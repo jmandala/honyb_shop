@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110701104512) do
+ActiveRecord::Schema.define(:version => 20110704101610) do
 
   create_table "addresses", :force => true do |t|
     t.string   "firstname"
@@ -249,6 +249,21 @@ ActiveRecord::Schema.define(:version => 20110701104512) do
   create_table "po_files", :force => true do |t|
     t.string   "file_name",    :limit => 22
     t.datetime "submitted_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "poa_files", :force => true do |t|
+    t.string   "record_code",             :limit => 2
+    t.string   "sequence_number",         :limit => 5
+    t.string   "file_source_san",         :limit => 7
+    t.string   "file_source_name",        :limit => 13
+    t.datetime "poa_creation_date"
+    t.string   "electronic_control_unit", :limit => 5
+    t.string   "file_name",               :limit => 17
+    t.string   "format_version",          :limit => 3
+    t.string   "destination_san",         :limit => 7
+    t.integer  "poa_type_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

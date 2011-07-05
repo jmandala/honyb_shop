@@ -1,10 +1,34 @@
-                admin_fulfillment_index GET    /admin/fulfillment(.:format)                                              {:action=>"index", :controller=>"admin/fulfillment"}
-                                        POST   /admin/fulfillment(.:format)                                              {:action=>"create", :controller=>"admin/fulfillment"}
-                  new_admin_fulfillment GET    /admin/fulfillment/new(.:format)                                          {:action=>"new", :controller=>"admin/fulfillment"}
-                 edit_admin_fulfillment GET    /admin/fulfillment/:id/edit(.:format)                                     {:action=>"edit", :controller=>"admin/fulfillment"}
-                      admin_fulfillment GET    /admin/fulfillment/:id(.:format)                                          {:action=>"show", :controller=>"admin/fulfillment"}
-                                        PUT    /admin/fulfillment/:id(.:format)                                          {:action=>"update", :controller=>"admin/fulfillment"}
-                                        DELETE /admin/fulfillment/:id(.:format)                                          {:action=>"destroy", :controller=>"admin/fulfillment"}
+            admin_fulfillment_dashboard        /admin/fulfillment/dashboard(.:format)                                    {:action=>"index", :controller=>"admin/fulfillment/dashboard"}
+       purge_admin_fulfillment_po_files DELETE /admin/fulfillment/po_files/purge(.:format)                               {:action=>"purge", :controller=>"admin/fulfillment/po_files"}
+             admin_fulfillment_po_files GET    /admin/fulfillment/po_files(.:format)                                     {:action=>"index", :controller=>"admin/fulfillment/po_files"}
+                                        POST   /admin/fulfillment/po_files(.:format)                                     {:action=>"create", :controller=>"admin/fulfillment/po_files"}
+          new_admin_fulfillment_po_file GET    /admin/fulfillment/po_files/new(.:format)                                 {:action=>"new", :controller=>"admin/fulfillment/po_files"}
+         edit_admin_fulfillment_po_file GET    /admin/fulfillment/po_files/:id/edit(.:format)                            {:action=>"edit", :controller=>"admin/fulfillment/po_files"}
+              admin_fulfillment_po_file GET    /admin/fulfillment/po_files/:id(.:format)                                 {:action=>"show", :controller=>"admin/fulfillment/po_files"}
+                                        PUT    /admin/fulfillment/po_files/:id(.:format)                                 {:action=>"update", :controller=>"admin/fulfillment/po_files"}
+                                        DELETE /admin/fulfillment/po_files/:id(.:format)                                 {:action=>"destroy", :controller=>"admin/fulfillment/po_files"}
+      purge_admin_fulfillment_poa_files DELETE /admin/fulfillment/poa_files/purge(.:format)                              {:action=>"purge", :controller=>"admin/fulfillment/poa_files"}
+            admin_fulfillment_poa_files GET    /admin/fulfillment/poa_files(.:format)                                    {:action=>"index", :controller=>"admin/fulfillment/poa_files"}
+                                        POST   /admin/fulfillment/poa_files(.:format)                                    {:action=>"create", :controller=>"admin/fulfillment/poa_files"}
+         new_admin_fulfillment_poa_file GET    /admin/fulfillment/poa_files/new(.:format)                                {:action=>"new", :controller=>"admin/fulfillment/poa_files"}
+        edit_admin_fulfillment_poa_file GET    /admin/fulfillment/poa_files/:id/edit(.:format)                           {:action=>"edit", :controller=>"admin/fulfillment/poa_files"}
+             admin_fulfillment_poa_file GET    /admin/fulfillment/poa_files/:id(.:format)                                {:action=>"show", :controller=>"admin/fulfillment/poa_files"}
+                                        PUT    /admin/fulfillment/poa_files/:id(.:format)                                {:action=>"update", :controller=>"admin/fulfillment/poa_files"}
+                                        DELETE /admin/fulfillment/poa_files/:id(.:format)                                {:action=>"destroy", :controller=>"admin/fulfillment/poa_files"}
+             admin_fulfillment_settings POST   /admin/fulfillment/settings(.:format)                                     {:action=>"create", :controller=>"admin/fulfillment/settings"}
+         new_admin_fulfillment_settings GET    /admin/fulfillment/settings/new(.:format)                                 {:action=>"new", :controller=>"admin/fulfillment/settings"}
+        edit_admin_fulfillment_settings GET    /admin/fulfillment/settings/edit(.:format)                                {:action=>"edit", :controller=>"admin/fulfillment/settings"}
+                                        GET    /admin/fulfillment/settings(.:format)                                     {:action=>"show", :controller=>"admin/fulfillment/settings"}
+                                        PUT    /admin/fulfillment/settings(.:format)                                     {:action=>"update", :controller=>"admin/fulfillment/settings"}
+                                        DELETE /admin/fulfillment/settings(.:format)                                     {:action=>"destroy", :controller=>"admin/fulfillment/settings"}
+                fulfillment_admin_order GET    /admin/orders/:id/fulfillment(.:format)                                   {:action=>"fulfillment", :controller=>"admin/orders"}
+                           admin_orders GET    /admin/orders(.:format)                                                   {:action=>"index", :controller=>"admin/orders"}
+                                        POST   /admin/orders(.:format)                                                   {:action=>"create", :controller=>"admin/orders"}
+                        new_admin_order GET    /admin/orders/new(.:format)                                               {:action=>"new", :controller=>"admin/orders"}
+                       edit_admin_order GET    /admin/orders/:id/edit(.:format)                                          {:action=>"edit", :controller=>"admin/orders"}
+                            admin_order GET    /admin/orders/:id(.:format)                                               {:action=>"show", :controller=>"admin/orders"}
+                                        PUT    /admin/orders/:id(.:format)                                               {:action=>"update", :controller=>"admin/orders"}
+                                        DELETE /admin/orders/:id(.:format)                                               {:action=>"destroy", :controller=>"admin/orders"}
         admin_promotion_promotion_rules GET    /admin/promotions/:promotion_id/promotion_rules(.:format)                 {:action=>"index", :controller=>"admin/promotion_rules"}
                                         POST   /admin/promotions/:promotion_id/promotion_rules(.:format)                 {:action=>"create", :controller=>"admin/promotion_rules"}
      new_admin_promotion_promotion_rule GET    /admin/promotions/:promotion_id/promotion_rules/new(.:format)             {:action=>"new", :controller=>"admin/promotion_rules"}
@@ -377,11 +401,11 @@ update_positions_admin_product_variants POST   /admin/products/:product_id/varia
                     admin_order_payment GET    /admin/orders/:order_id/payments/:id(.:format)                            {:action=>"show", :controller=>"admin/payments"}
                                         PUT    /admin/orders/:order_id/payments/:id(.:format)                            {:action=>"update", :controller=>"admin/payments"}
                                         DELETE /admin/orders/:order_id/payments/:id(.:format)                            {:action=>"destroy", :controller=>"admin/payments"}
-                           admin_orders GET    /admin/orders(.:format)                                                   {:action=>"index", :controller=>"admin/orders"}
+                                        GET    /admin/orders(.:format)                                                   {:action=>"index", :controller=>"admin/orders"}
                                         POST   /admin/orders(.:format)                                                   {:action=>"create", :controller=>"admin/orders"}
-                        new_admin_order GET    /admin/orders/new(.:format)                                               {:action=>"new", :controller=>"admin/orders"}
-                       edit_admin_order GET    /admin/orders/:id/edit(.:format)                                          {:action=>"edit", :controller=>"admin/orders"}
-                            admin_order GET    /admin/orders/:id(.:format)                                               {:action=>"show", :controller=>"admin/orders"}
+                                        GET    /admin/orders/new(.:format)                                               {:action=>"new", :controller=>"admin/orders"}
+                                        GET    /admin/orders/:id/edit(.:format)                                          {:action=>"edit", :controller=>"admin/orders"}
+                                        GET    /admin/orders/:id(.:format)                                               {:action=>"show", :controller=>"admin/orders"}
                                         PUT    /admin/orders/:id(.:format)                                               {:action=>"update", :controller=>"admin/orders"}
                                         DELETE /admin/orders/:id(.:format)                                               {:action=>"destroy", :controller=>"admin/orders"}
                  admin_general_settings POST   /admin/general_settings(.:format)                                         {:action=>"create", :controller=>"admin/general_settings"}

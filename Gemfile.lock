@@ -2,6 +2,7 @@ PATH
   remote: cdf
   specs:
     cdf (0.60.1)
+      fixed_width
       haml
       spree_core (>= 0.60.1)
 
@@ -87,6 +88,7 @@ GEM
       i18n (~> 0.4)
     fattr (2.2.0)
     ffi (1.0.9)
+    fixed_width (0.2.1)
     gherkin (2.4.1)
       json (>= 1.4.6)
     haml (3.1.2)

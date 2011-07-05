@@ -1,3 +1,7 @@
 .admin_buttons {
     float: right;
 }
+
+.field_pair {
+    margin-bottom: 20px;
+}
