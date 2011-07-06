@@ -260,6 +260,14 @@ ActiveRecord::Schema.define(:version => 20110706160445) do
     t.datetime "updated_at"
   end
 
+  create_table "po_types", :force => true do |t|
+    t.integer  "code"
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "poa_files", :force => true do |t|
     t.string   "record_code",             :limit => 2
     t.string   "sequence_number",         :limit => 5
@@ -274,6 +282,23 @@ ActiveRecord::Schema.define(:version => 20110706160445) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "imported_at"
+  end
+
+  create_table "poa_order_headers", :force => true do |t|
+    t.string   "record_code",                :limit => 2
+    t.string   "sequence_number",            :limit => 5
+    t.string   "toc",                        :limit => 13
+    t.string   "po_number",                  :limit => 22
+    t.string   "icg_ship_to_account_number", :limit => 7
+    t.string   "icg_san",                    :limit => 7
+    t.integer  "po_status_id"
+    t.integer  "poa_file_id"
+    t.integer  "po_file_id"
+    t.datetime "acknowledgement_date"
+    t.datetime "po_date"
+    t.datetime "po_cancellation_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "poa_statuses", :force => true do |t|
