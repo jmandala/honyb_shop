@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110706150255) do
+ActiveRecord::Schema.define(:version => 20110706160445) do
 
   create_table "addresses", :force => true do |t|
     t.string   "firstname"
@@ -268,7 +268,7 @@ ActiveRecord::Schema.define(:version => 20110706150255) do
     t.datetime "updated_at"
   end
 
-  create_table "poa_11s", :force => true do |t|
+  create_table "poa11s", :force => true do |t|
     t.string   "record_code",                :limit => 2
     t.string   "sequence_number",            :limit => 5
     t.string   "toc",                        :limit => 13
@@ -281,6 +281,8 @@ ActiveRecord::Schema.define(:version => 20110706150255) do
     t.date     "po_cancellation_date"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "po_file_id"
+    t.integer  "poa_file_id"
   end
 
   create_table "poa_files", :force => true do |t|
