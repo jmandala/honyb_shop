@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110706135920) do
+ActiveRecord::Schema.define(:version => 20110706150255) do
 
   create_table "addresses", :force => true do |t|
     t.string   "firstname"
@@ -253,10 +253,32 @@ ActiveRecord::Schema.define(:version => 20110706135920) do
     t.datetime "updated_at"
   end
 
+  create_table "po_statuses", :force => true do |t|
+    t.integer  "code"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "po_types", :force => true do |t|
     t.integer  "code"
     t.string   "name"
     t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "poa_11s", :force => true do |t|
+    t.string   "record_code",                :limit => 2
+    t.string   "sequence_number",            :limit => 5
+    t.string   "toc",                        :limit => 13
+    t.string   "po_number",                  :limit => 22
+    t.string   "icg_ship_to_account_number", :limit => 7
+    t.string   "icg_san",                    :limit => 7
+    t.integer  "po_status_id"
+    t.date     "acknowledgement_date"
+    t.date     "po_date"
+    t.date     "po_cancellation_date"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -275,6 +297,13 @@ ActiveRecord::Schema.define(:version => 20110706135920) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "imported_at"
+  end
+
+  create_table "poa_statuses", :force => true do |t|
+    t.string   "code"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "preferences", :force => true do |t|
