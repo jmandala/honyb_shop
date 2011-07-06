@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110706160445) do
+ActiveRecord::Schema.define(:version => 20110706185350) do
 
   create_table "addresses", :force => true do |t|
     t.string   "firstname"
@@ -304,6 +304,13 @@ ActiveRecord::Schema.define(:version => 20110706160445) do
   create_table "poa_statuses", :force => true do |t|
     t.string   "code"
     t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "poa_types", :force => true do |t|
+    t.integer  "code"
+    t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
