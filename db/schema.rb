@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110706185350) do
+ActiveRecord::Schema.define(:version => 20110706235715) do
 
   create_table "addresses", :force => true do |t|
     t.string   "firstname"
@@ -72,6 +72,13 @@ ActiveRecord::Schema.define(:version => 20110706185350) do
     t.datetime "updated_at"
   end
 
+  create_table "cdf_binding_codes", :force => true do |t|
+    t.string   "code",       :limit => 1
+    t.string   "name",       :limit => 20
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "configurations", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -104,6 +111,16 @@ ActiveRecord::Schema.define(:version => 20110706185350) do
     t.integer  "address_id"
     t.string   "gateway_customer_profile_id"
     t.string   "gateway_payment_profile_id"
+  end
+
+  create_table "dc_codes", :force => true do |t|
+    t.string   "po_dc_code",  :limit => 1
+    t.string   "poa_dc_code", :limit => 1
+    t.string   "asn_dc_code", :limit => 2
+    t.string   "inv_dc_san",  :limit => 10
+    t.string   "dc_name",     :limit => 50
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "fancy_things", :force => true do |t|
@@ -268,6 +285,53 @@ ActiveRecord::Schema.define(:version => 20110706185350) do
     t.datetime "updated_at"
   end
 
+  create_table "poa_additional_details", :force => true do |t|
+    t.string   "record_code",              :limit => 2
+    t.string   "sequence_number",          :limit => 5
+    t.string   "po_number",                :limit => 22
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "poa_order_header_id"
+    t.datetime "availability_date"
+    t.string   "dc_inventory_information", :limit => 40
+  end
+
+  create_table "poa_address_lines", :force => true do |t|
+    t.string   "record_code",            :limit => 2
+    t.string   "sequence_number",        :limit => 5
+    t.string   "po_number",              :limit => 22
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "poa_order_header_id"
+    t.string   "recipient_address_line", :limit => 35
+  end
+
+  create_table "poa_city_state_zips", :force => true do |t|
+    t.string   "record_code",              :limit => 2
+    t.string   "sequence_number",          :limit => 5
+    t.string   "po_number",                :limit => 22
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "poa_order_header_id"
+    t.string   "recipient_city",           :limit => 25
+    t.integer  "state_id"
+    t.string   "recipient_state_province", :limit => 3
+    t.string   "zip_postal_code",          :limit => 11
+    t.integer  "country_id"
+  end
+
+  create_table "poa_control_totals", :force => true do |t|
+    t.string   "record_code",              :limit => 2
+    t.string   "sequence_number",          :limit => 5
+    t.string   "po_number",                :limit => 22
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "poa_order_header_id"
+    t.integer  "record_count"
+    t.integer  "total_line_items_in_file"
+    t.integer  "total_units_acknowledged"
+  end
+
   create_table "poa_files", :force => true do |t|
     t.string   "record_code",             :limit => 2
     t.string   "sequence_number",         :limit => 5
@@ -282,6 +346,59 @@ ActiveRecord::Schema.define(:version => 20110706185350) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "imported_at"
+    t.integer  "po_file_id"
+  end
+
+  create_table "poa_item_number_price_records", :force => true do |t|
+    t.string   "record_code",           :limit => 2
+    t.string   "sequence_number",       :limit => 5
+    t.string   "po_number",             :limit => 22
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "poa_order_header_id"
+    t.decimal  "net_price",                           :precision => 8, :scale => 2
+    t.string   "item_number_type",      :limit => 2
+    t.decimal  "discounted_list_price",               :precision => 8, :scale => 2
+    t.integer  "total_line_order_qty"
+  end
+
+  create_table "poa_line_item_pub_records", :force => true do |t|
+    t.string   "record_code",                         :limit => 2
+    t.string   "sequence_number",                     :limit => 5
+    t.string   "po_number",                           :limit => 22
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "poa_order_header_id"
+    t.string   "publisher_name",                      :limit => 20
+    t.datetime "publication_release_date"
+    t.string   "original_seq_number",                 :limit => 5
+    t.string   "total_qty_predicted_to_ship_primary", :limit => 7
+  end
+
+  create_table "poa_line_item_title_records", :force => true do |t|
+    t.string   "record_code",         :limit => 2
+    t.string   "sequence_number",     :limit => 5
+    t.string   "po_number",           :limit => 22
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "poa_order_header_id"
+    t.string   "title",               :limit => 30
+    t.string   "author",              :limit => 20
+    t.integer  "cdf_binding_code_id"
+  end
+
+  create_table "poa_line_items", :force => true do |t|
+    t.string   "record_code",         :limit => 2
+    t.string   "sequence_number",     :limit => 5
+    t.string   "po_number",           :limit => 22
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "poa_order_header_id"
+    t.string   "line_item_po_number", :limit => 10
+    t.string   "item_number",         :limit => 20
+    t.integer  "poa_status_id"
+    t.integer  "dc_code_id"
+    t.integer  "product_id"
   end
 
   create_table "poa_order_headers", :force => true do |t|
@@ -293,12 +410,22 @@ ActiveRecord::Schema.define(:version => 20110706185350) do
     t.string   "icg_san",                    :limit => 7
     t.integer  "po_status_id"
     t.integer  "poa_file_id"
-    t.integer  "po_file_id"
     t.datetime "acknowledgement_date"
     t.datetime "po_date"
     t.datetime "po_cancellation_date"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "order_id"
+  end
+
+  create_table "poa_ship_to_names", :force => true do |t|
+    t.string   "record_code",         :limit => 2
+    t.string   "sequence_number",     :limit => 5
+    t.string   "po_number",           :limit => 22
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "poa_order_header_id"
+    t.string   "recipient_name",      :limit => 35
   end
 
   create_table "poa_statuses", :force => true do |t|
@@ -313,6 +440,16 @@ ActiveRecord::Schema.define(:version => 20110706185350) do
     t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "poa_vendor_records", :force => true do |t|
+    t.string   "record_code",         :limit => 2
+    t.string   "sequence_number",     :limit => 5
+    t.string   "po_number",           :limit => 22
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "vendor_message",      :limit => 50
+    t.integer  "poa_order_header_id"
   end
 
   create_table "preferences", :force => true do |t|
