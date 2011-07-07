@@ -90,8 +90,9 @@ class CreateMorePoaTables < ActiveRecord::Migration
     end
 
     create_table :poa_control_totals do |t|
-      default_poa_columns t
-      t.references :poa_order_header
+      t.string :record_code, :limit => 2
+      t.string :sequence_number, :limit => 5
+      t.references :poa_file
       t.integer :record_count
       t.integer :total_line_items_in_file
       t.integer :total_units_acknowledged
