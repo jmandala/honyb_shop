@@ -38,6 +38,7 @@ class CreateMorePoaTables < ActiveRecord::Migration
       t.references :poa_status
       t.references :dc_code
       t.references :product
+      t.references :line_item
     end
 
     create_table :dc_codes do |t|
@@ -89,13 +90,28 @@ class CreateMorePoaTables < ActiveRecord::Migration
       t.integer :total_line_order_qty
     end
 
-    create_table :poa_control_totals do |t|
+    create_table :poa_order_control_totals do |t|
       t.string :record_code, :limit => 2
       t.string :sequence_number, :limit => 5
-      t.references :poa_file
+      t.references :poa_order_header
       t.integer :record_count
       t.integer :total_line_items_in_file
       t.integer :total_units_acknowledged
+    end
+
+    create_table :poa_file_control_totals do |t|
+      t.string :record_code, :limit => 2
+      t.string :sequence_number, :limit => 5
+      t.references :poa_file
+      t.integer :total_line_items_in_file
+      t.integer :total_pos_acknowledged
+      t.integer :total_units_acknowledged
+      t.integer :record_count_01
+      t.integer :record_count_02
+      t.integer :record_count_03
+      t.integer :record_count_04
+      t.integer :record_count_05
+      t.integer :record_count_06
     end
 
   end
@@ -106,6 +122,8 @@ class CreateMorePoaTables < ActiveRecord::Migration
       add_column :poa_order_headers, :po_file_id, :integer
       remove_column :poa_order_headers, :order_id
       remove_column :poa_vendor_records, :poa_order_header_id
+      drop_table :poa_order_control_totals
+      drop_table :poa_file_control_totals
     rescue
     end
 
@@ -119,6 +137,6 @@ class CreateMorePoaTables < ActiveRecord::Migration
     drop_table :poa_line_item_title_records
     drop_table :poa_line_item_pub_records
     drop_table :poa_item_number_price_records
-    drop_table :poa_control_totals
+
   end
 end

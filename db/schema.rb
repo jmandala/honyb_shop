@@ -322,6 +322,21 @@ ActiveRecord::Schema.define(:version => 20110706235715) do
     t.integer "total_units_acknowledged"
   end
 
+  create_table "poa_file_control_totals", :force => true do |t|
+    t.string  "record_code",              :limit => 2
+    t.string  "sequence_number",          :limit => 5
+    t.integer "poa_file_id"
+    t.integer "total_line_items_in_file"
+    t.integer "total_pos_acknowledged"
+    t.integer "total_units_acknowledged"
+    t.integer "record_count_01"
+    t.integer "record_count_02"
+    t.integer "record_count_03"
+    t.integer "record_count_04"
+    t.integer "record_count_05"
+    t.integer "record_count_06"
+  end
+
   create_table "poa_files", :force => true do |t|
     t.string   "record_code",             :limit => 2
     t.string   "sequence_number",         :limit => 5
@@ -389,6 +404,16 @@ ActiveRecord::Schema.define(:version => 20110706235715) do
     t.integer  "poa_status_id"
     t.integer  "dc_code_id"
     t.integer  "product_id"
+    t.integer  "line_item_id"
+  end
+
+  create_table "poa_order_control_totals", :force => true do |t|
+    t.string  "record_code",              :limit => 2
+    t.string  "sequence_number",          :limit => 5
+    t.integer "poa_order_header_id"
+    t.integer "record_count"
+    t.integer "total_line_items_in_file"
+    t.integer "total_units_acknowledged"
   end
 
   create_table "poa_order_headers", :force => true do |t|
