@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110706235715) do
+ActiveRecord::Schema.define(:version => 20110709185756) do
 
   create_table "addresses", :force => true do |t|
     t.string   "firstname"
@@ -46,6 +46,78 @@ ActiveRecord::Schema.define(:version => 20110706235715) do
   end
 
   add_index "adjustments", ["order_id"], :name => "index_adjustments_on_order_id"
+
+  create_table "asn_files", :force => true do |t|
+    t.string   "record_code",               :limit => 2
+    t.string   "file_name"
+    t.datetime "imported_at"
+    t.string   "company_account_id_number", :limit => 10
+    t.integer  "total_order_count"
+    t.string   "file_version_number",       :limit => 10
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "asn_order_statuses", :force => true do |t|
+    t.string   "code"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "asn_shipment_details", :force => true do |t|
+    t.integer  "asn_file_id"
+    t.string   "record_code",                   :limit => 2
+    t.integer  "order_id"
+    t.integer  "dc_code_id"
+    t.string   "ingram_order_entry_number",     :limit => 10
+    t.integer  "quantity_canceled"
+    t.string   "isbn_10_ordered"
+    t.string   "isbn_10_shipped"
+    t.integer  "quantity_predicted"
+    t.integer  "quantity_slashed"
+    t.integer  "quantity_shipped"
+    t.integer  "asn_order_status_id"
+    t.string   "tracking_number"
+    t.string   "standard_carrier_address_code"
+    t.decimal  "ingram_item_list_price",                      :precision => 8, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "net_discounted_price",                        :precision => 8, :scale => 2, :default => 0.0, :null => false
+    t.string   "line_item_number"
+    t.integer  "line_item_id"
+    t.string   "ssl",                           :limit => 20
+    t.decimal  "weight",                                      :precision => 9, :scale => 4, :default => 0.0, :null => false
+    t.string   "shipping_method_code"
+    t.integer  "asn_slash_code_id"
+    t.string   "isbn_13"
+    t.integer  "product_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "asn_shipments", :force => true do |t|
+    t.integer  "asn_file_id"
+    t.string   "record_code",             :limit => 2
+    t.integer  "order_id"
+    t.integer  "asn_order_status_id"
+    t.decimal  "order_subtotal",                        :precision => 8, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "order_discount_amount",                 :precision => 8, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "sales_tax",                             :precision => 8, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "shipping_and_handling",                 :precision => 8, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "order_total",                           :precision => 8, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "freight_charge",                        :precision => 8, :scale => 2, :default => 0.0, :null => false
+    t.integer  "total_item_detail_count"
+    t.datetime "shipment_date"
+    t.string   "consumer_po_number",      :limit => 22
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "asn_slash_codes", :force => true do |t|
+    t.string   "code"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "assets", :force => true do |t|
     t.integer  "viewable_id"

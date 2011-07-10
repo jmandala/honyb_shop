@@ -60,7 +60,6 @@ class CreateMorePoaTables < ActiveRecord::Migration
     create_table :cdf_binding_codes do |t|
       t.string 'code', :limit => 1
       t.string 'name', :limit => 20
-
       t.timestamps
     end
 
