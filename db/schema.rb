@@ -12,6 +12,11 @@
 
 ActiveRecord::Schema.define(:version => 20110709185756) do
 
+  create_table "address_types", :force => true do |t|
+    t.string "code"
+    t.string "name"
+  end
+
   create_table "addresses", :force => true do |t|
     t.string   "firstname"
     t.string   "lastname"
@@ -85,11 +90,10 @@ ActiveRecord::Schema.define(:version => 20110709185756) do
     t.string   "line_item_number"
     t.integer  "line_item_id"
     t.string   "ssl",                           :limit => 20
-    t.decimal  "weight",                                      :precision => 9, :scale => 4, :default => 0.0, :null => false
+    t.decimal  "weight",                                      :precision => 9, :scale => 2, :default => 0.0, :null => false
     t.string   "shipping_method_code"
     t.integer  "asn_slash_code_id"
     t.string   "isbn_13"
-    t.integer  "product_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -108,6 +112,17 @@ ActiveRecord::Schema.define(:version => 20110709185756) do
     t.integer  "total_item_detail_count"
     t.datetime "shipment_date"
     t.string   "consumer_po_number",      :limit => 22
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "asn_shipping_method_codes", :force => true do |t|
+    t.string   "code",                   :limit => 2
+    t.string   "shipping_method"
+    t.string   "big_bisac_code_sent_in"
+    t.integer  "po_box_option_id"
+    t.string   "address_type"
+    t.string   "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -326,6 +341,12 @@ ActiveRecord::Schema.define(:version => 20110709185756) do
     t.string   "state"
     t.string   "response_code"
     t.string   "avs_response"
+  end
+
+  create_table "po_box_options", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "po_files", :force => true do |t|
