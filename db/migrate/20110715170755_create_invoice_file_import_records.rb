@@ -9,7 +9,8 @@ class CreateInvoiceFileImportRecords < ActiveRecord::Migration
       t.integer :ingram_san
       t.string :file_source, :limit => 13
       t.datetime :creation_date
-      t.string :file_name, :limit => 22
+      t.string :ingram_file_name, :limit => 22
+      t.string :file_name
       t.datetime :imported_at
       t.timestamps
     end
@@ -82,6 +83,8 @@ class CreateInvoiceFileImportRecords < ActiveRecord::Migration
       t.integer :total_titles
       t.integer :total_invoices
       t.integer :total_units
+      t.references :cdf_invoice_file
+
     end
     
   end

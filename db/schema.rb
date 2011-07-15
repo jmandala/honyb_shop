@@ -191,22 +191,24 @@ ActiveRecord::Schema.define(:version => 20110715170755) do
   end
 
   create_table "cdf_invoice_file_trailers", :force => true do |t|
-    t.string   "record_code",    :limit => 2
-    t.string   "sequence",       :limit => 5
+    t.string   "record_code",         :limit => 2
+    t.string   "sequence",            :limit => 5
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "total_titles"
     t.integer  "total_invoices"
     t.integer  "total_units"
+    t.integer  "cdf_invoice_file_id"
   end
 
   create_table "cdf_invoice_files", :force => true do |t|
-    t.string   "record_code",   :limit => 2
-    t.string   "sequence",      :limit => 5
+    t.string   "record_code",      :limit => 2
+    t.string   "sequence",         :limit => 5
     t.integer  "ingram_san"
-    t.string   "file_source",   :limit => 13
+    t.string   "file_source",      :limit => 13
     t.datetime "creation_date"
-    t.string   "file_name",     :limit => 22
+    t.string   "ingram_file_name", :limit => 22
+    t.string   "file_name"
     t.datetime "imported_at"
     t.datetime "created_at"
     t.datetime "updated_at"
