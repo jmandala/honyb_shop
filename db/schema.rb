@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110709185756) do
+ActiveRecord::Schema.define(:version => 20110715170755) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -164,6 +164,122 @@ ActiveRecord::Schema.define(:version => 20110709185756) do
     t.string   "name",       :limit => 20
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "cdf_invoice_detail_totals", :force => true do |t|
+    t.string   "record_code",         :limit => 2
+    t.string   "sequence",            :limit => 5
+    t.integer  "invoice_number"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "cdf_invoice_file_id"
+    t.string   "title",               :limit => 16
+    t.integer  "client_order_id"
+    t.string   "line_item_id_number"
+    t.integer  "order_id"
+    t.integer  "line_item_id"
+  end
+
+  create_table "cdf_invoice_ean_details", :force => true do |t|
+    t.string   "record_code",         :limit => 2
+    t.string   "sequence",            :limit => 5
+    t.integer  "invoice_number"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "cdf_invoice_file_id"
+    t.string   "ean_shipped",         :limit => 14
+  end
+
+  create_table "cdf_invoice_file_trailers", :force => true do |t|
+    t.string   "record_code",    :limit => 2
+    t.string   "sequence",       :limit => 5
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "total_titles"
+    t.integer  "total_invoices"
+    t.integer  "total_units"
+  end
+
+  create_table "cdf_invoice_files", :force => true do |t|
+    t.string   "record_code",   :limit => 2
+    t.string   "sequence",      :limit => 5
+    t.integer  "ingram_san"
+    t.string   "file_source",   :limit => 13
+    t.datetime "creation_date"
+    t.string   "file_name",     :limit => 22
+    t.datetime "imported_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "cdf_invoice_freight_and_fees", :force => true do |t|
+    t.string   "record_code",         :limit => 2
+    t.string   "sequence",            :limit => 5
+    t.integer  "invoice_number"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "cdf_invoice_file_id"
+    t.integer  "tracking_number"
+    t.decimal  "net_price",                        :precision => 8, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "shipping",                         :precision => 6, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "handling",                         :precision => 7, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "gift_wrap",                        :precision => 6, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "amount_due",                       :precision => 7, :scale => 2, :default => 0.0, :null => false
+  end
+
+  create_table "cdf_invoice_headers", :force => true do |t|
+    t.string   "record_code",               :limit => 2
+    t.string   "sequence",                  :limit => 5
+    t.integer  "invoice_number"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "cdf_invoice_file_id"
+    t.integer  "company_account_id_number"
+    t.integer  "warehouse_san"
+    t.datetime "invoice_date"
+  end
+
+  create_table "cdf_invoice_isbn_details", :force => true do |t|
+    t.string   "record_code",         :limit => 2
+    t.string   "sequence",            :limit => 5
+    t.integer  "invoice_number"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "cdf_invoice_file_id"
+    t.string   "isbn_10_shipped"
+    t.integer  "quantity_shipped"
+    t.decimal  "ingram_list_price",                :precision => 7, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "discount",                         :precision => 4, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "net_price",                        :precision => 8, :scale => 2, :default => 0.0, :null => false
+    t.datetime "metered_date"
+  end
+
+  create_table "cdf_invoice_totals", :force => true do |t|
+    t.string   "record_code",           :limit => 2
+    t.string   "sequence",              :limit => 5
+    t.integer  "invoice_number"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "cdf_invoice_file_id"
+    t.integer  "invoice_record_count"
+    t.integer  "number_of_titles"
+    t.integer  "total_number_of_units"
+    t.string   "bill_of_lading",        :limit => 10
+    t.integer  "total_invoice_weight"
+  end
+
+  create_table "cdf_invoice_trailers", :force => true do |t|
+    t.string   "record_code",         :limit => 2
+    t.string   "sequence",            :limit => 5
+    t.integer  "invoice_number"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "cdf_invoice_file_id"
+    t.decimal  "total_net_price",                  :precision => 9, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "total_shipping",                   :precision => 7, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "total_handling",                   :precision => 7, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "total_gift_wrap",                  :precision => 6, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "total_invoice",                    :precision => 9, :scale => 2, :default => 0.0, :null => false
   end
 
   create_table "configurations", :force => true do |t|

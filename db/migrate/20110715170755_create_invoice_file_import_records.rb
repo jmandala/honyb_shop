@@ -10,6 +10,7 @@ class CreateInvoiceFileImportRecords < ActiveRecord::Migration
       t.string :file_source, :limit => 13
       t.datetime :creation_date
       t.string :file_name, :limit => 22
+      t.datetime :imported_at
       t.timestamps
     end
     
@@ -41,6 +42,8 @@ class CreateInvoiceFileImportRecords < ActiveRecord::Migration
       t.string :title, :limit => 16
       t.integer :client_order_id
       t.string :line_item_id_number
+      t.references :order
+      t.references :line_item
     end
 
     create_table :cdf_invoice_freight_and_fees do |t|
