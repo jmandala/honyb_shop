@@ -1,5 +1,4 @@
 class CreateAsnRecords < ActiveRecord::Migration
-  extend SchemaHelper
 
   def self.up
 
