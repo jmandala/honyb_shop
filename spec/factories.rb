@@ -39,6 +39,7 @@ FactoryGirl.define do
     zipcode '04553'
     association :country, :factory => :us
     association :state, :factory => :maine
+    state_name { "#{state.name}" }
   end
 
   factory :order do

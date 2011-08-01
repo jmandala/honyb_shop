@@ -10,4 +10,4 @@ Feature: Submit Purchase Orders
       | 2011-07-30    | ready          |
     When I create a Purchase Order
     Then the Purchase Order should contain the given Order
-    And the given Order should have a shipment state of "ready"
+    And the given Order should have a shipment state of "pending"
