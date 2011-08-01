@@ -9,7 +9,3 @@ Then /^the Purchase Order should contain the given Order$/ do
   @po_file.orders.count.should == 1
   @po_file.orders.first.should == @order
 end
-
-Then /^the given Order should have a shipment state of "([^"]*)"$/ do |shipment_state|
-  @order.shipment_state.should == shipment_state
-end

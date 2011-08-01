@@ -6,8 +6,7 @@ Feature: Submit Purchase Orders
 
   Scenario: Create a Purchase Order
     Given the following Order exists:
-      | completed at  | shipment state |
-      | 2011-07-30    | ready          |
+      | completed_at  | shipment_state | payment_state |
+      | 2011-07-30    | ready          | paid          |
     When I create a Purchase Order
-    Then the Purchase Order should contain the given Order
-    And the given Order should have a shipment state of "pending"
+    Then the Purchase Order should contain the given order

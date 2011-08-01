@@ -30,6 +30,7 @@ group :development, :test do
   gem 'active_reload'
   gem "factory_girl_rails"
   gem 'capybara'
+  gem 'faker'
 end
 
 gem "cdf", :path => "cdf", :require => "cdf"
