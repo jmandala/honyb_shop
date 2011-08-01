@@ -53,7 +53,7 @@ FactoryGirl.define do
 
     factory :in_stock do
       sku '9781234567890'
-      count_on_hand 1000
+      on_hand 1000
     end
   end
 
