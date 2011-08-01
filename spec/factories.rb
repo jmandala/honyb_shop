@@ -4,6 +4,10 @@ FactoryGirl.define do
     "person#{n}@example.com"
   end
 
+  sequence :product_name do |n|
+    "Product #{n}"
+  end
+
   factory :country do
     factory :us do
       iso_name 'UNITED STATES'
@@ -41,6 +45,18 @@ FactoryGirl.define do
     association :state, :factory => :maine
     state_name { "#{state.name}" }
   end
+
+  factory :product do
+    sequence(:name) {|n| "Product #{n}" }
+    price 10.0
+    cost_price 6.0
+
+    factory :in_stock do
+      sku '9781234567890'
+      count_on_hand 1000
+    end
+  end
+
 
   factory :order do
     shipment_state 'ready'
