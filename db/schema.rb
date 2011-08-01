@@ -524,15 +524,6 @@ ActiveRecord::Schema.define(:version => 20110715170755) do
     t.integer  "country_id"
   end
 
-  create_table "poa_control_totals", :force => true do |t|
-    t.string  "record_code",              :limit => 2
-    t.string  "sequence_number",          :limit => 5
-    t.integer "poa_file_id"
-    t.integer "record_count"
-    t.integer "total_line_items_in_file"
-    t.integer "total_units_acknowledged"
-  end
-
   create_table "poa_file_control_totals", :force => true do |t|
     t.string  "record_code",              :limit => 2
     t.string  "sequence_number",          :limit => 5

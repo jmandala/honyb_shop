@@ -22,8 +22,14 @@ gem 'spree','0.60.1'
 # Dev/Test gems
 group :development, :test do
   gem 'sqlite3'
+  gem 'database_cleaner'
   gem 'webrat'
+  gem 'cucumber'
   gem 'cucumber-rails'
   gem 'rspec-rails'
+  gem 'active_reload'
+  gem "factory_girl_rails"
+  gem 'capybara'
 end
+
 gem "cdf", :path => "cdf", :require => "cdf"
