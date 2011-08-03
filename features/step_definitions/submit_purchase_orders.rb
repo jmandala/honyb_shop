@@ -1,3 +1,11 @@
+# define settings
+Given /^(CDF .*): (.*)$/ do |key, value|
+  key = to_sym key
+  if Spree::Config[key] == ''
+    Spree::Config.set({key => value.strip})
+  end
+end
+
 Given /^each order is completed$/ do
   Order.all.each {|order| complete_order order }
 end
@@ -19,6 +27,7 @@ When /^I create a purchase order$/ do
   Order.needs_po.each {|o| @orders << o}
 
   @po_file = PoFile.generate
+  @po_file.put
 end
 
 Then /^the purchase order should contain (\d+) orders?$/ do |order_count|
@@ -71,4 +80,8 @@ end
 
 def add_line_item(order, quantity=1, variant=Factory(:in_stock_product).master)
   order.add_variant variant, quantity
+end
+
+def to_sym(string)
+  string.strip.downcase.gsub(/ /, '_').to_sym
 end
