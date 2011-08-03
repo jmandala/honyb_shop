@@ -1,5 +1,5 @@
 Given /^the orders? (?:is|are) completed$/ do
-  Order.all {|order| complete_order order }
+  Order.all.each {|order| complete_order order }
 end
 
 Given /^the orders? (?:has|have) (\d+) line items? with a quantity of (\d+)$/ do |item_count, quantity|
@@ -13,14 +13,17 @@ Given /^the orders? (?:has|have) (\d+) line items? with a quantity of (\d+)$/ do
 end
 
 When /^I create a purchase order$/ do
-  @orders = Order.needs_po
+  Order.needs_po.count.should > 0
+
+  @orders = []
+  Order.needs_po.each {|o| @orders << o}
   @po_file = PoFile.generate
 end
 
 
 Then /^the purchase order should contain the (\d+)? ?given orders?$/ do |order_count|
   order_count ||= 1
-  @po_file.orders.count.should == order_count
+  @po_file.orders.count.should == order_count.to_i
   (@po_file.orders - @orders).size.should == 0
 end
 
