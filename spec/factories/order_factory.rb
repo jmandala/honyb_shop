@@ -2,6 +2,7 @@ FactoryGirl.define do
 
   factory :in_stock_product, :parent => :product do
     on_hand 1000
+    sku '9780373200009'
   end
 
   factory :order_address, :aliases => [:bill_address, :ship_address], :parent => :address
