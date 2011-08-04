@@ -11,7 +11,7 @@ When /^I download a POA$/ do
 end
 
 Then /^the POA will reference the purchase order$/ do
-  @downloaded.size.should == 1
+  @downloaded.size.should > 0
   poa_file = @downloaded.first
   puts poa_file.file_name
   puts @po_file.file_name
