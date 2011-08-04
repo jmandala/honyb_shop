@@ -36,6 +36,8 @@ group :cucumber, :test, :development do
   gem 'database_cleaner'
   gem 'rspec-rails'
   gem 'webrat'
+  gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
+  gem 'guard-rspec'
 end
 
 gem "cdf", :path => "cdf", :require => "cdf"
