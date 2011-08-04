@@ -38,6 +38,8 @@ group :cucumber, :test, :development do
   gem 'webrat'
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
   gem 'guard-rspec'
+  gem 'guard-cucumber'
+  gem 'guard-spork'
 end
 
 gem "cdf", :path => "cdf", :require => "cdf"

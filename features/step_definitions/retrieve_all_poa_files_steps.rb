@@ -6,10 +6,13 @@ Given /^(\d+) purchase order was submitted$/ do |count|
   @po_file = PoFile.generate
 end
 
-When /^I retrieve a POA$/ do
-  @poa_file = PoaFile.retrieve
+When /^I download a POA$/ do
+  @downloaded = PoaFile.download
 end
 
 Then /^the POA will reference the purchase order$/ do
-  pending # express the regexp above with the code you wish you had
+  @downloaded.size.should == 1
+  poa_file = @downloaded.first
+  puts poa_file.file_name
+  puts @po_file.file_name
 end

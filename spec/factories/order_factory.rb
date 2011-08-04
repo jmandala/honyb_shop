@@ -6,6 +6,7 @@ FactoryGirl.define do
   end
 
   factory :order_address, :aliases => [:bill_address, :ship_address], :parent => :address
+
 end
 
 def complete_order(order)

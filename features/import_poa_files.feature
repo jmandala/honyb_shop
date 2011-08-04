@@ -14,5 +14,5 @@ Feature: Import POA (Purchase Order Acknowledgement) Files
 
   Scenario: retrieve all POA files
     Given 1 purchase order was submitted
-    When I retrieve a POA
+    When I download a POA
     Then the POA will reference the purchase order
