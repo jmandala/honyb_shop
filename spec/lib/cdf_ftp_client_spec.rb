@@ -21,15 +21,14 @@ describe CdfFtpClient do
     end
   end
 
-  context "when using mocked initialization" do
+  context "when connecting to server" do
 
-    it "should login to ftp server" do
-      ftp = double('FTP server').as_null_object
+    before(:each) do
+      @ftp = double('FTP server').as_null_object
+      Net::FTP.should_receive(:open).with(@client.server).and_return(@ftp)
+    end
 
-      Net::FTP.should_receive(:new).and_return(ftp)
-
-      ftp.should_receive(:login).with(@client.user, @client.password)
-      ftp.should_receive(:close)
+    it "should login and close" do
       @client.connect
     end
   end
