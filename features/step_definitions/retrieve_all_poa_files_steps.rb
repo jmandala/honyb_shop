@@ -12,7 +12,20 @@ end
 
 Then /^the POA will reference the purchase order$/ do
   @downloaded.size.should > 0
-  poa_file = @downloaded.first
-  puts poa_file.file_name
+
+  found = nil
+  @downloaded.each do |poa_file|
+    file_name = poa_file.file_name.gsub(/\.fbc/, '.fbo')
+    if file_name == @po_file.file_name
+      found = poa_file
+      break
+    else
+      puts "#{file_name} != #{@po_file.file_name}"
+    end
+  end
+
+  found.should_not == nil
+
+  puts found.file_name
   puts @po_file.file_name
 end
