@@ -12,9 +12,10 @@ describe "A PoaFile" do
       files = PoaFile.retrieve
       files.should_not == []
       files.size.should > 0
-      imported = PoaFile.import
+
+      imported = PoaFile.import!
       imported.size.should == files.size
-      imported.each { |p| puts p.data }
+
     end
   end
 

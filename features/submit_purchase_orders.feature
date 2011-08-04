@@ -11,6 +11,7 @@ Feature: Submit Purchase Orders
     And CDF ftp server: ftp1.ingrambook.com
     And CDF ftp user: c20N2730
     And CDF ftp password: q3429czhvf
+    And CDF test mode: true
 
   Scenario Outline: submit purchase order
     Given <order count> orders exist
