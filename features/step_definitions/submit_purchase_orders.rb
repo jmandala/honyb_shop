@@ -1,11 +1,3 @@
-# define settings
-Given /^(CDF .*): (.*)$/ do |key, value|
-  key = to_sym key
-  if Spree::Config[key] == ''
-    Spree::Config.set({key => value.strip})
-  end
-end
-
 Given /^each order is completed$/ do
   Order.all.each {|order| complete_order order }
 end
@@ -48,40 +40,7 @@ Then /^the purchase order file name should be formatted hb-YYMMDDHHMMSS.fbo$/ do
   min.should == time.strftime("%M").to_s
   sec.should == time.strftime("%S").to_s
 
-  puts @po_file.data
+  #puts @po_file.data
   
   @po_file.delete_file
-end
-
-def complete_order(order)
-  order.bill_address = Factory(:address)
-  order.ship_address = Factory(:address)
-  order.shipping_method = Factory(:shipping_method)
-
-  order.next # cart -> address
-  order.next # address -> delivery
-  order.next # delivery -> payment
-
-  payment = order.payments.create(
-      :amount => order.total,
-      :source => Factory(:creditcard),
-      :payment_method => Factory(:bogus_payment_method)
-  )
-
-  order.next # payment -> confirm
-  order.next # confirm -> complete
-
-  # simulate CC capture
-  payment.complete
-
-  # update totals
-  order.update!
-end
-
-def add_line_item(order, quantity=1, variant=Factory(:in_stock_product).master)
-  order.add_variant variant, quantity
-end
-
-def to_sym(string)
-  string.strip.downcase.gsub(/ /, '_').to_sym
 end

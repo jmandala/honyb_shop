@@ -6,41 +6,37 @@ FactoryGirl.define do
   end
 
   factory :order_address, :aliases => [:bill_address, :ship_address], :parent => :address
+end
 
-  factory :completed_order, :parent => :order do
-    #noinspection RubyResolve
-    bill_address
+def complete_order(order)
+  order.bill_address = Factory(:address)
+  order.ship_address = Factory(:address)
+  order.shipping_method = Factory(:shipping_method)
 
-    #noinspection RubyResolve
-    ship_address
+  order.next # cart -> address
+  order.next # address -> delivery
+  order.next # delivery -> payment
 
-    shipping_method
+  payment = order.payments.create(
+      :amount => order.total,
+      :source => Factory(:creditcard),
+      :payment_method => Factory(:bogus_payment_method)
+  )
 
-    # add line items
-    after_build { |order| order.add_variant Factory(:in_stock_product).master }
+  order.next # payment -> confirm
+  order.next # confirm -> complete
 
-    after_create do |order|
+  # simulate CC capture
+  payment.complete
 
-      order.next # cart -> address
-      order.next # address -> delivery
-      order.next # delivery -> payment
+  # update totals
+  order.update!
+end
 
-      payment = order.payments.create(
-          :amount => order.total,
-          :source => Factory(:creditcard),
-          :payment_method => Factory(:bogus_payment_method)
-      )
+def add_line_item(order, quantity=1, variant=Factory(:in_stock_product).master)
+  order.add_variant variant, quantity
+end
 
-      order.next # payment -> confirm
-      order.next # confirm -> complete
-
-      # simulate CC capture
-      payment.complete
-
-      # update totals
-      order.update!
-    end
-
-  end
-
+def to_sym(string)
+  string.strip.downcase.gsub(/ /, '_').to_sym
 end
