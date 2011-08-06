@@ -18,12 +18,11 @@ describe Records::Po::Po00 do
       end
 
       it "should have 80 characters" do
-
         @po_00.cdf_record.length.should == 80
       end
 
       it "should have correct format" do
-        @po_00.cdf_record.should == '00000010000000     HonyB        110805test_file             F031697978     ICDFL'
+        @po_00.cdf_record.should == "00000010000000     HonyB        #{@order.completed_at.strftime("%y%m%d")}test_file             F031697978     ICDFL"
       end
 
     end

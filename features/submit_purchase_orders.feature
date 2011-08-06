@@ -20,6 +20,7 @@ Feature: Submit Purchase Orders
     When I create a purchase order
     Then the purchase order should contain <order count> orders
     And the purchase order file name should be formatted hb-YYMMDDHHMMSS.fbo
+    And the purchase order file character count should be divisible by 80
   Examples:
     | order count | line item count | quantity count |
     | 1           | 1               | 1              |

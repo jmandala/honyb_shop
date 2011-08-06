@@ -1,6 +1,5 @@
 require 'spec_helper'
 
-
 describe PoFile do
 
 
@@ -10,8 +9,7 @@ describe PoFile do
       Spree::Config.set({:cdf_ship_to_account => '1234567'})
       Spree::Config.set({:cdf_ship_to_password => '12345678'})
       Spree::Config.set({:cdf_bill_to_account => '1234567'})
-
-
+ 
       @order = Factory(:order)
       add_line_item @order
       complete_order @order
@@ -89,6 +87,26 @@ describe PoFile do
       @parsed = FixedWidth.parse(File.new(@po_file.path), :po_file)
     end
 
+
+    after(:all) do
+      @po_file.delete_file
+    end
+
+    it "should have 80 characters in each line" do
+      file = File.new(@po_file.path, "r")
+      while (line = file.gets)
+        line = line.chomp
+        if line.mb_chars.length != 80
+          fields = line.unpack('a2a5a7a5a13a6a22a3a7a5a1a4*')
+          fields.each {|f| puts "#{f.length}: '#{f}'"}
+          puts "Invalid Length #{line.length}]: #{line}"
+          line.split(//).each_with_index { |c, i| puts "#{i}: '#{c}'"}
+        end
+        line.length.should == 80
+      end
+      file.close
+    end
+
     it "should format po_00 correctly" do
       record = @parsed[:po_00]
       record.length.should == 1
@@ -132,7 +150,6 @@ describe PoFile do
       record = @parsed[:po_21]
       record.length.should == 1
       record = record.first
-      puts record.to_yaml
       record[:record_code].should == '21'
       record[:ingram_ship_to_account_number].should == Spree::Config.get(:cdf_ship_to_account)
       record[:sequence_number].should == '00004'
