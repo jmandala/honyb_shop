@@ -4,7 +4,19 @@ Given /^(\d+) purchase order was submitted$/ do |count|
   And "each order is completed"
 
   @po_file = PoFile.generate
+  @po_file.put
 end
+
+Given /^a POA file exists on the FTP server$/ do
+  poa_file_name = @po_file.file_name.gsub /fbo$/, 'fbc'
+  puts poa_file_name
+  CdfFtpClient.new.connect do |ftp|
+    remote_files = ftp.list("outgoing/#{poa_file_name}")
+    puts remote_files
+    remote_files.length.should == 1
+  end
+end
+
 
 When /^I download a POA$/ do
   @downloaded = PoaFile.download

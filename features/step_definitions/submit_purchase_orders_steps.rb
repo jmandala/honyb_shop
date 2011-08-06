@@ -53,13 +53,10 @@ Then /^the purchase order file name should be formatted hb-YYMMDDHHMMSS.fbo$/ do
   hour.should == time.strftime("%H").to_s
   min.should == time.strftime("%M").to_s
   sec.should == time.strftime("%S").to_s
-
-  puts @po_file.data
-
   @po_file.delete_file
 end
 
 Then /^the purchase order file character count should be divisible by (\d+)$/ do |count|
-  char_count = @po_file.data.split(//).length
+  char_count = @po_file.data.gsub(/\n/, '').split(//).length
   (char_count % 80).should == 0
 end
