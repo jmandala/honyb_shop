@@ -1,9 +1,5 @@
 require 'spec_helper'
 
-Spree::Config.set({:cdf_ship_to_account => '1234567'})
-Spree::Config.set({:cdf_ship_to_password => '12345678'})
-Spree::Config.set({:cdf_bill_to_account => '1234567'})
-
 
 describe PoFile do
 
@@ -11,11 +7,16 @@ describe PoFile do
   context "when creating a purchase order" do
 
     before(:all) do
+      Spree::Config.set({:cdf_ship_to_account => '1234567'})
+      Spree::Config.set({:cdf_ship_to_password => '12345678'})
+      Spree::Config.set({:cdf_bill_to_account => '1234567'})
+
+
       @order = Factory(:order)
       add_line_item @order
       complete_order @order
       @po_file = PoFile.generate
-      puts @po_file.data
+      puts "\n" + @po_file.data
 
       FixedWidth.define :po_file do |d|
         d.template :default do |t|
@@ -65,7 +66,7 @@ describe PoFile do
           l.spacer 21
         end
 
-        d.po_21(:align => :left) do |l|
+        d.po_21(:align => :left, :trim => false) do |l|
           l.trap { |line| line[0, 2] == '21' }
           l.template :default
           l.ingram_ship_to_account_number 7
@@ -89,18 +90,18 @@ describe PoFile do
     end
 
     it "should format po_00 correctly" do
-      po_00 = @parsed[:po_00]
-      po_00.length.should == 1
-      po_00 = po_00.first
-      po_00[:record_code].should == '00'
-      po_00[:sequence_number].should == '00001'
-      po_00[:file_source_san].should == '0000000'
-      po_00[:creation_date].should =~ /\d{6}/
-      po_00[:file_name].should == @po_file.file_name
-      po_00[:format_version].should == 'F03'
-      po_00[:ingram_san].should == '1697978'
-      po_00[:vendor_name_flag].should == 'I'
-      po_00[:product_description].should == 'CDFL'
+      record = @parsed[:po_00]
+      record.length.should == 1
+      record = record.first
+      record[:record_code].should == '00'
+      record[:sequence_number].should == '00001'
+      record[:file_source_san].should == '0000000'
+      record[:creation_date].should =~ /\d{6}/
+      record[:file_name].should == @po_file.file_name
+      record[:format_version].should == 'F03'
+      record[:ingram_san].should == '1697978'
+      record[:vendor_name_flag].should == 'I'
+      record[:product_description].should == 'CDFL'
     end
 
     it "should format po_10 correctly" do
@@ -109,6 +110,14 @@ describe PoFile do
       record = record.first
       record[:record_code].should == '10'
       record[:sequence_number].should == '00002'
+      record[:ingram_bill_to_account_number].should == Spree::Config.get(:cdf_bill_to_account)
+      record[:vendor_san].should == '1697978'
+      record[:order_date].should == @order.completed_at.strftime("%y%m%d")
+      record[:backorder_cancel_date].should == (@order.completed_at + 3.months).strftime("%y%m%d")
+      record[:backorder_code].should == Records::Po::Po10::BACKORDER_CODE[:do_not_backorder]
+      record[:ddc_fulfillment].should == 'N'
+      record[:ship_to_indicator].should == 'Y'
+      record[:bill_to_indicator].should == 'Y'
     end
 
     it "should format po_20 correctly" do
@@ -120,22 +129,22 @@ describe PoFile do
     end
 
     it "should format po_21 correctly" do
-      po_21 = @parsed[:po_21]
-      po_21.length.should == 1
-      po_21 = po_21.first
-      puts po_21.to_yaml
-      po_21[:record_code].should == '21'
-      po_21[:ingram_ship_to_account_number].should == Spree::Config.get(:cdf_ship_to_account)
-      po_21[:sequence_number].should == '00004'
-      po_21[:po_number].should == @order.number.ljust_trim(22)
-      po_21[:po_type].should == Records::Po::Po21::PO_TYPE[:purchase_order]
-      po_21[:order_type].should == Records::Po::Po21::ORDER_TYPE[:release_when_full]
-      po_21[:dc_code].should == ''
-      po_21[:green_light].should == 'Y'
-      po_21[:poa_type].should == Records::Po::Po21::POA_TYPE[:full_acknowledgement]
-      po_21[:ship_to_password].should == Spree::Config.get(:cdf_ship_to_password)
-      po_21[:carrier_shipping_method].should == '### 2ND DAY AIR'
-      po_21[:split_order_allowed].should == 'Y'
+      record = @parsed[:po_21]
+      record.length.should == 1
+      record = record.first
+      puts record.to_yaml
+      record[:record_code].should == '21'
+      record[:ingram_ship_to_account_number].should == Spree::Config.get(:cdf_ship_to_account)
+      record[:sequence_number].should == '00004'
+      record[:po_number].should == @order.number.ljust_trim(22)
+      record[:po_type].should == Records::Po::Po21::PO_TYPE[:purchase_order]
+      record[:order_type].should == Records::Po::Po21::ORDER_TYPE[:release_when_full]
+      record[:dc_code].should == ''
+      record[:green_light].should == 'Y'
+      record[:poa_type].should == Records::Po::Po21::POA_TYPE[:full_acknowledgement]
+      record[:ship_to_password].should == Spree::Config.get(:cdf_ship_to_password)
+      record[:carrier_shipping_method].should == '### 2ND DAY AIR'
+      record[:split_order_allowed].should == 'Y'
 
     end
   end
