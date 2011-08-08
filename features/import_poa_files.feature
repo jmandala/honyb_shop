@@ -12,7 +12,7 @@ Feature: Import POA (Purchase Order Acknowledgement) Files
     And CDF ftp user: c20N2730
     And CDF ftp password: q3429czhvf
 
-  Scenario: retrieve all POA files
+  Scenario: submit an order and retrieve a POA file
     Given 1 purchase order was submitted
     And a POA file exists on the FTP server
     When I download a POA

@@ -9,15 +9,22 @@ end
 
 Given /^a POA file exists on the FTP server$/ do
   poa_file_name = @po_file.file_name.gsub /fbo$/, 'fbc'
-  puts "looking for: #{poa_file_name}"
 
-  sleep 3
   CdfFtpClient.new.connect do |ftp|
-    remote_files = ftp.list("outgoing/#{poa_file_name}")
-    puts "Found"
-    remote_files.each {|f| puts f}
+
+    remote_files = []
+
+    5.times do
+      if remote_files.length > 0
+        break
+      end
+      sleep 5
+      remote_files = ftp.list("outgoing/#{poa_file_name}")
+    end
+
     remote_files.length.should == 1
   end
+
 end
 
 
@@ -34,13 +41,11 @@ Then /^the POA will reference the purchase order$/ do
     if file_name == @po_file.file_name
       found = poa_file
       break
-    else
-      puts "#{file_name} != #{@po_file.file_name}"
     end
   end
 
   found.should_not == nil
 
-  puts found.file_name
-  puts @po_file.file_name
+  @po_file.poa_files.size.should > 0
+
 end
