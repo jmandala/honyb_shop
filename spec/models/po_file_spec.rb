@@ -9,7 +9,8 @@ describe PoFile do
       Spree::Config.set({:cdf_ship_to_account => '1234567'})
       Spree::Config.set({:cdf_ship_to_password => '12345678'})
       Spree::Config.set({:cdf_bill_to_account => '1234567'})
- 
+
+      
       @order = Factory(:order)
       add_line_item @order
       complete_order @order
@@ -140,10 +141,7 @@ describe PoFile do
 
     it "should format po_20 correctly" do
       record = @parsed[:po_20]
-      record.length.should == 1
-      record = record.first
-      record[:record_code].should == '20'
-      record[:sequence_number].should == '00003'
+      record.should == nil
     end
 
     it "should format po_21 correctly" do

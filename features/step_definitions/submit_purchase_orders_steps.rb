@@ -57,6 +57,7 @@ Then /^the purchase order file name should be formatted hb-YYMMDDHHMMSS.fbo$/ do
 end
 
 Then /^the purchase order file character count should be divisible by (\d+)$/ do |count|
-  char_count = @po_file.data.gsub(/\n/, '').split(//).length
+  char_count = @po_file.data.gsub(/\r\n/, '').split(//).length
   (char_count % 80).should == 0
 end
+

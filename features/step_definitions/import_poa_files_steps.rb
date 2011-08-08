@@ -9,10 +9,13 @@ end
 
 Given /^a POA file exists on the FTP server$/ do
   poa_file_name = @po_file.file_name.gsub /fbo$/, 'fbc'
-  puts poa_file_name
+  puts "looking for: #{poa_file_name}"
+
+  sleep 3
   CdfFtpClient.new.connect do |ftp|
     remote_files = ftp.list("outgoing/#{poa_file_name}")
-    puts remote_files
+    puts "Found"
+    remote_files.each {|f| puts f}
     remote_files.length.should == 1
   end
 end

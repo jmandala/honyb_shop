@@ -7,7 +7,7 @@ Feature: Import POA (Purchase Order Acknowledgement) Files
   Background: Current Fulfillment Settings
     Given CDF bill to account: 20N1031
     And CDF ship to account: 20N2730
-    And CDF ship to password: MANDAFB3
+    And CDF ship to password: MANDAFB4
     And CDF ftp server: ftp1.ingrambook.com
     And CDF ftp user: c20N2730
     And CDF ftp password: q3429czhvf
