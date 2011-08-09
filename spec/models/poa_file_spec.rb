@@ -18,7 +18,9 @@ describe PoaFile do
 
   context "when working with remote files" do
     before(:all) do
-      @sample_file = '02000011697978     INGRAM       110808RTYOKHB-110808183530.FF030000000     1    1100002             R564547442            20N273016979780110808110808110808     2100003R564547442            THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 2100004R564547442            CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 2100005R564547442            NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 2100006R564547442            ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 2100007R564547442            EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 2100008R564547442             AT 1-800-234-6737.                                4000009R564547442            219                   9780373200009       00100100C4100010R564547442            000 000000{ 0000 0000 0000 0000 0000 0000 0000     4200011R564547442            HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M4300012R564547442            HQPB                030900019350000000010000000    4400013R564547442                                00004.99EN00003.240000001      4500014R564547442            219                                                5900015R564547442            0001300000000010000000001000000000400000000000000011100016             R327755781            20N273016979780110808110808110808     2100017R327755781            THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 2100018R327755781            CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 2100019R327755781            NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 2100020R327755781            ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 2100021R327755781            EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 2100022R327755781             AT 1-800-234-6737.                                4000023R327755781            220                   9780373200009       00100100C4100024R327755781            000 000000{ 0000 0000 0000 0000 0000 0000 0000     4200025R327755781            HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M4300026R327755781            HQPB                030900040350000000010000000    4400027R327755781                                00004.99EN00003.240000001      4500028R327755781            220                                                5900029R327755781            0001300000000010000000001000000000400000000000000019100030000000000000200002000000000200001000020001200000000120000200001          '
+      @po_file_name = '110809180859.fbo'
+      @po_file = PoFile.create(:file_name => @po_file_name)
+      @sample_file = '02000011697978     INGRAM       110809RUNQX110809180859.FBO F030000000     1    1100002             R364143388            20N273016979780110809110809110809     2100003R364143388            THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 2100004R364143388            CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 2100005R364143388            NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 2100006R364143388            ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 2100007R364143388            EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 2100008R364143388             AT 1-800-234-6737.                                4000009R364143388            1                     9780373200009       00100100C4100010R364143388            000 000000{ 0000 0000 0000 0000 0000 0000 0000     4200011R364143388            HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M4300012R364143388            HQPB                030900019350000000010000000    4400013R364143388                                00004.99EN00003.240000001      4500014R364143388            1                                                  5900015R364143388            0001300000000010000000001000000000400000000000000019100016000000000000100001000000000100001000010002300000000060000100001          '
     end
 
 
@@ -39,8 +41,8 @@ describe PoaFile do
         @outgoing_files = [
             "drw-rw-rw-   1 user     group           0 Aug  3 21:52 ..",
             "drw-rw-rw-   1 user     group           0 Aug  3 21:52 .",
-            "-rw-rw-rw-   1 user     group         128 Aug  3 13:30 hb-110803182629.fbc",
-            "-rw-rw-rw-   1 user     group        1872 Aug  3 20:30 hb-110804012651.fbo"
+            "-rw-rw-rw-   1 user     group         128 Aug  3 13:30 110809180859.fbc",
+            "-rw-rw-rw-   1 user     group        1872 Aug  3 20:30 110809180859.fbo"
         ]
 
         @ftp = double('ftp-server')
@@ -57,7 +59,7 @@ describe PoaFile do
       context "file is downloaded" do
 
         before(:each) do
-          @file_name = 'hb-110803182629.fbc'
+          @file_name = '110809180859.fbc'
           poa_file = PoaFile.create_path(@file_name)
           @ftp.should_receive(:gettextfile).any_number_of_times.with(@file_name, poa_file).and_return do
             file = File.new(poa_file, 'w')
@@ -69,19 +71,15 @@ describe PoaFile do
 
 
         it "should download the file, create a PaoFile record, and delete the file from the server" do
-
           PoaFile.needs_import.count.should == 0
           downloaded = PoaFile.download
           downloaded.size.should == 1
           downloaded.first.versions.size.should == 0
 
           PoaFile.needs_import.count.should == 1
-
           PoaFile.needs_import.first.should == downloaded.first
-
           PoaFile.needs_import.first.file_name.should == @file_name
         end
-
 
         it "should have 80 chars in each line" do
           PoaFile.download.size.should == 1
@@ -128,50 +126,114 @@ describe PoaFile do
 
             before(:each) do
               @po_file_name = @file_name.gsub(/fbc$/, 'fbo')
-              PoFile.should_receive(:find_by_file_name).once.with(@po_file_name).and_return(PoFile.create(:file_name => @po_file_name))
-            end
-
-            it "should have import files one by one" do
+              PoFile.should_receive(:find_by_file_name!).any_number_of_times.with(@po_file_name).and_return(@po_file)
+              Order.should_receive(:find_by_number!).any_number_of_times.and_return(Order.create)
               PoaFile.download
               PoaFile.needs_import.count.should > 0
+              @poa_file = PoaFile.needs_import.first
+            end
 
-              Order.should_receive(:find_by_number).any_number_of_times.and_return(Order.create())
+            it "should import files one by one" do
 
-              PoaFile.needs_import.each do |p|
-                parsed = p.parsed
-                parsed[:header].should_not == nil
-                parsed[:header].first[:file_name].should == @po_file_name
-
-                parsed[:poa_order_header].should_not == nil
-                parsed[:poa_vendor_record].should_not == nil
-                parsed[:poa_line_item].should_not == nil
-                parsed[:poa_additional_detail].should_not == nil
-                parsed[:poa_line_item_title_record].should_not == nil
-                parsed[:poa_line_item_pub_record].should_not == nil
-                parsed[:poa_item_number_price_record].should_not == nil
-                parsed[:poa_order_control_total].should_not == nil
-                parsed[:poa_file_control_total].should_not == nil
-              end
-
-              PoaFile.needs_import.each do |p|
-                p.import.should_not == nil
-                p.imported_at.should_not == nil
-              end
+              @poa_file.import.should_not == nil
+              @poa_file.imported_at.should_not == nil
 
               PoaFile.needs_import.count.should == 0
             end
 
-            it "should import all files" do
-              PoaFile.download
-              PoaFile.needs_import.count.should > 0
 
-              Order.should_receive(:find_by_number).any_number_of_times.and_return(Order.create())
+            it "should import all files" do
               imported = PoaFile.import_all
               imported.size.should == 1
               PoaFile.all.count.should == 1
               PoaFile.first.po_file.should_not == nil
               PoaFile.needs_import.count.should == 0
             end
+
+            context "and the import data is complete" do
+              #parsed = @poa_file.parsed
+              #parsed[:header].should_not == nil
+              #parsed[:header].first[:file_name].downcase.should == @po_file_name
+              #parsed[:poa_order_header].should_not == nil
+              #parsed[:poa_vendor_record].should_not == nil
+              #parsed[:poa_line_item].should_not == nil
+              #parsed[:poa_additional_detail].should_not == nil
+              #parsed[:poa_line_item_title_record].should_not == nil
+              #parsed[:poa_line_item_pub_record].should_not == nil
+              #parsed[:poa_item_number_price_record].should_not == nil
+              #parsed[:poa_order_control_total].should_not == nil
+              #parsed[:poa_file_control_total].should_not == nil
+
+
+              before(:each) do
+                @parsed = @poa_file.parsed
+                @poa_file.import
+              end
+
+              it "should import the header" do
+                header = @parsed[:header]
+                header.should_not == nil
+                header.size.should == 1
+                header = header.first
+
+                @poa_file.created_at.should_not == nil
+                @poa_file.destination_san.should_not == nil
+
+                [:electronic_control_unit,
+                 :destination_san,
+                 :file_source_name,
+                 :format_version,
+                 :record_code,
+                 :sequence_number
+                ].each { |field| should_match_text(@poa_file, header, field) }
+
+                should_match_date(@poa_file, header, :poa_creation_date)
+
+                @poa_file.file_name.should == @file_name
+                @poa_file.parent.should == nil
+                @poa_file.versions.should == []
+                @poa_file.po_file.should == PoFile.find_by_file_name!(@po_file_name)
+              end
+
+              #parsed = @poa_file.parsed
+              #parsed[:header].should_not == nil
+              #parsed[:header].first[:file_name].downcase.should == @po_file_name
+              #parsed[:poa_order_header].should_not == nil
+              #parsed[:poa_vendor_record].should_not == nil
+              #parsed[:poa_line_item].should_not == nil
+              #parsed[:poa_additional_detail].should_not == nil
+              #parsed[:poa_line_item_title_record].should_not == nil
+              #parsed[:poa_line_item_pub_record].should_not == nil
+              #parsed[:poa_item_number_price_record].should_not == nil
+              #parsed[:poa_order_control_total].should_not == nil
+              #parsed[:poa_file_control_total].should_not == nil
+
+
+              it "should import the PoaOrderHeader" do
+                r = @parsed[:poa_order_header]
+                r.should_not == nil
+                r.size.should == 1
+                r = r.first
+
+                @poa_file.poa_order_headers.count.should == 1
+            poa_order_header = @poa_file.poa_order_headers.first
+
+                poa_order_header.poa_file.should == @poa_file
+
+                [:icg_san,
+                 :icg_ship_to_account_number,
+                 :po_number,
+                 :record_code,
+                 :sequence_number,
+                 :toc
+                ].each { |k| should_match_text(poa_order_header, r, k) }
+
+                [:acknowledgement_date, :po_cancellation_date].each { |k| should_match_date(poa_order_header, r, k) }
+
+              end
+
+            end
+
           end
         end
       end
@@ -179,4 +241,13 @@ describe PoaFile do
     end
 
   end
+end
+
+
+def should_match_text(object, record, field)
+  object.send(field).should == record[field].strip
+end
+
+def should_match_date(object, record, field, fmt="%y%m%d")
+  object.send(field).strftime(fmt).should == Time.strptime(record[field], fmt).strftime(fmt)
 end

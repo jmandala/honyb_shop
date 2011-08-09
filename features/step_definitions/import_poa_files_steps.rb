@@ -62,5 +62,14 @@ end
 
 Then /^the POA Type should be valid$/ do
   @poa_file.poa_type.should_not == nil
-  puts @poa_file.poa_type.inspect
+end
+
+Then /^the POA should reference the orders in the PO File$/ do
+  @poa_file.orders.count.should == @po_file.orders.count
+
+  @poa_file.orders.each do |o|
+    @po_file.orders.include?(o).should == true
+  end
+  
+
 end

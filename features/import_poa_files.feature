@@ -22,3 +22,4 @@ Feature: Import POA (Purchase Order Acknowledgement) Files
     And the POA file should be named according to the PO File
     And the PO File should reference the POA
     And the POA Type should be valid
+    And the POA should reference the orders in the PO File
