@@ -42,8 +42,8 @@ Then /^the purchase order should contain (\d+) orders?$/ do |order_count|
   (@po_file.orders - @orders).size.should == 0
 end
 
-Then /^the purchase order file name should be formatted hb-YYMMDDHHMMSS.fbo$/ do
-  match = /^hb-(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2}).fbo/.match(@po_file.file_name)
+Then /^the purchase order file name should be formatted YYMMDDHHMMSS.fbo$/ do
+  match = /^(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2}).fbo/.match(@po_file.file_name)
   match.should_not == nil
   year, month, day, hour, min, sec = match.captures
   time = @po_file.created_at

@@ -13,7 +13,12 @@ Feature: Import POA (Purchase Order Acknowledgement) Files
     And CDF ftp password: q3429czhvf
 
   Scenario: submit an order and retrieve a POA file
-    Given 1 purchase order was submitted
+    Given a purchase order was submitted with 1 order
     And a POA file exists on the FTP server
     When I download a POA
-    Then the POA will reference the purchase order
+    And I import all POA files
+    Then there should be no more files to download
+    And I should have downloaded 1 file
+    And the POA file should be named according to the PO File
+    And the PO File should reference the POA
+    And the POA Type should be valid

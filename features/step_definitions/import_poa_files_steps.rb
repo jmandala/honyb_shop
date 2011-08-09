@@ -1,10 +1,12 @@
-Given /^(\d+) purchase order was submitted$/ do |count|
-  Given "2 orders exist"
+Given /^a purchase order was submitted with (\d+) orders?$/ do |count|
+  Given "#{count} orders exist"
   And "each order has 1 line item with a quantity of 1"
   And "each order is completed"
 
   @po_file = PoFile.generate
+  @po_file.orders.size.should == count.to_i
   @po_file.put
+
 end
 
 Given /^a POA file exists on the FTP server$/ do
@@ -24,7 +26,6 @@ Given /^a POA file exists on the FTP server$/ do
 
     remote_files.length.should == 1
   end
-
 end
 
 
@@ -32,20 +33,34 @@ When /^I download a POA$/ do
   @downloaded = PoaFile.download
 end
 
-Then /^the POA will reference the purchase order$/ do
-  @downloaded.size.should > 0
+When /^I import all POA files$/ do
+  @imported = PoaFile.import_all
+  @poa_file = PoaFile.first
+end
 
-  found = nil
-  @downloaded.each do |poa_file|
-    file_name = poa_file.file_name.gsub(/\.fbc/, '.fbo')
-    if file_name == @po_file.file_name
-      found = poa_file
-      break
-    end
-  end
+Then /^there should be no more files to download$/ do
+  PoaFile.remote_files.size.should == 0
+end
 
-  found.should_not == nil
+Then /^there should be one POA file$/ do
+  PoaFile.all.count.should == 1
+end
 
-  @po_file.poa_files.size.should > 0
+Then /^I should have downloaded (\d+) files?$/ do |count|
+  @downloaded.size.should == count.to_i
+end
 
+Then /^the POA file should be named according to the PO File$/ do
+  @downloaded.first.file_name.gsub(/fbc$/, 'fbo').should == @po_file.file_name
+end
+
+Then /^the PO File should reference the POA$/ do
+  @po_file.reload
+  @po_file.poa_files.size.should == 1
+  @po_file.poa_files.first.should == @poa_file
+end
+
+Then /^the POA Type should be valid$/ do
+  @poa_file.poa_type.should_not == nil
+  puts @poa_file.poa_type.inspect
 end

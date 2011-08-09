@@ -125,6 +125,12 @@ describe PoaFile do
           end
 
           context "and there are POA files to import" do
+
+            before(:each) do
+              @po_file_name = @file_name.gsub(/fbc$/, 'fbo')
+              PoFile.should_receive(:find_by_file_name).once.with(@po_file_name).and_return(PoFile.create(:file_name => @po_file_name))
+            end
+
             it "should have import files one by one" do
               PoaFile.download
               PoaFile.needs_import.count.should > 0
@@ -134,6 +140,8 @@ describe PoaFile do
               PoaFile.needs_import.each do |p|
                 parsed = p.parsed
                 parsed[:header].should_not == nil
+                parsed[:header].first[:file_name].should == @po_file_name
+
                 parsed[:poa_order_header].should_not == nil
                 parsed[:poa_vendor_record].should_not == nil
                 parsed[:poa_line_item].should_not == nil
@@ -161,6 +169,7 @@ describe PoaFile do
               imported = PoaFile.import_all
               imported.size.should == 1
               PoaFile.all.count.should == 1
+              PoaFile.first.po_file.should_not == nil
               PoaFile.needs_import.count.should == 0
             end
           end
