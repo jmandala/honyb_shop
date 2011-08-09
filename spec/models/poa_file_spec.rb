@@ -149,6 +149,8 @@ describe PoaFile do
                 p.import.should_not == nil
                 p.imported_at.should_not == nil
               end
+
+              PoaFile.needs_import.count.should == 0
             end
           end
         end
