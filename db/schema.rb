@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110715170755) do
+ActiveRecord::Schema.define(:version => 20110809020052) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -554,6 +554,7 @@ ActiveRecord::Schema.define(:version => 20110715170755) do
     t.datetime "updated_at"
     t.datetime "imported_at"
     t.integer  "po_file_id"
+    t.integer  "parent_id"
   end
 
   create_table "poa_item_number_price_records", :force => true do |t|
