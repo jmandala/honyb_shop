@@ -158,9 +158,10 @@ describe PoaFile do
               PoaFile.needs_import.count.should > 0
 
               Order.should_receive(:find_by_number).any_number_of_times.and_return(Order.create())
-
-              PoaFile.import_all
-
+              imported = PoaFile.import_all
+              imported.size.should == 1
+              
+              PoaFile.needs_import.count.should == 0
             end
           end
         end
