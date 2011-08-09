@@ -125,7 +125,7 @@ describe PoaFile do
           end
 
           context "and there are POA files to import" do
-            it "should have count files that need import" do
+            it "should have import files one by one" do
               PoaFile.download
               PoaFile.needs_import.count.should > 0
 
@@ -151,6 +151,16 @@ describe PoaFile do
               end
 
               PoaFile.needs_import.count.should == 0
+            end
+
+            it "should import all files" do
+              PoaFile.download
+              PoaFile.needs_import.count.should > 0
+
+              Order.should_receive(:find_by_number).any_number_of_times.and_return(Order.create())
+
+              PoaFile.import_all
+
             end
           end
         end
