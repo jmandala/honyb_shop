@@ -160,7 +160,7 @@ describe PoaFile do
               Order.should_receive(:find_by_number).any_number_of_times.and_return(Order.create())
               imported = PoaFile.import_all
               imported.size.should == 1
-              
+              PoaFile.all.count.should == 1
               PoaFile.needs_import.count.should == 0
             end
           end
