@@ -72,7 +72,6 @@ describe PoaFile do
           end
         end
 
-
         it "should download the file, create a PaoFile record, and delete the file from the server" do
           PoaFile.needs_import.count.should == 0
           downloaded = PoaFile.download
@@ -181,13 +180,26 @@ describe PoaFile do
               end
 
               it "should import the PoaFile data" do
-                should_import_poa_file_data(@parsed, @poa_file, @file_name, @po_file_name)
+                should_import_poa_file_data @parsed, @poa_file, @file_name, @po_file_name
               end
 
 
               it "should import the PoaOrderHeader" do
-                should_import_poa_order_header(@poa_file, @parsed, order_count=2, item_count=2)
+                should_import_poa_order_header @poa_file, @parsed, order_count=2, item_count=2
               end
+
+              it "should import the PoaLineItems" do
+                should_import_poa_line_items @parsed
+              end
+
+              it "should import the PoaAdditionalDetails" do
+                should_import_poa_additional_details @poa_file, @parsed
+              end
+
+              it "should import the PoaAdditionalLineItemRecord" do
+                should_import_poa_additional_line_item_record @poa_file, @parsed
+              end
+
 
             end
 
@@ -227,55 +239,15 @@ describe PoaFile do
                 end
 
                 it "should import the PoaLineItems" do
-                  all = @parsed[:poa_line_item]
-
-                  @poa_file.poa_order_headers.first.poa_line_items.each_with_index do |db_record, i|
-                    parsed = all[i]
-                    [:po_number,
-                     :record_code,
-                     :sequence_number].each { |k| should_match_text(db_record, parsed, k) }
-
-                    parsed[:dc_code].should_not == nil
-                    parsed[:dc_code].should == db_record.dc_code.poa_dc_code
-                    parsed[:poa_status].should_not == nil
-                    parsed[:poa_status].should == db_record.poa_status.code
-                    db_record.order.should_not == nil
-                    parsed[:po_number].strip.should == db_record.order.number
-
-                    db_record.line_item.should_not == nil
-                    db_record.variant.should_not == nil
-                    parsed[:line_item_item_number].strip.should == db_record.variant.sku.gsub(/\-/, '')
-                  end
+                  should_import_poa_line_items @parsed
                 end
 
                 it "should import the PoaAdditionalDetails" do
-                  all = @parsed[:poa_additional_detail]
-
-                  @poa_file.poa_order_headers.first.poa_additional_details.each_with_index do |db_record, i|
-                    parsed = all[i]
-                    [:po_number,
-                     :record_code,
-                     :sequence_number,
-                     :dc_inventory_information].each { |k| should_match_text(db_record, parsed, k) }
-
-                    if !parsed[:availability_date].nil?
-                      [:availability_date].each { |k| should_match_date(db_record, parsed, k) }
-                    end
-                  end
+                  should_import_poa_additional_details @poa_file, @parsed
                 end
 
                 it "should import the PoaAdditionalLineItemRecord" do
-                  all = @parsed[:poa_line_item_title_record]
-
-                  @poa_file.poa_order_headers.first.poa_line_item_title_records.each_with_index do |db_record, i|
-                    parsed = all[i]
-                    [:title,
-                     :author,
-                     :record_code,
-                     :sequence_number].each { |k| should_match_text(db_record, parsed, k) }
-
-                    parsed[:binding_code].should == db_record.cdf_binding_code.code
-                  end
+                  should_import_poa_additional_line_item_record @poa_file, @parsed
                 end
 
                 it "should import the PoaLineItemPubRecord" do
@@ -341,7 +313,7 @@ end
 
 
 def should_match_text(object, record, field)
-  object.send(field).should == record[field].strip
+  object.read_attribute(field).should == record[field].strip
 end
 
 def should_match_i(object, record, field)
@@ -365,11 +337,8 @@ def should_import_poa_order_header(poa_file, parsed, order_count, item_count)
   all.size.should == order_count
   poa_file.poa_order_headers.count.should == order_count
 
-
   all.each_with_index do |record, i|
-
     db_record = poa_file.poa_order_headers[i]
-
     db_record.poa_file.should == poa_file
     db_record.po_status.code.should == record[:po_status].to_i
     db_record.order.should_not == nil
@@ -399,6 +368,58 @@ def should_import_poa_order_header(poa_file, parsed, order_count, item_count)
     ].each { |k| should_match_text(db_record, record, k) }
 
     [:acknowledgement_date, :po_cancellation_date, :po_date].each { |k| should_match_date(db_record, record, k) }
+  end
+end
+
+def should_import_poa_additional_details(poa_file, parsed)
+  parsed[:poa_additional_detail].each do |record|
+    db_record = PoaAdditionalDetail.find_self poa_file, record[:sequence_number]
+    db_record.should_not == nil
+
+    [:po_number,
+     :record_code,
+     :sequence_number,
+     :dc_inventory_information].each { |k| should_match_text(db_record, record, k) }
+
+    if !record[:availability_date].nil?
+      [:availability_date].each { |k| should_match_date(db_record, record, k) }
+    end
+  end
+end
+
+def should_import_poa_additional_line_item_record(poa_file, parsed)
+  parsed[:poa_line_item_title_record].each do |record|
+    db_record = PoaLineItemTitleRecord.find_self poa_file, record[:sequence_number]
+
+    [:title,
+     :author,
+     :record_code,
+     :sequence_number].each { |k| should_match_text(db_record, record, k) }
+
+    record[:binding_code].should == db_record.cdf_binding_code.code
+  end
+end
+
+
+def should_import_poa_line_items(parsed)
+  parsed[:poa_line_item].each do |record|
+    db_record = PoaLineItem.find_by_line_item_po_number(record[:line_item_po_number].strip)
+    db_record.should_not == nil
+
+    [:po_number,
+     :record_code,
+     :sequence_number].each { |k| should_match_text(db_record, record, k) }
+
+    record[:dc_code].should_not == nil
+    record[:dc_code].should == db_record.dc_code.poa_dc_code
+    record[:poa_status].should_not == nil
+    record[:poa_status].should == db_record.poa_status.code
+    db_record.order.should_not == nil
+    record[:po_number].strip.should == db_record.order.number
+
+    db_record.line_item.should_not == nil
+    db_record.variant.should_not == nil
+    record[:line_item_item_number].strip.should == db_record.variant.sku.gsub(/\-/, '')
   end
 end
 
