@@ -151,26 +151,13 @@ describe PoaFile do
             end
 
             context "and the import data is complete" do
-              #parsed = @poa_file.parsed
-              #parsed[:header].should_not == nil
-              #parsed[:header].first[:file_name].downcase.should == @po_file_name
-              #parsed[:poa_order_header].should_not == nil
-              #parsed[:poa_vendor_record].should_not == nil
-              #parsed[:poa_line_item].should_not == nil
-              #parsed[:poa_additional_detail].should_not == nil
-              #parsed[:poa_line_item_title_record].should_not == nil
-              #parsed[:poa_line_item_pub_record].should_not == nil
-              #parsed[:poa_item_number_price_record].should_not == nil
-              #parsed[:poa_order_control_total].should_not == nil
-              #parsed[:poa_file_control_total].should_not == nil
-
 
               before(:each) do
                 @parsed = @poa_file.parsed
                 @poa_file.import
               end
 
-              it "should import the header" do
+              it "should import the PoaFile data" do
                 header = @parsed[:header]
                 header.should_not == nil
                 header.size.should == 1
@@ -195,10 +182,6 @@ describe PoaFile do
                 @poa_file.po_file.should == PoFile.find_by_file_name!(@po_file_name)
               end
 
-              #parsed = @poa_file.parsed
-              #parsed[:header].should_not == nil
-              #parsed[:header].first[:file_name].downcase.should == @po_file_name
-              #parsed[:poa_order_header].should_not == nil
               #parsed[:poa_vendor_record].should_not == nil
               #parsed[:poa_line_item].should_not == nil
               #parsed[:poa_additional_detail].should_not == nil
@@ -208,7 +191,6 @@ describe PoaFile do
               #parsed[:poa_order_control_total].should_not == nil
               #parsed[:poa_file_control_total].should_not == nil
 
-
               it "should import the PoaOrderHeader" do
                 r = @parsed[:poa_order_header]
                 r.should_not == nil
@@ -216,7 +198,7 @@ describe PoaFile do
                 r = r.first
 
                 @poa_file.poa_order_headers.count.should == 1
-            poa_order_header = @poa_file.poa_order_headers.first
+                poa_order_header = @poa_file.poa_order_headers.first
 
                 poa_order_header.poa_file.should == @poa_file
 
@@ -229,8 +211,26 @@ describe PoaFile do
                 ].each { |k| should_match_text(poa_order_header, r, k) }
 
                 [:acknowledgement_date, :po_cancellation_date].each { |k| should_match_date(poa_order_header, r, k) }
+              end
+
+              it "should import the PoaVendorRecord" do
+                vendor_records = @parsed[:poa_vendor_record]
+                vendor_records.should_not == nil
+                vendor_records.size.should == 6
+
+                header = @poa_file.poa_order_headers.first
+
+                header.poa_vendor_records.count.should == vendor_records.size
+
+                puts header.vendor_message
+
+                header.poa_vendor_records.each_with_index do |record, i|
+                  puts record.to_yaml
+                end
+
 
               end
+
 
             end
 

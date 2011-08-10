@@ -70,6 +70,6 @@ Then /^the POA should reference the orders in the PO File$/ do
   @poa_file.orders.each do |o|
     @po_file.orders.include?(o).should == true
   end
-  
+
 
 end
