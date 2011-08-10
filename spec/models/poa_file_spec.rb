@@ -315,6 +315,22 @@ describe PoaFile do
                     [:availability_date].each { |k| should_match_date(poa_detail, parsed, k) }
                   end
                 end
+              end
+
+              it "should import the PoaAdditionalLineItemRecord" do
+                parsed = @parsed[:poa_line_item_title_record]
+                parsed.size.should == 1
+                parsed = parsed.first
+
+                @poa_file.poa_order_headers.first.poa_line_item_title_records.each_with_index do |poa_title, i|
+                  [:title,
+                   :author,
+                   :record_code,
+                   :sequence_number].each { |k| should_match_text(poa_title, parsed, k) }
+
+                  parsed[:binding_code].should == poa_title.cdf_binding_code.code
+                end
+
 
               end
 
