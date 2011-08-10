@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110809020052) do
+ActiveRecord::Schema.define(:version => 20110810140912) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -498,6 +498,7 @@ ActiveRecord::Schema.define(:version => 20110809020052) do
     t.integer  "poa_order_header_id"
     t.datetime "availability_date"
     t.string   "dc_inventory_information", :limit => 40
+    t.integer  "poa_line_item_id"
   end
 
   create_table "poa_address_lines", :force => true do |t|

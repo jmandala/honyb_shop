@@ -156,26 +156,93 @@ describe PoaFile do
             context "and the po contains 2 orders with 2 line items each with a quantity of 2" do
               before(:each) do
 
-                @order_1 = Factory(:order, :number => 'R543255800')
                 @product_1 = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
-                @variant_1 = @product_1.master
-                @line_item_1 = Factory(:line_item, :id => 5, :variant => @variant_1, :price => 10, :order => @order_1)
+                @product_2 = Factory(:product, :sku => '978-0-37352-80-5', :price => 10, :name => 'test product 2')
+
+
+                @order_1 = Factory(:order, :number => 'R543255800')
+                @line_item_1 = Factory(:line_item, :id => 2, :quantity => 2, :variant => @product_1.master, :price => 10, :order => @order_1)
+                @line_item_2 = Factory(:line_item, :id => 5, :quantity => 2, :variant => @product_2.master, :price => 10, :order => @order_1)
 
                 @order_2 = Factory(:order, :number => 'R554266337')
-                @product_2 = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
-                @product_2 = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
-                @variant_2 = @product_2.master
-                @line_item_2 = Factory(:line_item, :id => 6, :variant => @variant_2, :price => 10, :order => @order_2)
+                @line_item_3 = Factory(:line_item, :id => 3, :quantity => 2, :variant => @product_1.master, :price => 10, :order => @order_2)
+                @line_item_4 = Factory(:line_item, :id => 6, :quantity => 2, :variant => @product_2.master, :price => 10, :order => @order_2)
 
                 @poa_with_2_by_2_by_2 = "02000011697978     INGRAM       110810RUYFU110809180859.FBO F030000000     1    1100002             R543255800            20N273016979780110810110810110810     2100003R543255800            THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 2100004R543255800            CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 2100005R543255800            NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 2100006R543255800            ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 2100007R543255800            EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 2100008R543255800             AT 1-800-234-6737.                                4000009R543255800            2                     9780373200009       00100100C4100010R543255800            000 000000{ 0000 0000 0000 0000 0000 0000 0000     4200011R543255800            HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M4300012R543255800            HQPB                030900019350000000010000000    4400013R543255800                                00004.99EN00003.240000001      4500014R543255800            2                                                  4000015R543255800            5                     978037352805        00100005C4100016R543255800            000         0000 0000 0000 0000 0000 0000 0000     4100017R543255800            000 000000  0000 0000 0000 0000 0000 0000 0000     4200018R543255800                                                               4300019R543255800                                    00022000000000000000000    4400020R543255800                                00000.00EN00000.000000001      4500021R543255800            5                                                  5900022R543255800            0002000000000020000000001000000000400000000000000011100023             R554266337            20N273016979780110810110810110810     2100024R554266337            THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 2100025R554266337            CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 2100026R554266337            NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 2100027R554266337            ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 2100028R554266337            EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 2100029R554266337             AT 1-800-234-6737.                                4000030R554266337            3                     9780373200009       00100100C4100031R554266337            000 000000{ 0000 0000 0000 0000 0000 0000 0000     4200032R554266337            HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M4300033R554266337            HQPB                030900043350000000010000000    4400034R554266337                                00004.99EN00003.240000001      4500035R554266337            3                                                  4000036R554266337            6                     978037352805        00100005C4100037R554266337            000         0000 0000 0000 0000 0000 0000 0000     4100038R554266337            000 000000  0000 0000 0000 0000 0000 0000 0000     4200039R554266337                                                               4300040R554266337                                    00046000000000000000000    4400041R554266337                                00000.00EN00000.000000001      4500042R554266337            6                                                  5900043R554266337            0002000000000020000000001000000000400000000000000019100044000000000000400002000000000200001000020001200000000260000200001          "
                 @poa_file.write_data @poa_with_2_by_2_by_2
                 @parsed = @poa_file.parsed
-                @poa_file.import
 
+                @poa_file.import
               end
 
               it "should return the correct data" do
                 @poa_file.data.should == PoaFile.add_delimiters(@poa_with_2_by_2_by_2)
+              end
+
+              it "should import the PoaFile data" do
+                all = @parsed[:header]
+                all.should_not == nil
+                all.size.should == 1
+                parsed = all.first
+
+                db_record = @poa_file
+                db_record.created_at.should_not == nil
+                db_record.destination_san.should_not == nil
+
+                [:electronic_control_unit,
+                 :destination_san,
+                 :file_source_name,
+                 :format_version,
+                 :record_code,
+                 :sequence_number
+                ].each { |field| should_match_text(db_record, parsed, field) }
+
+                should_match_date(db_record, parsed, :poa_creation_date)
+
+                db_record.file_name.should == @file_name
+                db_record.parent.should == nil
+                db_record.versions.should == []
+                db_record.po_file.should == PoFile.find_by_file_name!(@po_file_name)
+              end
+
+
+              it "should import the PoaOrderHeader" do
+                all = @parsed[:poa_order_header]
+                all.should_not == nil
+                all.size.should == 2
+
+                all.each_with_index do |parsed, i|
+                  @poa_file.poa_order_headers.count.should == 2
+                  db_record = @poa_file.poa_order_headers[i]
+                  db_record.poa_file.should == @poa_file
+                  db_record.po_status.should == PoStatus.find_by_code('0')
+                  db_record.order.should_not == nil
+                  parsed[:po_number].strip.should == db_record.order.number
+
+                  db_record.poa_vendor_records.count.should == MAX_POA_VENDOR_RECORDS
+                  db_record.poa_ship_to_name.should == nil
+                  db_record.poa_address_lines.should == []
+                  db_record.poa_city_state_zip.should == nil
+                  db_record.poa_line_items.count.should == 2
+
+
+                  db_record.poa_additional_details.count.should > 0 
+                  db_record.poa_line_item_title_records.count.should == 2
+                  db_record.poa_line_item_pub_records.count.should == 2
+                  db_record.poa_item_number_price_records.count.should == 2
+
+                  db_record.poa_order_control_total.should_not == nil
+
+                  [:icg_san,
+                   :icg_ship_to_account_number,
+                   :po_number,
+                   :record_code,
+                   :sequence_number,
+                   :toc
+                  ].each { |k| should_match_text(db_record, parsed, k) }
+
+                  [:acknowledgement_date, :po_cancellation_date, :po_date].each { |k| should_match_date(db_record, parsed, k) }
+                end
               end
 
             end
