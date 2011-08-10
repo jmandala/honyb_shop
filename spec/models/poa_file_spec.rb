@@ -126,8 +126,22 @@ describe PoaFile do
 
             before(:each) do
               @po_file_name = @file_name.gsub(/fbc$/, 'fbo')
+
               PoFile.should_receive(:find_by_file_name!).any_number_of_times.with(@po_file_name).and_return(@po_file)
               Order.should_receive(:find_by_number!).any_number_of_times.and_return(Order.create)
+              @product = Product.new
+              @product.sku = '978-0-37320-000-9'
+              @product.price = 10
+              @product.name = "test product"
+              @product.save!
+              @variant = @product.master
+
+              @line_item = LineItem.new
+              @line_item.variant = @variant
+              @line_item.price = 10
+              @line_item.should_receive(:order).any_number_of_times.and_return(Order.create)
+              @line_item.save!
+
               PoaFile.download
               PoaFile.needs_import.count.should > 0
               @poa_file = PoaFile.needs_import.first
@@ -199,8 +213,9 @@ describe PoaFile do
 
                 @poa_file.poa_order_headers.count.should == 1
                 poa_order_header = @poa_file.poa_order_headers.first
-
                 poa_order_header.poa_file.should == @poa_file
+
+                poa_order_header.po_status.should == PoStatus.find_by_code('0')
 
                 [:icg_san,
                  :icg_ship_to_account_number,
@@ -217,18 +232,58 @@ describe PoaFile do
                 vendor_records = @parsed[:poa_vendor_record]
                 vendor_records.should_not == nil
                 vendor_records.size.should == 6
-
                 header = @poa_file.poa_order_headers.first
-
                 header.poa_vendor_records.count.should == vendor_records.size
-
-                puts header.vendor_message
-
+                header.vendor_message.should == 'THANK YOU FOR YOUR ORDER. IF YOU REQUIRE ASSISTANCE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTMENT AT 1-800-234-6737 OR VIA EMAIL AT FLASHBACK@INGRAMBOOK.COM. TO CANCEL AN ORDER, PLEASE SPEAK WITH AN ELECTRONIC ORDERING REPRESENTATIVEAT 1-800-234-6737.'
                 header.poa_vendor_records.each_with_index do |record, i|
-                  puts record.to_yaml
+                  [:po_number,
+                   :record_code,
+                   :sequence_number,
+                   :vendor_message
+                  ].each { |k| should_match_text(record, vendor_records[i], k) }
                 end
+              end
 
+              # todo: need to determine behavior for when this value is altered by ingram
+              it "should not have any PoaShipToName" do
+                @parsed[:poa_ship_to_name].should == nil
+                @poa_file.poa_order_headers.first.poa_ship_to_name.should == nil
+              end
 
+              # todo: need to determine behavior for when this value is altered by ingram
+              it "should not have any PoaAddressLines" do
+                @parsed[:poa_address_lines].should == nil
+                @poa_file.poa_order_headers.first.poa_address_lines.should == []
+              end
+
+              # todo: need to determine behavior for when this value is altered by ingram
+              it "should not have any PoaCityStateZip" do
+                @parsed[:poa_city_state_zip].should == nil
+                @poa_file.poa_order_headers.first.poa_city_state_zip.should == nil
+              end
+
+              it "should import the PoaLineItems" do
+                parsed_line_items = @parsed[:poa_line_item]
+                #puts parsed_line_items.to_yaml
+
+                @poa_file.poa_order_headers.first.poa_line_items.each_with_index do |poa_line_item, i|
+                  parsed = parsed_line_items[i]
+                  [:po_number,
+                   :record_code,
+                   :sequence_number].each { |k| should_match_text(poa_line_item, parsed, k) }
+
+                  parsed[:dc_code].should_not == nil
+                  parsed[:dc_code].should == poa_line_item.dc_code.poa_dc_code
+                  parsed[:poa_status].should_not == nil
+                  parsed[:poa_status].should == poa_line_item.poa_status.code
+
+                  poa_line_item.line_item.should_not == nil
+                  poa_line_item.variant.should_not == nil
+                  parsed[:line_item_item_number].strip.should == poa_line_item.variant.sku.gsub(/\-/, '')
+
+                  poa_line_item.order.should_not == nil
+
+                end
               end
 
 
