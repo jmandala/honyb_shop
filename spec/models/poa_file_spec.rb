@@ -357,25 +357,38 @@ describe PoaFile do
                 parsed = parsed.first
 
                 poa_title = @poa_file.poa_order_headers.first.poa_order_control_total
-                puts parsed.to_yaml
-                puts poa_title.to_yaml
-
                 [:record_code,
                  :sequence_number].each { |k| should_match_text(poa_title, parsed, k) }
-                [
+                [:total_line_items_in_file,
+                 :total_units_acknowledged,].each { |k| should_match_i(poa_title, parsed, k) }
+              end
+
+              it "should import the PoaFileControlTotal" do
+                all = @parsed[:poa_file_control_total]
+                all.size.should == 1
+                parsed = all.first
+
+                db_record = @poa_file.poa_file_control_total
+
+                [:record_code, :sequence_number].each { |k| should_match_text(db_record, parsed, k) }
+                [:record_count_01,
+                 :record_count_02,
+                 :record_count_03,
+                 :record_count_04,
+                 :record_count_05,
+                 :record_count_06,
                  :total_line_items_in_file,
-                   :total_units_acknowledged,].each { |k| should_match_i(poa_title, parsed, k) }
+                 :total_pos_acknowledged,
+                 :total_units_acknowledged].each { |k| should_match_i(db_record, parsed, k) }
+
 
               end
 
             end
-
           end
         end
       end
-
     end
-
   end
 end
 
