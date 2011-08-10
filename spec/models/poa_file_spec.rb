@@ -344,10 +344,13 @@ describe PoaFile do
                    :record_code,
                    :sequence_number].each { |k| should_match_text(poa_title, parsed, k) }
 
-                  puts parsed.to_yaml
-                  puts poa_title.to_yaml
                   poa_title.publication_release_date.should == Time.strptime(parsed[:publication_release_date], "%m%y")
                 end
+              end
+
+              it "should import the PoaItemNumberPriceRecord" do
+                parsed = @parsed[:poa_item_number_price_records]
+                parsed.should == nil
               end
 
 
