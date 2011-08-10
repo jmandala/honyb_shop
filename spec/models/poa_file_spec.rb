@@ -128,7 +128,10 @@ describe PoaFile do
               @po_file_name = @file_name.gsub(/fbc$/, 'fbo')
 
               PoFile.should_receive(:find_by_file_name!).any_number_of_times.with(@po_file_name).and_return(@po_file)
-              Order.should_receive(:find_by_number!).any_number_of_times.and_return(Order.create)
+              @order = Order.new
+              @order.number = 'R364143388'
+              @order.save!
+              Order.should_receive(:find_by_number!).any_number_of_times.and_return(@order)
               @product = Product.new
               @product.sku = '978-0-37320-000-9'
               @product.price = 10
@@ -139,7 +142,7 @@ describe PoaFile do
               @line_item = LineItem.new
               @line_item.variant = @variant
               @line_item.price = 10
-              @line_item.should_receive(:order).any_number_of_times.and_return(Order.create)
+              @line_item.should_receive(:order).any_number_of_times.and_return(@order)
               @line_item.save!
 
               PoaFile.download
@@ -217,6 +220,9 @@ describe PoaFile do
 
                 poa_order_header.po_status.should == PoStatus.find_by_code('0')
 
+                poa_order_header.order.should_not == nil
+                r[:po_number].strip.should == poa_order_header.order.number
+
                 [:icg_san,
                  :icg_ship_to_account_number,
                  :po_number,
@@ -276,13 +282,12 @@ describe PoaFile do
                   parsed[:dc_code].should == poa_line_item.dc_code.poa_dc_code
                   parsed[:poa_status].should_not == nil
                   parsed[:poa_status].should == poa_line_item.poa_status.code
+                  poa_line_item.order.should_not == nil
+                  parsed[:po_number].strip.should == poa_line_item.order.number
 
                   poa_line_item.line_item.should_not == nil
                   poa_line_item.variant.should_not == nil
                   parsed[:line_item_item_number].strip.should == poa_line_item.variant.sku.gsub(/\-/, '')
-
-                  poa_line_item.order.should_not == nil
-
                 end
               end
 
