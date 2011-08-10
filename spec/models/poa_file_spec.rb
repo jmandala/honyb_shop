@@ -180,12 +180,29 @@ describe PoaFile do
               end
 
               it "should import the PoaFile data" do
-                should_import_poa_file_data @parsed, @poa_file, @file_name, @po_file_name
+                should_import_poa_file_data(@parsed, @poa_file, @file_name, @po_file_name)
               end
 
-
               it "should import the PoaOrderHeader" do
-                should_import_poa_order_header @poa_file, @parsed, order_count=2, item_count=2
+                should_import_poa_order_header(@poa_file, @parsed, order_count=2, item_count=2)
+              end
+
+              # todo: need to determine behavior for when this value is altered by ingram
+              it "should not have any PoaShipToName" do
+                @parsed[:poa_ship_to_name].should == nil
+                @poa_file.poa_order_headers.first.poa_ship_to_name.should == nil
+              end
+
+              # todo: need to determine behavior for when this value is altered by ingram
+              it "should not have any PoaAddressLines" do
+                @parsed[:poa_address_lines].should == nil
+                @poa_file.poa_order_headers.first.poa_address_lines.should == []
+              end
+
+              # todo: need to determine behavior for when this value is altered by ingram
+              it "should not have any PoaCityStateZip" do
+                @parsed[:poa_city_state_zip].should == nil
+                @poa_file.poa_order_headers.first.poa_city_state_zip.should == nil
               end
 
               it "should import the PoaLineItems" do
@@ -198,6 +215,23 @@ describe PoaFile do
 
               it "should import the PoaAdditionalLineItemRecord" do
                 should_import_poa_additional_line_item_record @poa_file, @parsed
+              end
+
+              it "should import the PoaLineItemPubRecord" do
+                should_import_poa_line_item_pub_record @poa_file, @parsed
+              end
+
+              it "should import the PoaItemNumberPriceRecord" do
+                parsed = @parsed[:poa_item_number_price_records]
+                parsed.should == nil
+              end
+
+              it "should import the PoaOrderControlTotal" do
+                should_import_poa_order_control_total @poa_file, @parsed
+              end
+
+              it "should import the PoaFileControlTotal" do
+                should_import_poa_file_control_total @poa_file, @parsed
               end
 
 
@@ -217,7 +251,6 @@ describe PoaFile do
 
                 it "should import the PoaOrderHeader" do
                   should_import_poa_order_header(@poa_file, @parsed, order_count=1, item_count=1)
-
                 end
 
                 # todo: need to determine behavior for when this value is altered by ingram
@@ -251,18 +284,7 @@ describe PoaFile do
                 end
 
                 it "should import the PoaLineItemPubRecord" do
-                  all = @parsed[:poa_line_item_pub_record]
-
-                  @poa_file.poa_order_headers.first.poa_line_item_pub_records.each_with_index do |db_record, i|
-                    parsed = all[i]
-                    [:publisher_name,
-                     :original_seq_number,
-                     :total_qty_predicted_to_ship_primary,
-                     :record_code,
-                     :sequence_number].each { |k| should_match_text(db_record, parsed, k) }
-
-                    db_record.publication_release_date.should == Time.strptime(parsed[:publication_release_date], "%m%y")
-                  end
+                  should_import_poa_line_item_pub_record @poa_file, @parsed
                 end
 
                 it "should import the PoaItemNumberPriceRecord" do
@@ -271,34 +293,11 @@ describe PoaFile do
                 end
 
                 it "should import the PoaOrderControlTotal" do
-                  all = @parsed[:poa_order_control_total]
-                  all.size.should == 1
-                  parsed = all.first
-
-                  db_record = @poa_file.poa_order_headers.first.poa_order_control_total
-                  [:record_code,
-                   :sequence_number].each { |k| should_match_text(db_record, parsed, k) }
-                  [:total_line_items_in_file,
-                   :total_units_acknowledged,].each { |k| should_match_i(db_record, parsed, k) }
+                  should_import_poa_order_control_total @poa_file, @parsed
                 end
 
                 it "should import the PoaFileControlTotal" do
-                  all = @parsed[:poa_file_control_total]
-                  all.size.should == 1
-                  parsed = all.first
-
-                  db_record = @poa_file.poa_file_control_total
-
-                  [:record_code, :sequence_number].each { |k| should_match_text(db_record, parsed, k) }
-                  [:record_count_01,
-                   :record_count_02,
-                   :record_count_03,
-                   :record_count_04,
-                   :record_count_05,
-                   :record_count_06,
-                   :total_line_items_in_file,
-                   :total_pos_acknowledged,
-                   :total_units_acknowledged].each { |k| should_match_i(db_record, parsed, k) }
+                  should_import_poa_file_control_total @poa_file, @parsed
                 end
 
               end
@@ -448,4 +447,53 @@ def should_import_poa_file_data(parsed, poa_file, file_name, po_file_name)
   db_record.parent.should == nil
   db_record.versions.should == []
   db_record.po_file.should == PoFile.find_by_file_name!(po_file_name)
+end
+
+def should_import_poa_file_control_total(poa_file, parsed)
+  parsed[:poa_file_control_total].each do |record|
+
+    db_record = PoaFileControlTotal.find_by_poa_file_id(poa_file.id)
+
+    [:record_code, :sequence_number].each { |k| should_match_text(db_record, record, k) }
+    [:record_count_01,
+     :record_count_02,
+     :record_count_03,
+     :record_count_04,
+     :record_count_05,
+     :record_count_06,
+     :total_line_items_in_file,
+     :total_pos_acknowledged,
+     :total_units_acknowledged].each { |k| should_match_i(db_record, record, k) }
+  end
+end
+
+
+def should_import_poa_order_control_total(poa_file, parsed)
+  @parsed[:poa_order_control_total].each do |record|
+    db_record = PoaOrderControlTotal.find_self(@poa_file, record[:sequence_number])
+
+    [:record_code,
+     :sequence_number].each { |k| should_match_text(db_record, record, k) }
+    [:total_line_items_in_file,
+     :total_units_acknowledged,].each { |k| should_match_i(db_record, record, k) }
+  end
+end
+
+
+def should_import_poa_line_item_pub_record(poa_file, parsed)
+  @parsed[:poa_line_item_pub_record].each do |record|
+    db_record = PoaLineItemPubRecord.find_self(@poa_file, record[:sequence_number])
+
+    [:publisher_name,
+     :original_seq_number,
+     :total_qty_predicted_to_ship_primary,
+     :record_code,
+     :sequence_number].each { |k| should_match_text(db_record, record, k) }
+
+    if record[:publication_release_date].empty?
+      db_record.publication_release_date.should == nil
+    else
+      db_record.publication_release_date.should == Time.strptime(record[:publication_release_date], "%m%y")
+    end
+  end
 end
