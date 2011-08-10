@@ -280,10 +280,10 @@ describe PoaFile do
               end
 
               it "should import the PoaLineItems" do
-                parsed_line_items = @parsed[:poa_line_item]
+                all = @parsed[:poa_line_item]
 
                 @poa_file.poa_order_headers.first.poa_line_items.each_with_index do |poa_line_item, i|
-                  parsed = parsed_line_items[i]
+                  parsed = all[i]
                   [:po_number,
                    :record_code,
                    :sequence_number].each { |k| should_match_text(poa_line_item, parsed, k) }
@@ -302,10 +302,10 @@ describe PoaFile do
               end
 
               it "should import the PoaAdditionalDetails" do
-                parsed_additional_detail = @parsed[:poa_additional_detail]
+                all = @parsed[:poa_additional_detail]
 
                 @poa_file.poa_order_headers.first.poa_additional_details.each_with_index do |poa_detail, i|
-                  parsed = parsed_additional_detail[i]
+                  parsed = all[i]
                   [:po_number,
                    :record_code,
                    :sequence_number,
@@ -318,11 +318,10 @@ describe PoaFile do
               end
 
               it "should import the PoaAdditionalLineItemRecord" do
-                parsed = @parsed[:poa_line_item_title_record]
-                parsed.size.should == 1
-                parsed = parsed.first
+                all = @parsed[:poa_line_item_title_record]
 
                 @poa_file.poa_order_headers.first.poa_line_item_title_records.each_with_index do |poa_title, i|
+                  parsed = all[i]
                   [:title,
                    :author,
                    :record_code,
@@ -333,11 +332,10 @@ describe PoaFile do
               end
 
               it "should import the PoaLineItemPubRecord" do
-                parsed = @parsed[:poa_line_item_pub_record]
-                parsed.size.should == 1
-                parsed = parsed.first
+                all = @parsed[:poa_line_item_pub_record]
 
                 @poa_file.poa_order_headers.first.poa_line_item_pub_records.each_with_index do |poa_title, i|
+                  parsed = all[i]
                   [:publisher_name,
                    :original_seq_number,
                    :total_qty_predicted_to_ship_primary,
@@ -353,6 +351,22 @@ describe PoaFile do
                 parsed.should == nil
               end
 
+              it "should import the PoaOrderControlTotal" do
+                parsed = @parsed[:poa_order_control_total]
+                parsed.size.should == 1
+                parsed = parsed.first
+
+                poa_title = @poa_file.poa_order_headers.first.poa_order_control_total
+                puts parsed.to_yaml
+                puts poa_title.to_yaml
+
+                [:record_code,
+                 :sequence_number].each { |k| should_match_text(poa_title, parsed, k) }
+                [
+                 :total_line_items_in_file,
+                   :total_units_acknowledged,].each { |k| should_match_i(poa_title, parsed, k) }
+
+              end
 
             end
 
@@ -368,6 +382,10 @@ end
 
 def should_match_text(object, record, field)
   object.send(field).should == record[field].strip
+end
+
+def should_match_i(object, record, field)
+  object.send(field).should == record[field].strip.to_i
 end
 
 def should_match_date(object, record, field, fmt="%y%m%d")
