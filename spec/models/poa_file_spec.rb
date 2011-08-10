@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 MAX_POA_VENDOR_RECORDS = 6
+
+
 describe PoaFile do
 
   context "when defining a PoaFile" do
@@ -95,7 +97,6 @@ describe PoaFile do
           end
 
           it "should make the existing PoaFile old version the new file" do
-
             orig_poa_file = PoaFile.find_by_file_name @file_name
             orig_poa_file.versions.should == []
             orig_poa_file.parent.should == nil
@@ -180,69 +181,12 @@ describe PoaFile do
               end
 
               it "should import the PoaFile data" do
-                all = @parsed[:header]
-                all.should_not == nil
-                all.size.should == 1
-                parsed = all.first
-
-                db_record = @poa_file
-                db_record.created_at.should_not == nil
-                db_record.destination_san.should_not == nil
-
-                [:electronic_control_unit,
-                 :destination_san,
-                 :file_source_name,
-                 :format_version,
-                 :record_code,
-                 :sequence_number
-                ].each { |field| should_match_text(db_record, parsed, field) }
-
-                should_match_date(db_record, parsed, :poa_creation_date)
-
-                db_record.file_name.should == @file_name
-                db_record.parent.should == nil
-                db_record.versions.should == []
-                db_record.po_file.should == PoFile.find_by_file_name!(@po_file_name)
+                should_import_poa_file_data(@parsed, @poa_file, @file_name, @po_file_name)
               end
 
 
               it "should import the PoaOrderHeader" do
-                all = @parsed[:poa_order_header]
-                all.should_not == nil
-                all.size.should == 2
-
-                all.each_with_index do |parsed, i|
-                  @poa_file.poa_order_headers.count.should == 2
-                  db_record = @poa_file.poa_order_headers[i]
-                  db_record.poa_file.should == @poa_file
-                  db_record.po_status.should == PoStatus.find_by_code('0')
-                  db_record.order.should_not == nil
-                  parsed[:po_number].strip.should == db_record.order.number
-
-                  db_record.poa_vendor_records.count.should == MAX_POA_VENDOR_RECORDS
-                  db_record.poa_ship_to_name.should == nil
-                  db_record.poa_address_lines.should == []
-                  db_record.poa_city_state_zip.should == nil
-                  db_record.poa_line_items.count.should == 2
-
-
-                  db_record.poa_additional_details.count.should > 0 
-                  db_record.poa_line_item_title_records.count.should == 2
-                  db_record.poa_line_item_pub_records.count.should == 2
-                  db_record.poa_item_number_price_records.count.should == 2
-
-                  db_record.poa_order_control_total.should_not == nil
-
-                  [:icg_san,
-                   :icg_ship_to_account_number,
-                   :po_number,
-                   :record_code,
-                   :sequence_number,
-                   :toc
-                  ].each { |k| should_match_text(db_record, parsed, k) }
-
-                  [:acknowledgement_date, :po_cancellation_date, :po_date].each { |k| should_match_date(db_record, parsed, k) }
-                end
+                should_import_poa_order_header(@poa_file, @parsed, order_count=2, item_count=2)
               end
 
             end
@@ -256,81 +200,12 @@ describe PoaFile do
                 end
 
                 it "should import the PoaFile data" do
-                  all = @parsed[:header]
-                  all.should_not == nil
-                  all.size.should == 1
-                  parsed = all.first
-
-                  db_record = @poa_file
-                  db_record.created_at.should_not == nil
-                  db_record.destination_san.should_not == nil
-
-                  [:electronic_control_unit,
-                   :destination_san,
-                   :file_source_name,
-                   :format_version,
-                   :record_code,
-                   :sequence_number
-                  ].each { |field| should_match_text(db_record, parsed, field) }
-
-                  should_match_date(db_record, parsed, :poa_creation_date)
-
-                  db_record.file_name.should == @file_name
-                  db_record.parent.should == nil
-                  db_record.versions.should == []
-                  db_record.po_file.should == PoFile.find_by_file_name!(@po_file_name)
+                  should_import_poa_file_data(@parsed, @poa_file, @file_name, @po_file_name)
                 end
 
                 it "should import the PoaOrderHeader" do
-                  all = @parsed[:poa_order_header]
-                  all.should_not == nil
-                  all.size.should == 1
-                  parsed = all.first
+                  should_import_poa_order_header(@poa_file, @parsed, order_count=1, item_count=1)
 
-                  @poa_file.poa_order_headers.count.should == 1
-                  db_record = @poa_file.poa_order_headers.first
-                  db_record.poa_file.should == @poa_file
-                  db_record.po_status.should == PoStatus.find_by_code('0')
-                  db_record.order.should_not == nil
-                  parsed[:po_number].strip.should == db_record.order.number
-
-                  db_record.poa_vendor_records.count.should == MAX_POA_VENDOR_RECORDS
-                  db_record.poa_ship_to_name.should == nil
-                  db_record.poa_address_lines.should == []
-                  db_record.poa_city_state_zip.should == nil
-                  db_record.poa_line_items.count.should == 1
-                  db_record.poa_additional_details.count.should == 1
-                  db_record.poa_line_item_title_records.count.should == 1
-                  db_record.poa_line_item_pub_records.count.should == 1
-                  db_record.poa_item_number_price_records.count.should == 1
-
-                  db_record.poa_order_control_total.should_not == nil
-
-                  [:icg_san,
-                   :icg_ship_to_account_number,
-                   :po_number,
-                   :record_code,
-                   :sequence_number,
-                   :toc
-                  ].each { |k| should_match_text(db_record, parsed, k) }
-
-                  [:acknowledgement_date, :po_cancellation_date, :po_date].each { |k| should_match_date(db_record, parsed, k) }
-                end
-
-                it "should import the PoaVendorRecord" do
-                  all = @parsed[:poa_vendor_record]
-                  all.should_not == nil
-                  all.size.should == 6
-                  db_record = @poa_file.poa_order_headers.first
-                  db_record.poa_vendor_records.count.should == all.size
-                  db_record.vendor_message.should == 'THANK YOU FOR YOUR ORDER. IF YOU REQUIRE ASSISTANCE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTMENT AT 1-800-234-6737 OR VIA EMAIL AT FLASHBACK@INGRAMBOOK.COM. TO CANCEL AN ORDER, PLEASE SPEAK WITH AN ELECTRONIC ORDERING REPRESENTATIVEAT 1-800-234-6737.'
-                  db_record.poa_vendor_records.each_with_index do |record, i|
-                    [:po_number,
-                     :record_code,
-                     :sequence_number,
-                     :vendor_message
-                    ].each { |k| should_match_text(record, all[i], k) }
-                  end
                 end
 
                 # todo: need to determine behavior for when this value is altered by ingram
@@ -482,4 +357,74 @@ def should_match_date(object, record, field, fmt="%y%m%d")
   end
 
   object_value.strftime(fmt).should == Time.strptime(import_value, fmt).strftime(fmt)
+end
+
+def should_import_poa_order_header(poa_file, parsed, order_count, item_count)
+  all = parsed[:poa_order_header]
+  all.should_not == nil
+  all.size.should == order_count
+  poa_file.poa_order_headers.count.should == order_count
+
+
+  all.each_with_index do |record, i|
+
+    db_record = poa_file.poa_order_headers[i]
+
+    db_record.poa_file.should == poa_file
+    db_record.po_status.code.should == record[:po_status].to_i
+    db_record.order.should_not == nil
+    db_record.order.number.should_not == nil
+    db_record.order.number.should == record[:po_number].strip
+
+    db_record.poa_vendor_records.count.should == MAX_POA_VENDOR_RECORDS
+    db_record.poa_ship_to_name.should == nil
+    db_record.poa_address_lines.should == []
+    db_record.poa_city_state_zip.should == nil
+    db_record.poa_line_items.count.should == item_count
+
+
+    db_record.poa_additional_details.count.should > 0
+    db_record.poa_line_item_title_records.count.should == item_count
+    db_record.poa_line_item_pub_records.count.should == item_count
+    db_record.poa_item_number_price_records.count.should == item_count
+
+    db_record.poa_order_control_total.should_not == nil
+
+    [:icg_san,
+     :icg_ship_to_account_number,
+     :po_number,
+     :record_code,
+     :sequence_number,
+     :toc
+    ].each { |k| should_match_text(db_record, record, k) }
+
+    [:acknowledgement_date, :po_cancellation_date, :po_date].each { |k| should_match_date(db_record, record, k) }
+  end
+end
+
+
+def should_import_poa_file_data(parsed, poa_file, file_name, po_file_name)
+  all = parsed[:header]
+  all.should_not == nil
+  all.size.should == 1
+  parsed = all.first
+
+  db_record = poa_file
+  db_record.created_at.should_not == nil
+  db_record.destination_san.should_not == nil
+
+  [:electronic_control_unit,
+   :destination_san,
+   :file_source_name,
+   :format_version,
+   :record_code,
+   :sequence_number
+  ].each { |field| should_match_text(db_record, parsed, field) }
+
+  should_match_date(db_record, parsed, :poa_creation_date)
+
+  db_record.file_name.should == file_name
+  db_record.parent.should == nil
+  db_record.versions.should == []
+  db_record.po_file.should == PoFile.find_by_file_name!(po_file_name)
 end
