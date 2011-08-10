@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+MAX_POA_VENDOR_RECORDS = 6
 describe PoaFile do
 
   context "when defining a PoaFile" do
@@ -217,11 +218,21 @@ describe PoaFile do
                 @poa_file.poa_order_headers.count.should == 1
                 poa_order_header = @poa_file.poa_order_headers.first
                 poa_order_header.poa_file.should == @poa_file
-
                 poa_order_header.po_status.should == PoStatus.find_by_code('0')
-
                 poa_order_header.order.should_not == nil
                 r[:po_number].strip.should == poa_order_header.order.number
+
+                poa_order_header.poa_vendor_records.count.should == MAX_POA_VENDOR_RECORDS
+                poa_order_header.poa_ship_to_name.should == nil
+                poa_order_header.poa_address_lines.should == []
+                poa_order_header.poa_city_state_zip.should == nil
+                poa_order_header.poa_line_items.count.should == 1
+                poa_order_header.poa_additional_details.count.should == 1
+                poa_order_header.poa_line_item_title_records.count.should == 1
+                poa_order_header.poa_line_item_pub_records.count.should == 1
+                poa_order_header.poa_item_number_price_records.count.should == 1
+
+                poa_order_header.poa_order_control_total.should_not == nil
 
                 [:icg_san,
                  :icg_ship_to_account_number,
@@ -231,7 +242,7 @@ describe PoaFile do
                  :toc
                 ].each { |k| should_match_text(poa_order_header, r, k) }
 
-                [:acknowledgement_date, :po_cancellation_date].each { |k| should_match_date(poa_order_header, r, k) }
+                [:acknowledgement_date, :po_cancellation_date, :po_date].each { |k| should_match_date(poa_order_header, r, k) }
               end
 
               it "should import the PoaVendorRecord" do
