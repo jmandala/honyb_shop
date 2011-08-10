@@ -314,8 +314,6 @@ describe PoaFile do
                   if !parsed[:availability_date].nil?
                     [:availability_date].each { |k| should_match_date(poa_detail, parsed, k) }
                   end
-
-
                 end
 
               end
