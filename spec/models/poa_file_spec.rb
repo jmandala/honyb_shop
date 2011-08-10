@@ -281,7 +281,6 @@ describe PoaFile do
 
               it "should import the PoaLineItems" do
                 parsed_line_items = @parsed[:poa_line_item]
-                #puts parsed_line_items.to_yaml
 
                 @poa_file.poa_order_headers.first.poa_line_items.each_with_index do |poa_line_item, i|
                   parsed = parsed_line_items[i]
@@ -302,6 +301,25 @@ describe PoaFile do
                 end
               end
 
+              it "should import the PoaAdditionalDetails" do
+                parsed_additional_detail = @parsed[:poa_additional_detail]
+
+                @poa_file.poa_order_headers.first.poa_additional_details.each_with_index do |poa_detail, i|
+                  parsed = parsed_additional_detail[i]
+                  [:po_number,
+                   :record_code,
+                   :sequence_number,
+                   :dc_inventory_information].each { |k| should_match_text(poa_detail, parsed, k) }
+
+                  if !parsed[:availability_date].nil?
+                    [:availability_date].each { |k| should_match_date(poa_detail, parsed, k) }
+                  end
+
+
+                end
+
+              end
+
 
             end
 
@@ -320,5 +338,12 @@ def should_match_text(object, record, field)
 end
 
 def should_match_date(object, record, field, fmt="%y%m%d")
-  object.send(field).strftime(fmt).should == Time.strptime(record[field], fmt).strftime(fmt)
+  import_value = record[field]
+  object_value = object.send(field)
+
+  if import_value.to_i == 0
+    return object_value.should == nil
+  end
+
+  object_value.strftime(fmt).should == Time.strptime(import_value, fmt).strftime(fmt)
 end
