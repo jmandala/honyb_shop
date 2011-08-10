@@ -39,5 +39,5 @@ def add_line_item(order, quantity=1, variant=Factory(:in_stock_product).master)
 end
 
 def to_sym(string)
-  string.strip.downcase.gsub(/ /, '_').to_sym
+  string.strip.downcase.gsub(/\s+/, '_').to_sym
 end

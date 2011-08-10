@@ -1,10 +1,10 @@
-Given /^a purchase order was submitted with (\d+) orders?$/ do |count|
-  Given "#{count} orders exist"
-  And "each order has 1 line item with a quantity of 1"
+Given /^a purchase order was submitted with (\d+) orders? and (\d+) line items? with a quantity of (\d+) each$/ do |order_count, line_count, quantity|
+  Given "#{order_count} orders exist"
+  And "each order has #{line_count} line item with a quantity of #{quantity}"
   And "each order is completed"
 
   @po_file = PoFile.generate
-  @po_file.orders.size.should == count.to_i
+  @po_file.orders.size.should == order_count.to_i
   @po_file.put
 
 end

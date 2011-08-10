@@ -15,7 +15,6 @@ describe PoFile do
       add_line_item @order
       complete_order @order
       @po_file = PoFile.generate
-      puts "\n" + @po_file.data
 
       FixedWidth.define :po_file do |d|
         d.template :default do |t|

@@ -124,27 +124,14 @@ describe PoaFile do
           end
 
           context "and there are POA files to import" do
-
             before(:each) do
               @po_file_name = @file_name.gsub(/fbc$/, 'fbo')
-
               PoFile.should_receive(:find_by_file_name!).any_number_of_times.with(@po_file_name).and_return(@po_file)
-              @order = Order.new
-              @order.number = 'R364143388'
-              @order.save!
-              Order.should_receive(:find_by_number!).any_number_of_times.and_return(@order)
-              @product = Product.new
-              @product.sku = '978-0-37320-000-9'
-              @product.price = 10
-              @product.name = "test product"
-              @product.save!
-              @variant = @product.master
 
-              @line_item = LineItem.new
-              @line_item.variant = @variant
-              @line_item.price = 10
-              @line_item.should_receive(:order).any_number_of_times.and_return(@order)
-              @line_item.save!
+              @order = Factory(:order, :number => 'R364143388')
+              @product = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
+              @variant = @product.master
+              @line_item = Factory(:line_item, :variant => @variant, :price => 10, :order => @order)
 
               PoaFile.download
               PoaFile.needs_import.count.should > 0
@@ -152,7 +139,6 @@ describe PoaFile do
             end
 
             it "should import files one by one" do
-
               @poa_file.import.should_not == nil
               @poa_file.imported_at.should_not == nil
 
@@ -168,213 +154,217 @@ describe PoaFile do
               PoaFile.needs_import.count.should == 0
             end
 
-            context "and the import data is complete" do
+            context "and the po contains 1 order with 1 line item with 1 quantity" do
+              context "and the import data is complete" do
 
-              before(:each) do
-                @parsed = @poa_file.parsed
-                @poa_file.import
-              end
-
-              it "should import the PoaFile data" do
-                all = @parsed[:header]
-                all.should_not == nil
-                all.size.should == 1
-                parsed = all.first
-
-                db_record = @poa_file
-                db_record.created_at.should_not == nil
-                db_record.destination_san.should_not == nil
-
-                [:electronic_control_unit,
-                 :destination_san,
-                 :file_source_name,
-                 :format_version,
-                 :record_code,
-                 :sequence_number
-                ].each { |field| should_match_text(db_record, parsed, field) }
-
-                should_match_date(db_record, parsed, :poa_creation_date)
-
-                db_record.file_name.should == @file_name
-                db_record.parent.should == nil
-                db_record.versions.should == []
-                db_record.po_file.should == PoFile.find_by_file_name!(@po_file_name)
-              end
-
-              it "should import the PoaOrderHeader" do
-                all = @parsed[:poa_order_header]
-                all.should_not == nil
-                all.size.should == 1
-                parsed = all.first
-
-                @poa_file.poa_order_headers.count.should == 1
-                db_record = @poa_file.poa_order_headers.first
-                db_record.poa_file.should == @poa_file
-                db_record.po_status.should == PoStatus.find_by_code('0')
-                db_record.order.should_not == nil
-                parsed[:po_number].strip.should == db_record.order.number
-
-                db_record.poa_vendor_records.count.should == MAX_POA_VENDOR_RECORDS
-                db_record.poa_ship_to_name.should == nil
-                db_record.poa_address_lines.should == []
-                db_record.poa_city_state_zip.should == nil
-                db_record.poa_line_items.count.should == 1
-                db_record.poa_additional_details.count.should == 1
-                db_record.poa_line_item_title_records.count.should == 1
-                db_record.poa_line_item_pub_records.count.should == 1
-                db_record.poa_item_number_price_records.count.should == 1
-
-                db_record.poa_order_control_total.should_not == nil
-
-                [:icg_san,
-                 :icg_ship_to_account_number,
-                 :po_number,
-                 :record_code,
-                 :sequence_number,
-                 :toc
-                ].each { |k| should_match_text(db_record, parsed, k) }
-
-                [:acknowledgement_date, :po_cancellation_date, :po_date].each { |k| should_match_date(db_record, parsed, k) }
-              end
-
-              it "should import the PoaVendorRecord" do
-                all = @parsed[:poa_vendor_record]
-                all.should_not == nil
-                all.size.should == 6
-                db_record = @poa_file.poa_order_headers.first
-                db_record.poa_vendor_records.count.should == all.size
-                db_record.vendor_message.should == 'THANK YOU FOR YOUR ORDER. IF YOU REQUIRE ASSISTANCE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTMENT AT 1-800-234-6737 OR VIA EMAIL AT FLASHBACK@INGRAMBOOK.COM. TO CANCEL AN ORDER, PLEASE SPEAK WITH AN ELECTRONIC ORDERING REPRESENTATIVEAT 1-800-234-6737.'
-                db_record.poa_vendor_records.each_with_index do |record, i|
-                  [:po_number,
-                   :record_code,
-                   :sequence_number,
-                   :vendor_message
-                  ].each { |k| should_match_text(record, all[i], k) }
+                before(:each) do
+                  @parsed = @poa_file.parsed
+                  @poa_file.import
                 end
-              end
 
-              # todo: need to determine behavior for when this value is altered by ingram
-              it "should not have any PoaShipToName" do
-                @parsed[:poa_ship_to_name].should == nil
-                @poa_file.poa_order_headers.first.poa_ship_to_name.should == nil
-              end
+                it "should import the PoaFile data" do
+                  all = @parsed[:header]
+                  all.should_not == nil
+                  all.size.should == 1
+                  parsed = all.first
 
-              # todo: need to determine behavior for when this value is altered by ingram
-              it "should not have any PoaAddressLines" do
-                @parsed[:poa_address_lines].should == nil
-                @poa_file.poa_order_headers.first.poa_address_lines.should == []
-              end
+                  db_record = @poa_file
+                  db_record.created_at.should_not == nil
+                  db_record.destination_san.should_not == nil
 
-              # todo: need to determine behavior for when this value is altered by ingram
-              it "should not have any PoaCityStateZip" do
-                @parsed[:poa_city_state_zip].should == nil
-                @poa_file.poa_order_headers.first.poa_city_state_zip.should == nil
-              end
-
-              it "should import the PoaLineItems" do
-                all = @parsed[:poa_line_item]
-
-                @poa_file.poa_order_headers.first.poa_line_items.each_with_index do |db_record, i|
-                  parsed = all[i]
-                  [:po_number,
+                  [:electronic_control_unit,
+                   :destination_san,
+                   :file_source_name,
+                   :format_version,
                    :record_code,
-                   :sequence_number].each { |k| should_match_text(db_record, parsed, k) }
+                   :sequence_number
+                  ].each { |field| should_match_text(db_record, parsed, field) }
 
-                  parsed[:dc_code].should_not == nil
-                  parsed[:dc_code].should == db_record.dc_code.poa_dc_code
-                  parsed[:poa_status].should_not == nil
-                  parsed[:poa_status].should == db_record.poa_status.code
+                  should_match_date(db_record, parsed, :poa_creation_date)
+
+                  db_record.file_name.should == @file_name
+                  db_record.parent.should == nil
+                  db_record.versions.should == []
+                  db_record.po_file.should == PoFile.find_by_file_name!(@po_file_name)
+                end
+
+                it "should import the PoaOrderHeader" do
+                  all = @parsed[:poa_order_header]
+                  all.should_not == nil
+                  all.size.should == 1
+                  parsed = all.first
+
+                  @poa_file.poa_order_headers.count.should == 1
+                  db_record = @poa_file.poa_order_headers.first
+                  db_record.poa_file.should == @poa_file
+                  db_record.po_status.should == PoStatus.find_by_code('0')
                   db_record.order.should_not == nil
                   parsed[:po_number].strip.should == db_record.order.number
 
-                  db_record.line_item.should_not == nil
-                  db_record.variant.should_not == nil
-                  parsed[:line_item_item_number].strip.should == db_record.variant.sku.gsub(/\-/, '')
-                end
-              end
+                  db_record.poa_vendor_records.count.should == MAX_POA_VENDOR_RECORDS
+                  db_record.poa_ship_to_name.should == nil
+                  db_record.poa_address_lines.should == []
+                  db_record.poa_city_state_zip.should == nil
+                  db_record.poa_line_items.count.should == 1
+                  db_record.poa_additional_details.count.should == 1
+                  db_record.poa_line_item_title_records.count.should == 1
+                  db_record.poa_line_item_pub_records.count.should == 1
+                  db_record.poa_item_number_price_records.count.should == 1
 
-              it "should import the PoaAdditionalDetails" do
-                all = @parsed[:poa_additional_detail]
+                  db_record.poa_order_control_total.should_not == nil
 
-                @poa_file.poa_order_headers.first.poa_additional_details.each_with_index do |db_record, i|
-                  parsed = all[i]
-                  [:po_number,
+                  [:icg_san,
+                   :icg_ship_to_account_number,
+                   :po_number,
                    :record_code,
                    :sequence_number,
-                   :dc_inventory_information].each { |k| should_match_text(db_record, parsed, k) }
+                   :toc
+                  ].each { |k| should_match_text(db_record, parsed, k) }
 
-                  if !parsed[:availability_date].nil?
-                    [:availability_date].each { |k| should_match_date(db_record, parsed, k) }
+                  [:acknowledgement_date, :po_cancellation_date, :po_date].each { |k| should_match_date(db_record, parsed, k) }
+                end
+
+                it "should import the PoaVendorRecord" do
+                  all = @parsed[:poa_vendor_record]
+                  all.should_not == nil
+                  all.size.should == 6
+                  db_record = @poa_file.poa_order_headers.first
+                  db_record.poa_vendor_records.count.should == all.size
+                  db_record.vendor_message.should == 'THANK YOU FOR YOUR ORDER. IF YOU REQUIRE ASSISTANCE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTMENT AT 1-800-234-6737 OR VIA EMAIL AT FLASHBACK@INGRAMBOOK.COM. TO CANCEL AN ORDER, PLEASE SPEAK WITH AN ELECTRONIC ORDERING REPRESENTATIVEAT 1-800-234-6737.'
+                  db_record.poa_vendor_records.each_with_index do |record, i|
+                    [:po_number,
+                     :record_code,
+                     :sequence_number,
+                     :vendor_message
+                    ].each { |k| should_match_text(record, all[i], k) }
                   end
                 end
-              end
 
-              it "should import the PoaAdditionalLineItemRecord" do
-                all = @parsed[:poa_line_item_title_record]
-
-                @poa_file.poa_order_headers.first.poa_line_item_title_records.each_with_index do |db_record, i|
-                  parsed = all[i]
-                  [:title,
-                   :author,
-                   :record_code,
-                   :sequence_number].each { |k| should_match_text(db_record, parsed, k) }
-
-                  parsed[:binding_code].should == db_record.cdf_binding_code.code
+                # todo: need to determine behavior for when this value is altered by ingram
+                it "should not have any PoaShipToName" do
+                  @parsed[:poa_ship_to_name].should == nil
+                  @poa_file.poa_order_headers.first.poa_ship_to_name.should == nil
                 end
-              end
 
-              it "should import the PoaLineItemPubRecord" do
-                all = @parsed[:poa_line_item_pub_record]
-
-                @poa_file.poa_order_headers.first.poa_line_item_pub_records.each_with_index do |db_record, i|
-                  parsed = all[i]
-                  [:publisher_name,
-                   :original_seq_number,
-                   :total_qty_predicted_to_ship_primary,
-                   :record_code,
-                   :sequence_number].each { |k| should_match_text(db_record, parsed, k) }
-
-                  db_record.publication_release_date.should == Time.strptime(parsed[:publication_release_date], "%m%y")
+                # todo: need to determine behavior for when this value is altered by ingram
+                it "should not have any PoaAddressLines" do
+                  @parsed[:poa_address_lines].should == nil
+                  @poa_file.poa_order_headers.first.poa_address_lines.should == []
                 end
+
+                # todo: need to determine behavior for when this value is altered by ingram
+                it "should not have any PoaCityStateZip" do
+                  @parsed[:poa_city_state_zip].should == nil
+                  @poa_file.poa_order_headers.first.poa_city_state_zip.should == nil
+                end
+
+                it "should import the PoaLineItems" do
+                  all = @parsed[:poa_line_item]
+
+                  @poa_file.poa_order_headers.first.poa_line_items.each_with_index do |db_record, i|
+                    parsed = all[i]
+                    [:po_number,
+                     :record_code,
+                     :sequence_number].each { |k| should_match_text(db_record, parsed, k) }
+
+                    parsed[:dc_code].should_not == nil
+                    parsed[:dc_code].should == db_record.dc_code.poa_dc_code
+                    parsed[:poa_status].should_not == nil
+                    parsed[:poa_status].should == db_record.poa_status.code
+                    db_record.order.should_not == nil
+                    parsed[:po_number].strip.should == db_record.order.number
+
+                    db_record.line_item.should_not == nil
+                    db_record.variant.should_not == nil
+                    parsed[:line_item_item_number].strip.should == db_record.variant.sku.gsub(/\-/, '')
+                  end
+                end
+
+                it "should import the PoaAdditionalDetails" do
+                  all = @parsed[:poa_additional_detail]
+
+                  @poa_file.poa_order_headers.first.poa_additional_details.each_with_index do |db_record, i|
+                    parsed = all[i]
+                    [:po_number,
+                     :record_code,
+                     :sequence_number,
+                     :dc_inventory_information].each { |k| should_match_text(db_record, parsed, k) }
+
+                    if !parsed[:availability_date].nil?
+                      [:availability_date].each { |k| should_match_date(db_record, parsed, k) }
+                    end
+                  end
+                end
+
+                it "should import the PoaAdditionalLineItemRecord" do
+                  all = @parsed[:poa_line_item_title_record]
+
+                  @poa_file.poa_order_headers.first.poa_line_item_title_records.each_with_index do |db_record, i|
+                    parsed = all[i]
+                    [:title,
+                     :author,
+                     :record_code,
+                     :sequence_number].each { |k| should_match_text(db_record, parsed, k) }
+
+                    parsed[:binding_code].should == db_record.cdf_binding_code.code
+                  end
+                end
+
+                it "should import the PoaLineItemPubRecord" do
+                  all = @parsed[:poa_line_item_pub_record]
+
+                  @poa_file.poa_order_headers.first.poa_line_item_pub_records.each_with_index do |db_record, i|
+                    parsed = all[i]
+                    [:publisher_name,
+                     :original_seq_number,
+                     :total_qty_predicted_to_ship_primary,
+                     :record_code,
+                     :sequence_number].each { |k| should_match_text(db_record, parsed, k) }
+
+                    db_record.publication_release_date.should == Time.strptime(parsed[:publication_release_date], "%m%y")
+                  end
+                end
+
+                it "should import the PoaItemNumberPriceRecord" do
+                  parsed = @parsed[:poa_item_number_price_records]
+                  parsed.should == nil
+                end
+
+                it "should import the PoaOrderControlTotal" do
+                  all = @parsed[:poa_order_control_total]
+                  all.size.should == 1
+                  parsed = all.first
+
+                  db_record = @poa_file.poa_order_headers.first.poa_order_control_total
+                  [:record_code,
+                   :sequence_number].each { |k| should_match_text(db_record, parsed, k) }
+                  [:total_line_items_in_file,
+                   :total_units_acknowledged,].each { |k| should_match_i(db_record, parsed, k) }
+                end
+
+                it "should import the PoaFileControlTotal" do
+                  all = @parsed[:poa_file_control_total]
+                  all.size.should == 1
+                  parsed = all.first
+
+                  db_record = @poa_file.poa_file_control_total
+
+                  [:record_code, :sequence_number].each { |k| should_match_text(db_record, parsed, k) }
+                  [:record_count_01,
+                   :record_count_02,
+                   :record_count_03,
+                   :record_count_04,
+                   :record_count_05,
+                   :record_count_06,
+                   :total_line_items_in_file,
+                   :total_pos_acknowledged,
+                   :total_units_acknowledged].each { |k| should_match_i(db_record, parsed, k) }
+                end
+
               end
+            end
 
-              it "should import the PoaItemNumberPriceRecord" do
-                parsed = @parsed[:poa_item_number_price_records]
-                parsed.should == nil
-              end
-
-              it "should import the PoaOrderControlTotal" do
-                all = @parsed[:poa_order_control_total]
-                all.size.should == 1
-                parsed = all.first
-
-                db_record = @poa_file.poa_order_headers.first.poa_order_control_total
-                [:record_code,
-                 :sequence_number].each { |k| should_match_text(db_record, parsed, k) }
-                [:total_line_items_in_file,
-                 :total_units_acknowledged,].each { |k| should_match_i(db_record, parsed, k) }
-              end
-
-              it "should import the PoaFileControlTotal" do
-                all = @parsed[:poa_file_control_total]
-                all.size.should == 1
-                parsed = all.first
-
-                db_record = @poa_file.poa_file_control_total
-
-                [:record_code, :sequence_number].each { |k| should_match_text(db_record, parsed, k) }
-                [:record_count_01,
-                 :record_count_02,
-                 :record_count_03,
-                 :record_count_04,
-                 :record_count_05,
-                 :record_count_06,
-                 :total_line_items_in_file,
-                 :total_pos_acknowledged,
-                 :total_units_acknowledged].each { |k| should_match_i(db_record, parsed, k) }
-
-
-              end
+            context "and the po contains 2 orders with 2 line items each with a quantity of 2" do
 
             end
           end
