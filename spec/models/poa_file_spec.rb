@@ -330,8 +330,24 @@ describe PoaFile do
 
                   parsed[:binding_code].should == poa_title.cdf_binding_code.code
                 end
+              end
 
+              it "should import the PoaLineItemPubRecord" do
+                parsed = @parsed[:poa_line_item_pub_record]
+                parsed.size.should == 1
+                parsed = parsed.first
 
+                @poa_file.poa_order_headers.first.poa_line_item_pub_records.each_with_index do |poa_title, i|
+                  [:publisher_name,
+                   :original_seq_number,
+                   :total_qty_predicted_to_ship_primary,
+                   :record_code,
+                   :sequence_number].each { |k| should_match_text(poa_title, parsed, k) }
+
+                  puts parsed.to_yaml
+                  puts poa_title.to_yaml
+                  poa_title.publication_release_date.should == Time.strptime(parsed[:publication_release_date], "%m%y")
+                end
               end
 
 
