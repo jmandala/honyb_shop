@@ -8,12 +8,33 @@ describe PoaLineItem do
       @p = FactoryGirl.create :poa_line_item
     end
 
-    it "should have default values" do
+    it "should have an order header" do
       @p.poa_order_header.should_not == nil
+    end
+
+    it "should have a line item" do
       @p.line_item.should_not == nil
+    end
+
+    it "should have a po_number" do
       @p.po_number.should_not == nil
-      @p.product.should_not == nil
+    end
+
+    it "should have a record code" do
+
       @p.record_code.should == '40'
+    end
+
+    it "should have a poa_status" do
+      @p.poa_status.code == '00'
+    end
+
+    it "should have a dc code" do
+      @p.dc_code.po_dc_code == 'N'
+      @p.dc_code.poa_dc_code == 'N'
+      @p.dc_code.asn_dc_code == 'NV'
+      @p.dc_code.inv_dc_san == '1697978'
+      @p.dc_code.dc_name == 'La Vergne, Tennessee'
     end
 
     it "should have a sequence number" do
