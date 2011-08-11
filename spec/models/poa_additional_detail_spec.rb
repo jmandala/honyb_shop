@@ -6,11 +6,26 @@ describe PoaAdditionalDetail do
 
     before(:all) do
       @pad = FactoryGirl.create :poa_additional_detail
+      puts Factory.next(:test_seq)
     end
 
     it "should have default values" do
       @pad.availability_date.should_not == nil
       @pad.po_number.should_not == nil
+      @pad.poa_order_header.should_not == nil
+    end
+
+    it "should have a sequence number" do
+      @pad.sequence_number.should_not == nil
+      @pad.sequence_number.to_i > 0
+    end
+
+    it "should delegate poa_file" do
+      @pad.poa_file.should == @pad.poa_order_header.poa_file
+    end
+
+    it "should #find_self" do
+      PoaAdditionalDetail.find_self(@pad.poa_file, @pad.sequence_number).should == @pad
     end
 
   end

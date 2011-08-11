@@ -1,5 +1,9 @@
 FactoryGirl.define do
 
+  sequence :row_number do |n|
+    sprintf "%05d", n
+  end
+
   factory :poa_file do
     file_name "#{Time.now.strftime("%y%m%d%H%M%S")}.fbc"
   end
@@ -22,6 +26,7 @@ FactoryGirl.define do
     availability_date Time.now
     association :poa_order_header, :factory => :poa_order_header
     po_number { poa_order_header.order.number }
+    sequence_number { Factory.next(:row_number) }
   end
 end
 
