@@ -65,7 +65,7 @@ FactoryGirl.define do
 
   factory :poa_file do
     file_name { "#{Time.now.strftime("%y%m%d%H%M%S")}.fbc" }
-    sequence_number { Factory.next :row_number}
+    sequence_number { Factory.next :row_number }
   end
 
   factory :poa_order_header do
@@ -77,7 +77,7 @@ FactoryGirl.define do
     acknowledgement_date Time.now
     icg_san '1697978'
     icg_ship_to_account_number Spree::Config.get(:cdf_ship_to_account_number)
-    po_cancellation_date  { Time.new + 3.months }
+    po_cancellation_date { Time.new + 3.months }
     #po_date { order.updated_at }
     toc 'C123456789012'
   end
@@ -86,13 +86,14 @@ FactoryGirl.define do
     availability_date { Time.now }
     association :poa_order_header, :factory => :poa_order_header
     po_number { poa_order_header.order.number }
-    sequence_number  { Factory.next :row_number }
+    sequence_number { Factory.next :row_number }
+    record_code '41'
   end
 
   factory :poa_line_item do
     association :dc_code, :factory => :la_vergne
     line_item
-    line_item_po_number { |p| p.line_item.id}
+    line_item_po_number { |p| p.line_item.id }
     poa_order_header
     po_number { |p| p.poa_order_header.po_number }
     association :poa_status, :factory => :predicted_to_ship
@@ -105,9 +106,20 @@ FactoryGirl.define do
     association :cdf_binding_code, :factory => :mass_market
     association :poa_order_header, :factory => :poa_order_header
     po_number { poa_order_header.order.number }
-    record_code '41'
-    sequence_number  { Factory.next :row_number }
+    record_code '42'
+    sequence_number { Factory.next :row_number }
     title { Faker::Lorem.sentence 5 }
+  end
+
+  factory :poa_line_item_pub_record do
+    association :poa_order_header, :factory => :poa_order_header
+    po_number { poa_order_header.order.number }
+    record_code '43'
+    sequence_number { Factory.next :row_number }
+    total_qty_predicted_to_ship_primary '1'
+    publication_release_date { Time.now - 1.month }
+    publisher_name { Faker::Lorem.words(3) }
+    original_seq_number 0
   end
 
 
