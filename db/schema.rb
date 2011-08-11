@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110810140912) do
+ActiveRecord::Schema.define(:version => 20110811121441) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -607,7 +607,6 @@ ActiveRecord::Schema.define(:version => 20110810140912) do
     t.string   "item_number",         :limit => 20
     t.integer  "poa_status_id"
     t.integer  "dc_code_id"
-    t.integer  "product_id"
     t.integer  "line_item_id"
   end
 

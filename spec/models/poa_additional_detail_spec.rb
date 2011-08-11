@@ -3,10 +3,8 @@ require 'spec_helper'
 describe PoaAdditionalDetail do
 
   context "when creating a new instance" do
-
     before(:all) do
       @pad = FactoryGirl.create :poa_additional_detail
-      puts Factory.next(:test_seq)
     end
 
     it "should have default values" do
@@ -27,7 +25,21 @@ describe PoaAdditionalDetail do
     it "should #find_self" do
       PoaAdditionalDetail.find_self(@pad.poa_file, @pad.sequence_number).should == @pad
     end
+  end
+
+  context "when created during an import" do
+
+    before(:all) do
+
+      @poa_file = FactoryGirl.create :poa_file
+      @poa_order_header_1 = FactoryGirl.create :poa_order_header, :poa_file => @poa_file
+      @poa_line_item = FactoryGirl.create :poa_line_item
+
+    end
+
+    it "should reference the poa_line_item" 
 
   end
+
 
 end
