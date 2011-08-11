@@ -2,8 +2,13 @@ require 'spec_helper'
 
 MAX_POA_VENDOR_RECORDS = 6
 
-
 describe PoaFile do
+
+  before(:all) do
+    PoaFile.all.each &:destroy
+    LineItem.all.each &:destroy
+    Order.all.each &:destroy
+  end
 
   context "when defining a PoaFile" do
     it "should specify a record length of 80" do
@@ -132,6 +137,8 @@ describe PoaFile do
               @product = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
               @variant = @product.master
               @line_item = Factory(:line_item, :variant => @variant, :price => 10, :order => @order)
+              LineItem.should_receive(:find_by_id!).any_number_of_times.with("1").and_return(@line_item)
+
 
               PoaFile.download
               PoaFile.needs_import.count.should > 0
@@ -161,12 +168,20 @@ describe PoaFile do
 
 
                 @order_1 = Factory(:order, :number => 'R543255800')
-                @line_item_1 = Factory(:line_item, :id => 2, :quantity => 2, :variant => @product_1.master, :price => 10, :order => @order_1)
-                @line_item_2 = Factory(:line_item, :id => 5, :quantity => 2, :variant => @product_2.master, :price => 10, :order => @order_1)
+
+                @line_item_1 = Factory(:line_item, :quantity => 2, :variant => @product_1.master, :price => 10, :order => @order_1)
+                LineItem.should_receive(:find_by_id!).any_number_of_times.with("2").and_return(@line_item_1)
+
+                @line_item_2 = Factory(:line_item, :quantity => 2, :variant => @product_2.master, :price => 10, :order => @order_1)
+                LineItem.should_receive(:find_by_id!).any_number_of_times.with("5").and_return(@line_item_2)
 
                 @order_2 = Factory(:order, :number => 'R554266337')
-                @line_item_3 = Factory(:line_item, :id => 3, :quantity => 2, :variant => @product_1.master, :price => 10, :order => @order_2)
-                @line_item_4 = Factory(:line_item, :id => 6, :quantity => 2, :variant => @product_2.master, :price => 10, :order => @order_2)
+                @line_item_3 = Factory(:line_item, :quantity => 2, :variant => @product_1.master, :price => 10, :order => @order_2)
+                LineItem.should_receive(:find_by_id!).any_number_of_times.with("3").and_return(@line_item_3)
+
+                @line_item_4 = Factory(:line_item, :quantity => 2, :variant => @product_2.master, :price => 10, :order => @order_2)
+                LineItem.should_receive(:find_by_id!).any_number_of_times.with("6").and_return(@line_item_4)
+
 
                 @poa_with_2_by_2_by_2 = "02000011697978     INGRAM       110810RUYFU110809180859.FBO F030000000     1    1100002             R543255800            20N273016979780110810110810110810     2100003R543255800            THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 2100004R543255800            CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 2100005R543255800            NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 2100006R543255800            ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 2100007R543255800            EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 2100008R543255800             AT 1-800-234-6737.                                4000009R543255800            2                     9780373200009       00100100C4100010R543255800            000 000000{ 0000 0000 0000 0000 0000 0000 0000     4200011R543255800            HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M4300012R543255800            HQPB                030900019350000000010000000    4400013R543255800                                00004.99EN00003.240000001      4500014R543255800            2                                                  4000015R543255800            5                     978037352805        00100005C4100016R543255800            000         0000 0000 0000 0000 0000 0000 0000     4100017R543255800            000 000000  0000 0000 0000 0000 0000 0000 0000     4200018R543255800                                                               4300019R543255800                                    00022000000000000000000    4400020R543255800                                00000.00EN00000.000000001      4500021R543255800            5                                                  5900022R543255800            0002000000000020000000001000000000400000000000000011100023             R554266337            20N273016979780110810110810110810     2100024R554266337            THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 2100025R554266337            CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 2100026R554266337            NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 2100027R554266337            ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 2100028R554266337            EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 2100029R554266337             AT 1-800-234-6737.                                4000030R554266337            3                     9780373200009       00100100C4100031R554266337            000 000000{ 0000 0000 0000 0000 0000 0000 0000     4200032R554266337            HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M4300033R554266337            HQPB                030900043350000000010000000    4400034R554266337                                00004.99EN00003.240000001      4500035R554266337            3                                                  4000036R554266337            6                     978037352805        00100005C4100037R554266337            000         0000 0000 0000 0000 0000 0000 0000     4100038R554266337            000 000000  0000 0000 0000 0000 0000 0000 0000     4200039R554266337                                                               4300040R554266337                                    00046000000000000000000    4400041R554266337                                00000.00EN00000.000000001      4500042R554266337            6                                                  5900043R554266337            0002000000000020000000001000000000400000000000000019100044000000000000400002000000000200001000020001200000000260000200001          "
                 @poa_file.write_data @poa_with_2_by_2_by_2
@@ -214,7 +229,7 @@ describe PoaFile do
               end
 
               it "should import the PoaAdditionalLineItemRecord" do
-                should_import_poa_additional_line_item_record @poa_file, @parsed
+                should_import_poa_line_item_title_record @poa_file, @parsed
               end
 
               it "should import the PoaLineItemPubRecord" do
@@ -236,73 +251,69 @@ describe PoaFile do
 
 
             end
-
             context "and the po contains 1 order with 1 line item with 1 quantity" do
-              context "and the import data is complete" do
 
-                before(:each) do
-                  @parsed = @poa_file.parsed
-                  @poa_file.import
-                end
-
-                it "should import the PoaFile data" do
-                  should_import_poa_file_data(@parsed, @poa_file, @file_name, @po_file_name)
-                end
-
-                it "should import the PoaOrderHeader" do
-                  should_import_poa_order_header(@poa_file, @parsed, order_count=1, item_count=1)
-                end
-
-                # todo: need to determine behavior for when this value is altered by ingram
-                it "should not have any PoaShipToName" do
-                  @parsed[:poa_ship_to_name].should == nil
-                  @poa_file.poa_order_headers.first.poa_ship_to_name.should == nil
-                end
-
-                # todo: need to determine behavior for when this value is altered by ingram
-                it "should not have any PoaAddressLines" do
-                  @parsed[:poa_address_lines].should == nil
-                  @poa_file.poa_order_headers.first.poa_address_lines.should == []
-                end
-
-                # todo: need to determine behavior for when this value is altered by ingram
-                it "should not have any PoaCityStateZip" do
-                  @parsed[:poa_city_state_zip].should == nil
-                  @poa_file.poa_order_headers.first.poa_city_state_zip.should == nil
-                end
-
-                it "should import the PoaLineItems" do
-                  should_import_poa_line_items @parsed
-                end
-
-                it "should import the PoaAdditionalDetails" do
-                  should_import_poa_additional_details @poa_file, @parsed
-                end
-
-                it "should import the PoaAdditionalLineItemRecord" do
-                  should_import_poa_additional_line_item_record @poa_file, @parsed
-                end
-
-                it "should import the PoaLineItemPubRecord" do
-                  should_import_poa_line_item_pub_record @poa_file, @parsed
-                end
-
-                it "should import the PoaItemNumberPriceRecord" do
-                  parsed = @parsed[:poa_item_number_price_records]
-                  parsed.should == nil
-                end
-
-                it "should import the PoaOrderControlTotal" do
-                  should_import_poa_order_control_total @poa_file, @parsed
-                end
-
-                it "should import the PoaFileControlTotal" do
-                  should_import_poa_file_control_total @poa_file, @parsed
-                end
-
+              before(:each) do
+                @parsed = @poa_file.parsed
+                @poa_file.import
               end
-            end
 
+              it "should import the PoaFile data" do
+                should_import_poa_file_data(@parsed, @poa_file, @file_name, @po_file_name)
+              end
+
+              it "should import the PoaOrderHeader" do
+                should_import_poa_order_header(@poa_file, @parsed, order_count=1, item_count=1)
+              end
+
+              # todo: need to determine behavior for when this value is altered by ingram
+              it "should not have any PoaShipToName" do
+                @parsed[:poa_ship_to_name].should == nil
+                @poa_file.poa_order_headers.first.poa_ship_to_name.should == nil
+              end
+
+              # todo: need to determine behavior for when this value is altered by ingram
+              it "should not have any PoaAddressLines" do
+                @parsed[:poa_address_lines].should == nil
+                @poa_file.poa_order_headers.first.poa_address_lines.should == []
+              end
+
+              # todo: need to determine behavior for when this value is altered by ingram
+              it "should not have any PoaCityStateZip" do
+                @parsed[:poa_city_state_zip].should == nil
+                @poa_file.poa_order_headers.first.poa_city_state_zip.should == nil
+              end
+
+              it "should import the PoaLineItems" do
+                should_import_poa_line_items @parsed
+              end
+
+              it "should import the PoaAdditionalDetails" do
+                should_import_poa_additional_details @poa_file, @parsed
+              end
+
+              it "should import the PoaAdditionalLineItemRecord" do
+                should_import_poa_line_item_title_record @poa_file, @parsed
+              end
+
+              it "should import the PoaLineItemPubRecord" do
+                should_import_poa_line_item_pub_record @poa_file, @parsed
+              end
+
+              it "should import the PoaItemNumberPriceRecord" do
+                parsed = @parsed[:poa_item_number_price_records]
+                parsed.should == nil
+              end
+
+              it "should import the PoaOrderControlTotal" do
+                should_import_poa_order_control_total @poa_file, @parsed
+              end
+
+              it "should import the PoaFileControlTotal" do
+                should_import_poa_file_control_total @poa_file, @parsed
+              end
+
+            end
           end
         end
       end
@@ -383,10 +394,13 @@ def should_import_poa_additional_details(poa_file, parsed)
     if !record[:availability_date].nil?
       [:availability_date].each { |k| should_match_date(db_record, record, k) }
     end
+
+    db_record.nearest_poa_line_item.should == db_record.poa_line_item
+    db_record.poa_line_item.should_not == nil
   end
 end
 
-def should_import_poa_additional_line_item_record(poa_file, parsed)
+def should_import_poa_line_item_title_record(poa_file, parsed)
   parsed[:poa_line_item_title_record].each do |record|
     db_record = PoaLineItemTitleRecord.find_self poa_file, record[:sequence_number]
 
@@ -418,6 +432,7 @@ def should_import_poa_line_items(parsed)
 
     db_record.line_item.should_not == nil
     db_record.variant.should_not == nil
+
     record[:line_item_item_number].strip.should == db_record.variant.sku.gsub(/\-/, '')
   end
 end

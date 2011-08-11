@@ -2,11 +2,18 @@ require 'spec_helper'
 
 describe PoaLineItem do
 
+
+    after(:all) do
+      PoaFile.all.each { |p| p.destroy}
+      LineItem.all.each { |l| l.destroy }
+    end
+
   context "when creating a new instance" do
     before(:all) do
       #noinspection RubyInstanceVariableNamingConvention
       @p = FactoryGirl.create :poa_line_item
     end
+
 
     it "should have an order header" do
       @p.poa_order_header.should_not == nil
@@ -21,7 +28,6 @@ describe PoaLineItem do
     end
 
     it "should have a record code" do
-
       @p.record_code.should == '40'
     end
 
