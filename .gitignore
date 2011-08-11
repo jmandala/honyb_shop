@@ -1,8 +1,11 @@
 .bundle
 db/*.sqlite3*
+db/*.sql
 log/*.log
 tmp/
 *~
 .idea
 public/assets/products
 cdf
+doc
+.yardoc
