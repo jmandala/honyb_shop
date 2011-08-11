@@ -4,6 +4,29 @@ FactoryGirl.define do
     sprintf "%05d", n
   end
 
+  factory :cdf_binding_code do
+    factory :mass_market do
+      code 'M'
+      name 'Mass Market'
+    end
+    factory :audio do
+      code 'A'
+      name 'Audio products'
+    end
+    factory :trade_paper do
+      code 'T'
+      name 'Trade Paper'
+    end
+    factory :hard_cover do
+      code 'H'
+      name 'Hard Cover'
+    end
+    factory :other do
+      code ''
+      name 'Other'
+    end
+  end
+
   factory :dc_code do
     factory :la_vergne do
       po_dc_code 'N'
@@ -76,6 +99,18 @@ FactoryGirl.define do
     record_code '40'
     sequence_number { Factory.next :row_number }
   end
+
+  factory :poa_line_item_title_record do
+    author { Faker::Name.first_name + ' ' + Faker::Name.last_name }
+    association :cdf_binding_code, :factory => :mass_market
+    association :poa_order_header, :factory => :poa_order_header
+    po_number { poa_order_header.order.number }
+    record_code '41'
+    sequence_number  { Factory.next :row_number }
+    title { Faker::Lorem.sentence 5 }
+  end
+
+
 end
 
 

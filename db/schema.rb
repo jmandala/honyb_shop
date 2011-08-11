@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110811121441) do
+ActiveRecord::Schema.define(:version => 20110811191012) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -582,6 +582,7 @@ ActiveRecord::Schema.define(:version => 20110811121441) do
     t.datetime "publication_release_date"
     t.string   "original_seq_number",                 :limit => 5
     t.string   "total_qty_predicted_to_ship_primary", :limit => 7
+    t.integer  "poa_line_item_id"
   end
 
   create_table "poa_line_item_title_records", :force => true do |t|
@@ -594,6 +595,7 @@ ActiveRecord::Schema.define(:version => 20110811121441) do
     t.string   "title",               :limit => 30
     t.string   "author",              :limit => 20
     t.integer  "cdf_binding_code_id"
+    t.integer  "poa_line_item_id"
   end
 
   create_table "poa_line_items", :force => true do |t|
