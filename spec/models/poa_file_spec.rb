@@ -491,6 +491,8 @@ def should_import_poa_order_control_total(poa_file, parsed)
      :sequence_number].each { |k| should_match_text(db_record, record, k) }
     [:total_line_items_in_file,
      :total_units_acknowledged,].each { |k| should_match_i(db_record, record, k) }
+
+    db_record.total_line_items_in_file.should == db_record.poa_order_header.poa_line_items.count
   end
 end
 
