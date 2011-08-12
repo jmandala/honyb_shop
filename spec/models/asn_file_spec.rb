@@ -129,7 +129,7 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
             asn_file.versions.count.should == 1
           end
         end
-        
+
         context "and the file is imported" do
 
           context "and there are no ASN files to import" do
@@ -149,6 +149,7 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
               AsnFile.download
               AsnFile.needs_import.count.should > 0
               @asn_file = AsnFile.needs_import.first
+              @parsed = @asn_file.parsed
             end
 
             it "should import files one by one" do
@@ -164,10 +165,22 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
               AsnFile.needs_import.count.should == 0
             end
 
+            context "and asn file is imported" do
+              before(:each) do
+                @asn_file.import
+              end
+              it "should return the correct data" do
+                @asn_file.data.should == AsnFile.add_delimiters(@sample_file)
+              end
+
+              it "should import the AsnFile data" do
+                should_import_asn_file_data(@parsed, @asn_file, @file_name)
+              end
+            end
 
           end
         end
-        
+
 
       end
 
@@ -175,4 +188,27 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
 
 
   end
+end
+
+def should_import_asn_file_data(parsed, asn_file, file_name)
+  all = parsed[:header]
+  all.should_not == nil
+  all.size.should == 1
+  parsed = all.first
+
+  db_record = asn_file
+  db_record.created_at.should_not == nil
+
+  puts db_record.to_yaml
+  puts parsed.to_yaml
+  [:company_account_id_number,
+   :file_version_number,
+   :record_code].each { |field| ImportFileHelper.should_match_text(db_record, parsed, field) }
+
+  [:total_order_count].each { |field| ImportFileHelper.should_match_i(db_record, parsed, field) }
+
+
+  db_record.file_name.should == file_name
+  db_record.parent.should == nil
+  db_record.versions.should == []
 end
