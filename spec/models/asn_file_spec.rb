@@ -26,11 +26,12 @@ describe AsnFile do
 
   context "when working with remote files" do
     before(:all) do
-      @sample_file = "CR20N2730   000000024.0
-ORR150352227                    00000039980000000000000000000000000000000000000000001000000000499800000200   000120110812
-ODR150352227            C 01703          0373200005037320000500002     00002001ZTESTTRACKCI017030000   SCAC 2              000049900003242         TESTSSLCI01703000001000000040129780373200009
-ORR328552614                    00000079960000000000000000000000000000000000000000001000000000899600000500   000120110812
-ODR328552614            C 01704          0373200005037320000500002     00002001ZTESTTRACKCI017040000   SCAC 1              000049900003241         TESTSSLCI01704000001000000040129780373200009         "
+      @sample_file = "CR20N2730   000000024.0                                                                                                                                                                                 
+ORR374103387                    00000019990000000000000000000000000000000000000000001000000000299900000100   000120110812                                                                               
+ODR374103387            C 01705          0373200005037320000500001     00001001ZTESTTRACKCI017050000   SCAC 1              000049900003241         TESTSSLCI01705000001000000020129780373200009         
+ORR674657678                    00000039980000000000000000000000000000000000000000001000000000499800000200   000120110812                                                                               
+ODR674657678            C 01706          0373200005037320000500001     00001001ZTESTTRACKCI017060000   SCAC 2              000049900003242         TESTSSLCI01706000001000000020129780373200009         
+"
     end
 
     before(:each) do
@@ -79,10 +80,18 @@ ODR328552614            C 01704          0373200005037320000500002     00002001Z
             nil
           end
         end
+
+        it "should have the correct number of records after the download" do
+          AsnFile.download
+          asn_file = AsnFile.find_by_file_name @file_name
+          asn_file.data.should == @sample_file
+        end
+
         it "should download the file, create an AsnFile record, and delete the file from the server" do
           AsnFile.needs_import.count.should == 0
           downloaded = AsnFile.download
           downloaded.size.should == 1
+          downloaded.first.versions.size.should == 0
 
           AsnFile.needs_import.count.should == 1
           AsnFile.needs_import.first.should == downloaded.first
@@ -92,7 +101,7 @@ ODR328552614            C 01704          0373200005037320000500002     00002001Z
         it "should have 200 chars in each line" do
           AsnFile.download.size.should == 1
           AsnFile.needs_import.first.data.split(/\n/).each do |line|
-            line.chomp.length.should == 200
+            line.length.should == 200
           end
         end
 
@@ -120,6 +129,45 @@ ODR328552614            C 01704          0373200005037320000500002     00002001Z
             asn_file.versions.count.should == 1
           end
         end
+        
+        context "and the file is imported" do
+
+          context "and there are no ASN files to import" do
+            it "should have no files that need import" do
+              AsnFile.needs_import.count.should == 0
+            end
+          end
+
+          context "and there are ASN files to import" do
+            before(:each) do
+              @order = Factory(:order, :number => 'R364143388')
+              @product = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
+              @variant = @product.master
+              @line_item = Factory(:line_item, :variant => @variant, :price => 10, :order => @order)
+              LineItem.should_receive(:find_by_id!).any_number_of_times.with("1").and_return(@line_item)
+
+              AsnFile.download
+              AsnFile.needs_import.count.should > 0
+              @asn_file = AsnFile.needs_import.first
+            end
+
+            it "should import files one by one" do
+              @asn_file.import.should_not == nil
+              @asn_file.imported_at.should_not == nil
+              AsnFile.needs_import.count.should == 0
+            end
+
+            it "should import all files" do
+              imported = AsnFile.import_all
+              imported.size.should == 1
+              AsnFile.all.count.should == 1
+              AsnFile.needs_import.count.should == 0
+            end
+
+
+          end
+        end
+        
 
       end
 
