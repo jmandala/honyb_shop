@@ -72,7 +72,6 @@ describe PoaAdditionalDetail do
         poa_line_item = instance_variable_get "@poa_line_item_#{i}"
         poa_line_item.should_not == nil
         poa_additional_detail.poa_line_item.should == nil
-        puts "my sequence: #{poa_additional_detail.sequence_number}"
         poa_additional_detail.nearest_poa_line_item.should == poa_line_item
       end
 

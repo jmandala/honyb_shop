@@ -29,8 +29,8 @@ describe PoaLineItemTitleRecord do
       @p.po_number.should == @p.poa_order_header.order.number
     end
 
-    it "should have record code 41" do
-      @p.record_code.should == '41'
+    it "should have record code" do
+      @p.record_code.should == '42'
     end
 
     it "should have a title" do
