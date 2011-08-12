@@ -508,7 +508,7 @@ def should_import_poa_line_item_pub_record(poa_file, parsed)
     if record[:publication_release_date].empty?
       db_record.publication_release_date.should == nil
     else
-      db_record.publication_release_date.should == Time.strptime(record[:publication_release_date], "%m%y")
+      db_record.publication_release_date.strftime("%m%y").should == record[:publication_release_date]
     end
   end
 end
