@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110811191012) do
+ActiveRecord::Schema.define(:version => 20110812201331) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(:version => 20110811191012) do
     t.string   "file_version_number",       :limit => 10
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "parent_id"
   end
 
   create_table "asn_order_statuses", :force => true do |t|
@@ -212,6 +213,7 @@ ActiveRecord::Schema.define(:version => 20110811191012) do
     t.datetime "imported_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "parent_id"
   end
 
   create_table "cdf_invoice_freight_and_fees", :force => true do |t|

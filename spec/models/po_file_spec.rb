@@ -9,7 +9,6 @@ describe PoFile do
       Spree::Config.set({:cdf_ship_to_password => '12345678'})
       Spree::Config.set({:cdf_bill_to_account => '1234567'})
 
-      
       @order = Factory(:order)
       add_line_item @order
       complete_order @order

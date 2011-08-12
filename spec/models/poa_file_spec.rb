@@ -10,6 +10,12 @@ describe PoaFile do
     Order.all.each &:destroy
   end
 
+  after(:all) do
+    PoaFile.all.each &:destroy
+    LineItem.all.each &:destroy
+    Order.all.each &:destroy
+  end
+
   context "when defining a PoaFile" do
     it "should specify a record length of 80" do
       PoaFile.record_length.should == 80
