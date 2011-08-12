@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe PoFile do
 
-
   context "when creating a purchase order" do
 
     before(:all) do
