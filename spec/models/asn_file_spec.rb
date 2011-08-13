@@ -199,8 +199,6 @@ def should_import_asn_file_data(parsed, asn_file, file_name)
   db_record = asn_file
   db_record.created_at.should_not == nil
 
-  puts db_record.to_yaml
-  puts parsed.to_yaml
   [:company_account_id_number,
    :file_version_number,
    :record_code].each { |field| ImportFileHelper.should_match_text(db_record, parsed, field) }
