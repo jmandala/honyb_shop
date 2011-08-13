@@ -140,10 +140,14 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
 
           context "and there are ASN files to import" do
             before(:each) do
-              @order = Factory(:order, :number => 'R364143388')
+              @order_1 = FactoryGirl.create(:order, :number => 'R374103387')
+              Order.should_receive(:find_by_number!).with(@order_1.number).any_number_of_times.and_return([@order_1])
+              @order_2 = FactoryGirl.create(:order, :number => 'R674657678')
+              Order.should_receive(:find_by_number!).with(@order_2.number).any_number_of_times.and_return([@order_2])
+              
               @product = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
               @variant = @product.master
-              @line_item = Factory(:line_item, :variant => @variant, :price => 10, :order => @order)
+              @line_item = Factory(:line_item, :variant => @variant, :price => 10, :order => @order_1)
               LineItem.should_receive(:find_by_id!).any_number_of_times.with("1").and_return(@line_item)
 
               AsnFile.download
@@ -176,6 +180,10 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
               it "should import the AsnFile data" do
                 should_import_asn_file_data(@parsed, @asn_file, @file_name)
               end
+
+              it "should import the ASN Shipment record" do
+                should_import_asn_shipment_record(@parsed, @asn_file)
+              end
             end
 
           end
@@ -187,6 +195,18 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
     end
 
 
+  end
+end
+
+def should_import_asn_shipment_record(parsed, asn_file)
+  parsed[:asn_shipment].each do |record|
+    puts "looking for asn shipment by id:#{record[:client_order_id]}"
+    db_record = AsnShipment.find_self asn_file, record[:client_order_id]
+    db_record.should_not == nil
+    db_record.asn_file.should == asn_file
+    db_record.order.should_not == nil
+    db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
+    puts db_record
   end
 end
 
