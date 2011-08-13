@@ -207,7 +207,7 @@ def should_import_asn_file_data(parsed, asn_file, file_name)
 
   [:total_order_count].each { |field| ImportFileHelper.should_match_i(db_record, parsed, field) }
 
-
+  db_record.file_version_number.should == '4.0'
   db_record.file_name.should == file_name
   db_record.parent.should == nil
   db_record.versions.should == []
