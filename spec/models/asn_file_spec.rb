@@ -198,13 +198,11 @@ end
 
 def should_import_asn_shipment_record(parsed, asn_file)
   parsed[:asn_shipment].each do |record|
-    puts "looking for asn shipment by id:#{record[:client_order_id]}"
     db_record = AsnShipment.find_self asn_file, record[:client_order_id]
     db_record.should_not == nil
     db_record.asn_file.should == asn_file
     db_record.order.should_not == nil
     db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
-    puts db_record
   end
 end
 
