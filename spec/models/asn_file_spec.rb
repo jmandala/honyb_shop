@@ -141,9 +141,7 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
           context "and there are ASN files to import" do
             before(:each) do
               @order_1 = FactoryGirl.create(:order, :number => 'R374103387')
-              Order.should_receive(:find_by_number!).with(@order_1.number).any_number_of_times.and_return([@order_1])
               @order_2 = FactoryGirl.create(:order, :number => 'R674657678')
-              Order.should_receive(:find_by_number!).with(@order_2.number).any_number_of_times.and_return([@order_2])
               
               @product = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
               @variant = @product.master

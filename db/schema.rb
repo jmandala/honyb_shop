@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110813103939) do
+ActiveRecord::Schema.define(:version => 20110812201331) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -86,18 +86,17 @@ ActiveRecord::Schema.define(:version => 20110813103939) do
     t.integer  "asn_order_status_id"
     t.string   "tracking_number"
     t.string   "standard_carrier_address_code"
-    t.decimal  "ingram_item_list_price",                      :precision => 8, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "net_discounted_price",                        :precision => 8, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "ingram_item_list_price",                      :default => 0.0, :null => false
+    t.decimal  "net_discounted_price",                        :default => 0.0, :null => false
     t.string   "line_item_number"
     t.integer  "line_item_id"
     t.string   "ssl",                           :limit => 20
-    t.decimal  "weight",                                      :precision => 9, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "weight",                                      :default => 0.0, :null => false
     t.string   "shipping_method_code"
     t.integer  "asn_slash_code_id"
     t.string   "isbn_13"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "po_number"
   end
 
   create_table "asn_shipments", :force => true do |t|
@@ -105,18 +104,17 @@ ActiveRecord::Schema.define(:version => 20110813103939) do
     t.string   "record_code",             :limit => 2
     t.integer  "order_id"
     t.integer  "asn_order_status_id"
-    t.decimal  "order_subtotal",                        :precision => 8, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "order_discount_amount",                 :precision => 8, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "sales_tax",                             :precision => 8, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "shipping_and_handling",                 :precision => 8, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "order_total",                           :precision => 8, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "freight_charge",                        :precision => 8, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "order_subtotal",                        :default => 0.0, :null => false
+    t.decimal  "order_discount_amount",                 :default => 0.0, :null => false
+    t.decimal  "sales_tax",                             :default => 0.0, :null => false
+    t.decimal  "shipping_and_handling",                 :default => 0.0, :null => false
+    t.decimal  "order_total",                           :default => 0.0, :null => false
+    t.decimal  "freight_charge",                        :default => 0.0, :null => false
     t.integer  "total_item_detail_count"
     t.datetime "shipment_date"
     t.string   "consumer_po_number",      :limit => 22
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "po_number"
   end
 
   create_table "asn_shipping_method_codes", :force => true do |t|
