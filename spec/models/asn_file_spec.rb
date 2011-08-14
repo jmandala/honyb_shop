@@ -203,9 +203,17 @@ def should_import_asn_shipment_record(parsed, asn_file)
     db_record.asn_file.should == asn_file
     db_record.order.should_not == nil
     db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
-    [:consumer_po_number].each { |field| ImportFileHelper.should_match_text(db_record, parsed, field) }
+    [:consumer_po_number].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
     db_record.asn_order_status.code.should == record[:order_status_code]
-    db_record.order_subtotal.to_f.should == record[:order_subtotal].to_f / 100
+    
+    [:order_subtotal,
+    :order_discount_amount,
+    :order_total,
+    :freight_charge].each { |field| ImportFileHelper.should_match_money(db_record, record, field)}
+    
+    db_record.shipping_and_handling.should == BigDecimal.new((record[:shipping_and_handling].to_f / 10000).to_s)
+
+    puts "#{db_record.shipment_date} == #{record[:shipment_date]}"
   end
 end
 
