@@ -182,6 +182,9 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
               it "should import the ASN Shipment record" do
                 should_import_asn_shipment_record(@parsed, @asn_file)
               end
+              it "should import the ASN Shipment Detail record" do
+                should_import_asn_shipment_detail_record(@parsed, @asn_file)
+              end
             end
 
           end
@@ -196,6 +199,33 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
   end
 end
 
+def should_import_asn_shipment_detail_record(parsed, asn_file)
+  parsed[:asn_shipment_detail].each do |record|
+    db_record = AsnShipmentDetail.find_self asn_file, record[:client_order_id]
+    db_record.should_not == nil
+    db_record.asn_file.should == asn_file
+    db_record.order.should_not == nil
+    db_record.record_code.should == 'OD'
+    db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
+
+    puts record.to_yaml
+    
+    [:ingram_order_entry_number,
+     :isbn_10_ordered,
+     :isbn_10_shipped,
+     :tracking_number,
+     :scac,
+     :ssl,
+     :isbn_13].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
+
+    [:ingram_item_list_price,
+     :net_discounted_price].each { |field| ImportFileHelper.should_match_money(db_record, record, field) }
+
+    db_record.weight.should == BigDecimal.new((record[:weight].to_f / 100).to_s)
+
+  end
+end
+
 def should_import_asn_shipment_record(parsed, asn_file)
   parsed[:asn_shipment].each do |record|
     db_record = AsnShipment.find_self asn_file, record[:client_order_id]
@@ -206,15 +236,13 @@ def should_import_asn_shipment_record(parsed, asn_file)
     db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
     [:consumer_po_number].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
     db_record.asn_order_status.code.should == record[:order_status_code]
-    
-    [:order_subtotal,
-    :order_discount_amount,
-    :order_total,
-    :freight_charge].each { |field| ImportFileHelper.should_match_money(db_record, record, field)}
-    
-    db_record.shipping_and_handling.should == BigDecimal.new((record[:shipping_and_handling].to_f / 10000).to_s)
 
-    puts "#{db_record.shipment_date} == #{record[:shipment_date]}"
+    [:order_subtotal,
+     :order_discount_amount,
+     :order_total,
+     :freight_charge].each { |field| ImportFileHelper.should_match_money(db_record, record, field) }
+
+    db_record.shipping_and_handling.should == BigDecimal.new((record[:shipping_and_handling].to_f / 10000).to_s)
   end
 end
 

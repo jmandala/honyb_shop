@@ -13,8 +13,7 @@ class ImportFileHelper
 
   def self.should_match_money(object, record, field)
     import_value = record[field]
-    object_value = object.send(field)
-    puts "#{field}: #{object_value}"
+    object_value = object.read_attribute(field)
     object_value.should == BigDecimal.new((import_value.to_f / 100).to_s)
     
   end
