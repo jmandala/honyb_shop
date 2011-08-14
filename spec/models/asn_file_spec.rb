@@ -142,7 +142,7 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
             before(:each) do
               @order_1 = FactoryGirl.create(:order, :number => 'R374103387')
               @order_2 = FactoryGirl.create(:order, :number => 'R674657678')
-              
+
               @product = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
               @variant = @product.master
               @line_item = Factory(:line_item, :variant => @variant, :price => 10, :order => @order_1)
@@ -203,6 +203,9 @@ def should_import_asn_shipment_record(parsed, asn_file)
     db_record.asn_file.should == asn_file
     db_record.order.should_not == nil
     db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
+    [:consumer_po_number].each { |field| ImportFileHelper.should_match_text(db_record, parsed, field) }
+    db_record.asn_order_status.code.should == record[:order_status_code]
+    db_record.order_subtotal.to_f.should == record[:order_subtotal].to_f / 100
   end
 end
 

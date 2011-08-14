@@ -13,8 +13,12 @@ class ImportFileHelper
 
 
   def self.should_match_text(object, record, field)
-    raise ArgumentError, "#{field} should not be null" if record[field].nil?
-    object.read_attribute(field).should == record[field].strip
+    value = object.read_attribute(field)
+    if record[field].nil?
+      value.should == '' || value.should == nil    
+    else
+      value.should == record[field].strip      
+    end
   end
 
   def self.should_match_i(object, record, field)
