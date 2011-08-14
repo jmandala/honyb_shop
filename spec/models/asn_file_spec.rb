@@ -202,6 +202,7 @@ def should_import_asn_shipment_record(parsed, asn_file)
     db_record.should_not == nil
     db_record.asn_file.should == asn_file
     db_record.order.should_not == nil
+    db_record.record_code.should == 'OR'
     db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
     [:consumer_po_number].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
     db_record.asn_order_status.code.should == record[:order_status_code]
