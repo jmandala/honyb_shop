@@ -122,6 +122,14 @@ FactoryGirl.define do
     original_seq_number 0
   end
 
+  factory :poa_order_control_total do
+    association :poa_order_header, :factory => :poa_order_header
+    record_code '59'
+    record_count 5
+    sequence_number { Factory.next :row_number }
+    total_line_items_in_file 1
+    total_units_acknowledged 1
+  end
 
 end
 

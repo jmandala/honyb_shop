@@ -10,6 +10,12 @@ describe PoaFile do
     Order.all.each &:destroy
   end
 
+  after(:all) do
+    PoaFile.all.each &:destroy
+    LineItem.all.each &:destroy
+    Order.all.each &:destroy
+  end
+
   context "when defining a PoaFile" do
     it "should specify a record length of 80" do
       PoaFile.record_length.should == 80
@@ -491,6 +497,8 @@ def should_import_poa_order_control_total(poa_file, parsed)
      :sequence_number].each { |k| should_match_text(db_record, record, k) }
     [:total_line_items_in_file,
      :total_units_acknowledged,].each { |k| should_match_i(db_record, record, k) }
+
+    db_record.total_line_items_in_file.should == db_record.poa_order_header.poa_line_items.count
   end
 end
 
@@ -508,7 +516,7 @@ def should_import_poa_line_item_pub_record(poa_file, parsed)
     if record[:publication_release_date].empty?
       db_record.publication_release_date.should == nil
     else
-      db_record.publication_release_date.should == Time.strptime(record[:publication_release_date], "%m%y")
+      db_record.publication_release_date.strftime("%m%y").should == record[:publication_release_date]
     end
   end
 end
