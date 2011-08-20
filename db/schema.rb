@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110812201331) do
+ActiveRecord::Schema.define(:version => 20110820094752) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -86,17 +86,18 @@ ActiveRecord::Schema.define(:version => 20110812201331) do
     t.integer  "asn_order_status_id"
     t.string   "tracking_number"
     t.string   "standard_carrier_address_code"
-    t.decimal  "ingram_item_list_price",                      :precision => 8, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "net_discounted_price",                        :precision => 8, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "ingram_item_list_price",                      :default => 0.0, :null => false
+    t.decimal  "net_discounted_price",                        :default => 0.0, :null => false
     t.string   "line_item_number"
     t.integer  "line_item_id"
     t.string   "ssl",                           :limit => 20
-    t.decimal  "weight",                                      :precision => 9, :scale => 2, :default => 0.0, :null => false
-    t.string   "shipping_method_code"
+    t.decimal  "weight",                                      :default => 0.0, :null => false
     t.integer  "asn_slash_code_id"
     t.string   "isbn_13"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "asn_shipping_method_code"
+    t.integer  "asn_shipping_method_code_id"
   end
 
   create_table "asn_shipments", :force => true do |t|
