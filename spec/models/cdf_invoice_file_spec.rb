@@ -209,6 +209,9 @@ describe CdfInvoiceFile do
               it "should import the CdfInvoiceHeader data" do
                 should_import_cdf_invoice_header(@parsed, @cdf_invoice_file)
               end
+              it "should import the CdfInvoiceIsbnDetail data" do
+                should_import_cdf_invoice_isbn_detail(@parsed, @cdf_invoice_file)
+              end
             end
 
           end
@@ -221,36 +224,23 @@ describe CdfInvoiceFile do
   end
 end
 
-def should_import_asn_shipment_detail_record(parsed, cdf_invoice_file)
-  parsed[:asn_shipment_detail].each do |record|
-    db_record = AsnShipmentDetail.find_self cdf_invoice_file, record[:client_order_id]
+def should_import_cdf_invoice_isbn_detail(parsed, cdf_invoice_file)
+  parsed[:cdf_invoice_isbn_detail].each do |record|
+    db_record = CdfInvoiceIsbnDetail.find_self cdf_invoice_file, record[:sequence]
     db_record.should_not == nil
     db_record.cdf_invoice_file.should == cdf_invoice_file
-    db_record.order.should_not == nil
-    db_record.record_code.should == 'OD'
-    db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
+    db_record.record_code.should == '45'
 
-    [].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
+    [:isbn_10_shipped].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
 
-    [].each { |field| ImportFileHelper.should_match_money(db_record, record, field) }
+    [:ingram_list_price,
+    :discount,
+    :net_price].each { |field| ImportFileHelper.should_match_money(db_record, record, field) }
 
-    [].each { |field| ImportFileHelper.should_match_i(db_record, record, field) }
+    [:invoice_number, 
+     :quantity_shipped].each { |field| ImportFileHelper.should_match_i(db_record, record, field) }
 
-    db_record.weight.should == BigDecimal.new((record[:weight].to_f / 100).to_s, 0)
-
-    db_record.asn_shipping_method_code.should == AsnShippingMethodCode.find_by_code(record[:shipping_method_or_slash_reason_code])
-
-    db_record.asn_order_status.code.should == record[:item_detail_status_code]
-
-    db_record.dc_code.should_not == nil
-    first = record[:shipping_warehouse_code].match(/./).to_s
-    codes = DcCode.where("asn_dc_code LIKE ?", "#{first}%")
-    db_record.dc_code.should == codes.first
-
-    DcCode.find_by_asn_dc_code(record[:shipping_warehouse_code]).to_yaml
-
-    db_record.line_item = LineItem.find_by_id(record[:line_item_id_number])
-    puts db_record.line_item.to_yaml
+    [:metered_date].each { |field| ImportFileHelper.should_match_date(db_record, record, field, "%Y%m%d") }
 
   end
 end
