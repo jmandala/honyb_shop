@@ -238,8 +238,6 @@ def should_import_asn_shipment_detail_record(parsed, asn_file)
     DcCode.find_by_asn_dc_code(record[:shipping_warehouse_code]).to_yaml
 
     db_record.line_item = LineItem.find_by_id(record[:line_item_id_number])
-    puts db_record.line_item.to_yaml
-
   end
 end
 
