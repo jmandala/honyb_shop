@@ -88,6 +88,8 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
         end
 
         it "should download the file, create an AsnFile record, and delete the file from the server" do
+          @ftp.should_receive(:delete).once
+
           AsnFile.needs_import.count.should == 0
           downloaded = AsnFile.download
           downloaded.size.should == 1
@@ -253,6 +255,7 @@ def should_import_asn_file_data(parsed, asn_file, file_name)
   parsed = all.first
 
   db_record = asn_file
+  db_record.record_code.should == 'CR'
   db_record.created_at.should_not == nil
 
   [:company_account_id_number,
