@@ -208,9 +208,6 @@ def should_import_asn_shipment_detail_record(parsed, asn_file)
     db_record.record_code.should == 'OD'
     db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
 
-    #puts record.to_yaml
-    #puts db_record.to_yaml
-    
     [:ingram_order_entry_number,
      :isbn_10_ordered,
      :isbn_10_shipped,
@@ -222,6 +219,11 @@ def should_import_asn_shipment_detail_record(parsed, asn_file)
     [:ingram_item_list_price,
      :net_discounted_price].each { |field| ImportFileHelper.should_match_money(db_record, record, field) }
 
+    [:quantity_canceled,
+    :quantity_predicted,
+    :quantity_slashed,
+    :quantity_shipped].each {|field| ImportFileHelper.should_match_i(db_record, record, field)}
+    
     db_record.weight.should == BigDecimal.new((record[:weight].to_f / 100).to_s, 0)
 
     db_record.asn_shipping_method_code.should == AsnShippingMethodCode.find_by_code(record[:shipping_method_or_slash_reason_code])
@@ -236,8 +238,9 @@ def should_import_asn_shipment_record(parsed, asn_file)
     db_record.order.should_not == nil
     db_record.record_code.should == 'OR'
     db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
-    [:consumer_po_number].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
     db_record.asn_order_status.code.should == record[:order_status_code]
+
+    [:consumer_po_number].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
 
     [:order_subtotal,
      :order_discount_amount,
@@ -258,9 +261,9 @@ def should_import_asn_file_data(parsed, asn_file, file_name)
   db_record.record_code.should == 'CR'
   db_record.created_at.should_not == nil
 
-  [:company_account_id_number,
-   :file_version_number,
-   :record_code].each { |field| ImportFileHelper.should_match_text(db_record, parsed, field) }
+  [:company_account_id_number, :file_version_number, :record_code].each do |field|
+    ImportFileHelper.should_match_text(db_record, parsed, field)
+  end
 
   [:total_order_count].each { |field| ImportFileHelper.should_match_i(db_record, parsed, field) }
 
