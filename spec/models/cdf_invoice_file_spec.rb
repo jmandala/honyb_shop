@@ -213,8 +213,13 @@ describe CdfInvoiceFile do
               it "should import the CdfInvoiceIsbnDetail data" do
                 should_import_cdf_invoice_isbn_detail(@parsed, @cdf_invoice_file)
               end
+              
               it "should import the CdfInvoiceEanDetail data" do
                 should_import_cdf_invoice_ean_detail(@parsed, @cdf_invoice_file)
+              end
+              
+              it "should import the CdfInvoiceDetailTotals " do
+                should_import_cdf_invoice_detail_totals(@parsed, @cdf_invoice_file)
               end
               
             end
@@ -225,6 +230,16 @@ describe CdfInvoiceFile do
       end
 
     end
+
+  end
+end
+
+def should_import_cdf_invoice_detail_totals(parsed, cdf_invoice_file)
+  parsed[:cdf_invoice_detail_total].each do |record|
+    db_record = CdfInvoiceDetailTotal.find_self cdf_invoice_file, record[:sequence]
+    db_record.should_not == nil
+    db_record.cdf_invoice_file.should == cdf_invoice_file
+    db_record.record_code.should == '48'
 
   end
 end
