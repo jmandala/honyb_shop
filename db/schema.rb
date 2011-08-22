@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110822180358) do
+ActiveRecord::Schema.define(:version => 20110822214408) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -175,17 +175,19 @@ ActiveRecord::Schema.define(:version => 20110822180358) do
   end
 
   create_table "cdf_invoice_detail_totals", :force => true do |t|
-    t.string   "record_code",         :limit => 2
-    t.string   "sequence",            :limit => 5
+    t.string   "record_code",                :limit => 2
+    t.string   "sequence",                   :limit => 5
     t.integer  "invoice_number"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "cdf_invoice_file_id"
-    t.string   "title",               :limit => 16
+    t.string   "title",                      :limit => 16
     t.integer  "client_order_id"
     t.string   "line_item_id_number"
     t.integer  "order_id"
     t.integer  "line_item_id"
+    t.integer  "cdf_invoice_isbn_detail_id"
+    t.integer  "cdf_invoice_ean_detail_id"
   end
 
   create_table "cdf_invoice_ean_details", :force => true do |t|

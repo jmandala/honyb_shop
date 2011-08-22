@@ -241,6 +241,7 @@ def should_import_cdf_invoice_detail_totals(parsed, cdf_invoice_file)
     db_record.cdf_invoice_file.should == cdf_invoice_file
     db_record.record_code.should == '48'
 
+    puts record.to_yaml
   end
 end
 
