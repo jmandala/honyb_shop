@@ -28,7 +28,7 @@ class ImportFileHelper
       value.should == '' || value.should == nil
     else
 
-      if object.send(field) != record[field]
+      if object.send(field) != record[field].strip
         puts "error on field: #{field}. '#{record[field]}' != '#{object.send(field)}'"
       end
 
