@@ -182,7 +182,7 @@ describe CdfInvoiceFile do
             end
 
             it "should import files one by one" do
-              @cdf_invoice_file.import.should_not == nil
+              @cdf_invoice_file.import!.should == nil
               @cdf_invoice_file.imported_at.should_not == nil
               CdfInvoiceFile.needs_import.count.should == 0
             end
@@ -196,7 +196,7 @@ describe CdfInvoiceFile do
 
             context "and an invoice file is imported" do
               before(:each) do
-                @cdf_invoice_file.import
+                @cdf_invoice_file.import!
               end
               it "should return the correct data" do
                 @cdf_invoice_file.data.should == CdfInvoiceFile.add_delimiters(@sample_file)
@@ -231,8 +231,8 @@ def should_import_asn_shipment_detail_record(parsed, cdf_invoice_file)
 
     [].each { |field| ImportFileHelper.should_match_money(db_record, record, field) }
 
-    [].each {|field| ImportFileHelper.should_match_i(db_record, record, field)}
-    
+    [].each { |field| ImportFileHelper.should_match_i(db_record, record, field) }
+
     db_record.weight.should == BigDecimal.new((record[:weight].to_f / 100).to_s, 0)
 
     db_record.asn_shipping_method_code.should == AsnShippingMethodCode.find_by_code(record[:shipping_method_or_slash_reason_code])
@@ -252,13 +252,13 @@ def should_import_asn_shipment_detail_record(parsed, cdf_invoice_file)
   end
 end
 
-def should_import_asn_shipment_record(parsed, cdf_invoice_file)
-  parsed[:asn_shipment].each do |record|
-    db_record = AsnShipment.find_self cdf_invoice_file, record[:client_order_id]
+def should_import_cdf_invoice_header(parsed, cdf_invoice_file)
+  parsed[:cdf_invoice_header].each do |record|
+    db_record = CdfInvoiceHeader.find_self cdf_invoice_file, record[:sequence]
     db_record.should_not == nil
     db_record.cdf_invoice_file.should == cdf_invoice_file
     db_record.order.should_not == nil
-    db_record.record_code.should == 'OR'
+    db_record.record_code.should == '15'
     db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
     db_record.asn_order_status.code.should == record[:order_status_code]
 
@@ -280,10 +280,16 @@ def should_import_cdf_invoice_file_data(parsed, cdf_invoice_file, file_name)
   db_record.record_code.should == '01'
   db_record.created_at.should_not == nil
 
-  [].each do |field|
+  [:record_code,
+   :sequence,
+   :file_source,
+   :ingram_file_name].each do |field|
     ImportFileHelper.should_match_text(db_record, parsed, field)
   end
 
-  [].each { |field| ImportFileHelper.should_match_i(db_record, parsed, field) }
-
+  [:ingram_san].each { |field| ImportFileHelper.should_match_i(db_record, parsed, field) }
+  [:creation_date].each { |field| ImportFileHelper.should_match_date(db_record, parsed, field) }
+  db_record.file_name.should == file_name
+  db_record.versions.should == []
+  db_record.parent.should == nil
 end

@@ -14,7 +14,7 @@ class ImportFileHelper
   def self.should_match_money(object, record, field)
     import_value = record[field]
     object_value = object.read_attribute(field)
-    object_value.should == BigDecimal.new((import_value.to_f / 100).to_s)
+    object_value.should == BigDecimal.new((import_value.to_f / 100).to_s, 0)
 
   end
 
@@ -23,6 +23,11 @@ class ImportFileHelper
     if record[field].nil?
       value.should == '' || value.should == nil
     else
+
+      if object.send(field) != record[field]
+        puts "error on field: #{field}. '#{record[field]}' != '#{object.send(field)}'"
+      end
+
       value.should == record[field].strip
     end
   end
