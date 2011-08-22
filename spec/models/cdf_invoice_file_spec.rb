@@ -245,10 +245,13 @@ def should_import_cdf_invoice_detail_totals(parsed, cdf_invoice_file)
     db_record.cdf_invoice_file.should == cdf_invoice_file
     db_record.record_code.should == '48'
 
-    puts record.to_yaml
-    
     db_record.order.should_not == nil
+    db_record.order.should == Order.find_by_number!(record[:client_order_id].strip)
     db_record.line_item.should_not == nil
+    db_record.line_item.should == LineItem.find_by_id!(record[:line_item_id_number].strip)
+    
+    db_record.cdf_invoice_isbn_detail.should_not == nil
+    db_record.cdf_invoice_ean_detail.should_not == nil
   end
 end
 
