@@ -70,6 +70,38 @@ describe PoaFile do
         PoaFile.remote_files.size.should == 1
       end
 
+      context "when importing an exception file" do
+        before(:each) do
+          @file_name = '110809180859.fbc'
+          poa_file = PoaFile.create_path(@file_name)
+          @ftp.should_receive(:gettextfile).any_number_of_times.with(@file_name, poa_file).and_return do
+            file = File.new(poa_file, 'w')
+            file.write 'NO MAINFRAME'
+            file.close
+            nil
+          end
+
+          @po_file_name = @file_name.gsub(/fbc$/, 'fbo')
+          PoFile.should_receive(:find_by_file_name!).any_number_of_times.with(@po_file_name).and_return(@po_file)
+
+          @order = Factory(:order, :number => 'R364143388')
+          @product = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
+          @variant = @product.master
+          @line_item = Factory(:line_item, :variant => @variant, :price => 10, :order => @order)
+          LineItem.should_receive(:find_by_id!).any_number_of_times.with("1").and_return(@line_item)
+
+          PoaFile.download
+          PoaFile.needs_import.count.should > 0
+          @poa_file = PoaFile.needs_import.first
+        end
+
+        it "should log an error message" do
+          result = @poa_file.import
+          result.class.should == CdfImportExceptionLog
+        end
+      end
+
+
       context "file is downloaded" do
 
         before(:each) do
@@ -144,7 +176,6 @@ describe PoaFile do
               @variant = @product.master
               @line_item = Factory(:line_item, :variant => @variant, :price => 10, :order => @order)
               LineItem.should_receive(:find_by_id!).any_number_of_times.with("1").and_return(@line_item)
-
 
               PoaFile.download
               PoaFile.needs_import.count.should > 0
