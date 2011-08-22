@@ -15,19 +15,23 @@ class ImportFileHelper
     import_value = record[field]
     object_value = object.read_attribute(field)
     object_value.should == BigDecimal.new((import_value.to_f / 100).to_s)
-    
+
   end
 
   def self.should_match_text(object, record, field)
     value = object.read_attribute(field)
     if record[field].nil?
-      value.should == '' || value.should == nil    
+      value.should == '' || value.should == nil
     else
-      value.should == record[field].strip      
+      value.should == record[field].strip
     end
   end
 
   def self.should_match_i(object, record, field)
+    if object.send(field) != record[field].strip.to_i
+      puts "error on field: #{field}. '#{record[field]}' != '#{object.send(field)}'"
+    end
+
     object.send(field).should == record[field].strip.to_i
   end
 
