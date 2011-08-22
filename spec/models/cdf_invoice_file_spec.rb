@@ -167,13 +167,17 @@ describe CdfInvoiceFile do
 
           context "and there are Invoice files to import" do
             before(:each) do
-              @order_1 = FactoryGirl.create(:order, :number => 'R374103387')
-              @order_2 = FactoryGirl.create(:order, :number => 'R674657678')
-
-              @product = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
-              @variant = @product.master
-              @line_item = Factory(:line_item, :variant => @variant, :price => 10, :order => @order_1)
-              LineItem.should_receive(:find_by_id!).any_number_of_times.with("1").and_return(@line_item)
+              @order_1 = FactoryGirl.create(:order, :number => 'R483688864')
+              @product_1 = FactoryGirl.create(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
+              @variant_1 = @product_1.master
+              @line_item_1 = FactoryGirl.create(:line_item, :variant => @variant_1, :price => 10, :order => @order_1)
+              LineItem.should_receive(:find_by_id!).any_number_of_times.with("43").and_return(@line_item_1)
+              
+              @order_2 = FactoryGirl.create(:order, :number => 'R746668282')
+              @product_2 = FactoryGirl.create(:product, :sku => '978-0-37320-000-2', :price => 10, :name => 'test product')
+              @variant_2 = @product_2.master
+              @line_item_2 = Factory(:line_item, :variant => @variant_2, :price => 10, :order => @order_2)
+              LineItem.should_receive(:find_by_id!).any_number_of_times.with("41").and_return(@line_item_2)
 
               CdfInvoiceFile.download
               CdfInvoiceFile.needs_import.count.should > 0
@@ -242,6 +246,9 @@ def should_import_cdf_invoice_detail_totals(parsed, cdf_invoice_file)
     db_record.record_code.should == '48'
 
     puts record.to_yaml
+    
+    db_record.order.should_not == nil
+    db_record.line_item.should_not == nil
   end
 end
 
