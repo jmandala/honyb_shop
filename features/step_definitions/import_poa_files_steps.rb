@@ -3,8 +3,9 @@ Given /^a purchase order was submitted with (\d+) orders? and (\d+) line items? 
   And "each order has #{line_count} line item with a quantity of #{quantity}"
   And "each order is completed"
 
+  needs_po_count = Order.needs_po.count
   @po_file = PoFile.generate
-  @po_file.orders.size.should == order_count.to_i
+  @po_file.orders.size.should == needs_po_count
   @po_file.put
 
 end
@@ -16,12 +17,15 @@ Given /^a POA file exists on the FTP server$/ do
 
     remote_files = []
 
-    5.times do
+    i = 0
+    600.times do
+      i = i+1
       if remote_files.length > 0
         break
       end
-      sleep 5
+      sleep 1
       remote_files = ftp.list("outgoing/#{poa_file_name}")
+      puts "[#{i}] #{remote_files.count}"
     end
 
     remote_files.length.should == 1
