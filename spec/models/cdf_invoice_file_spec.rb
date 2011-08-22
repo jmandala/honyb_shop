@@ -206,6 +206,9 @@ describe CdfInvoiceFile do
                 should_import_cdf_invoice_file_data(@parsed, @cdf_invoice_file, @file_name)
               end
 
+              it "should import the CdfInvoiceHeader data" do
+                should_import_cdf_invoice_header(@parsed, @cdf_invoice_file)
+              end
             end
 
           end
@@ -257,16 +260,14 @@ def should_import_cdf_invoice_header(parsed, cdf_invoice_file)
     db_record = CdfInvoiceHeader.find_self cdf_invoice_file, record[:sequence]
     db_record.should_not == nil
     db_record.cdf_invoice_file.should == cdf_invoice_file
-    db_record.order.should_not == nil
     db_record.record_code.should == '15'
-    db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
-    db_record.asn_order_status.code.should == record[:order_status_code]
 
-    [].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
-
-    [].each { |field| ImportFileHelper.should_match_money(db_record, record, field) }
-
-    db_record.shipping_and_handling.should == BigDecimal.new((record[:shipping_and_handling].to_f / 10000).to_s, 0)
+    [:sequence].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
+    [:invoice_number, :warehouse_san, :company_account_id_number].each do |field|
+      ImportFileHelper.should_match_i(db_record, record, field)
+    end
+    
+    [:invoice_date].each { |field| ImportFileHelper.should_match_date(db_record, record, field, "%Y%m%d") }
   end
 end
 
