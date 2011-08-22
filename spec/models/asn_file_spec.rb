@@ -228,12 +228,18 @@ def should_import_asn_shipment_detail_record(parsed, asn_file)
 
     db_record.asn_shipping_method_code.should == AsnShippingMethodCode.find_by_code(record[:shipping_method_or_slash_reason_code])
 
+    db_record.asn_order_status.code.should == record[:item_detail_status_code]
+
     db_record.dc_code.should_not == nil
     first = record[:shipping_warehouse_code].match(/./).to_s
     codes = DcCode.where("asn_dc_code LIKE ?", "#{first}%")
     db_record.dc_code.should == codes.first
 
     DcCode.find_by_asn_dc_code(record[:shipping_warehouse_code]).to_yaml
+
+    db_record.line_item = LineItem.find_by_id(record[:line_item_id_number])
+    puts db_record.line_item.to_yaml
+
   end
 end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110820094752) do
+ActiveRecord::Schema.define(:version => 20110822151037) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -88,7 +88,6 @@ ActiveRecord::Schema.define(:version => 20110820094752) do
     t.string   "standard_carrier_address_code"
     t.decimal  "ingram_item_list_price",                      :default => 0.0, :null => false
     t.decimal  "net_discounted_price",                        :default => 0.0, :null => false
-    t.string   "line_item_number"
     t.integer  "line_item_id"
     t.string   "ssl",                           :limit => 20
     t.decimal  "weight",                                      :default => 0.0, :null => false
