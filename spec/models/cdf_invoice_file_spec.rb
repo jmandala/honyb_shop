@@ -240,7 +240,7 @@ end
 
 def should_import_cdf_invoice_detail_totals(parsed, cdf_invoice_file)
   parsed[:cdf_invoice_detail_total].each do |record|
-    db_record = CdfInvoiceDetailTotal.find_self cdf_invoice_file, record[:sequence]
+    db_record = CdfInvoiceDetailTotal.find_self cdf_invoice_file, record[:sequence_number]
     db_record.should_not == nil
     db_record.cdf_invoice_file.should == cdf_invoice_file
     db_record.record_code.should == '48'
@@ -257,7 +257,7 @@ end
 
 def should_import_cdf_invoice_ean_detail(parsed, cdf_invoice_file)
   parsed[:cdf_invoice_ean_detail].each do |record|
-    db_record = CdfInvoiceEanDetail.find_self cdf_invoice_file, record[:sequence]
+    db_record = CdfInvoiceEanDetail.find_self cdf_invoice_file, record[:sequence_number]
     db_record.should_not == nil
     db_record.cdf_invoice_file.should == cdf_invoice_file
     db_record.record_code.should == '46'
@@ -270,7 +270,7 @@ def should_import_cdf_invoice_ean_detail(parsed, cdf_invoice_file)
 end
 def should_import_cdf_invoice_isbn_detail(parsed, cdf_invoice_file)
   parsed[:cdf_invoice_isbn_detail].each do |record|
-    db_record = CdfInvoiceIsbnDetail.find_self cdf_invoice_file, record[:sequence]
+    db_record = CdfInvoiceIsbnDetail.find_self cdf_invoice_file, record[:sequence_number]
     db_record.should_not == nil
     db_record.cdf_invoice_file.should == cdf_invoice_file
     db_record.record_code.should == '45'
@@ -291,12 +291,12 @@ end
 
 def should_import_cdf_invoice_header(parsed, cdf_invoice_file)
   parsed[:cdf_invoice_header].each do |record|
-    db_record = CdfInvoiceHeader.find_self cdf_invoice_file, record[:sequence]
+    db_record = CdfInvoiceHeader.find_self cdf_invoice_file, record[:sequence_number]
     db_record.should_not == nil
     db_record.cdf_invoice_file.should == cdf_invoice_file
     db_record.record_code.should == '15'
 
-    [:sequence].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
+    [:sequence_number].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
     [:invoice_number, :warehouse_san, :company_account_id_number].each do |field|
       ImportFileHelper.should_match_i(db_record, record, field)
     end
@@ -316,7 +316,7 @@ def should_import_cdf_invoice_file_data(parsed, cdf_invoice_file, file_name)
   db_record.created_at.should_not == nil
 
   [:record_code,
-   :sequence,
+   :sequence_number,
    :file_source,
    :ingram_file_name].each do |field|
     ImportFileHelper.should_match_text(db_record, parsed, field)
