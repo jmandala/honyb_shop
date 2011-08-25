@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110825100233) do
+ActiveRecord::Schema.define(:version => 20110825132919) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -237,7 +237,7 @@ ActiveRecord::Schema.define(:version => 20110825100233) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "cdf_invoice_file_id"
-    t.integer  "tracking_number"
+    t.string   "tracking_number"
     t.decimal  "net_price",                        :default => 0.0, :null => false
     t.decimal  "shipping",                         :default => 0.0, :null => false
     t.decimal  "handling",                         :default => 0.0, :null => false
