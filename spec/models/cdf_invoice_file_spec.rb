@@ -24,6 +24,7 @@ describe CdfInvoiceFile do
     end
   end
 
+  
   context "when working with remote files" do
     before(:all) do
       @sample_file = "0100001169797800000INGRAM BK CO 110822INVOICE COMMUNICATIONS                    
@@ -259,6 +260,19 @@ def should_import_cdf_invoice_detail_totals(parsed, cdf_invoice_file)
     db_record.cdf_invoice_ean_detail.should_not == nil
     db_record.cdf_invoice_freight_and_fee.should_not == nil
   end
+
+  LineItem.all.each do |line_item|
+    puts "\nLine Item: #{line_item.variant.sku}"
+    line_item.cdf_invoice_detail_totals.each do |total|
+      puts "#{total.title}: $#{total.ingram_list_price} (list), $#{total.discount} (discount), $#{total.net_price} (net) "      
+      puts "#{total.quantity_shipped} [#{total.isbn_10_shipped}, #{total.ean_shipped}] copy(s)"
+      puts "Metered Date: #{total.metered_date.strftime("%h. %d, %y")}"
+      f = total.cdf_invoice_freight_and_fee
+      puts "FREIGHT & FEES: #{f.net_price} (net), #{f.shipping} (shipping), #{f.handling} (handling), #{f.gift_wrap} (gift wrap), #{f.amount_due} (amount due), #{f.tracking_number} (tracking)"
+      puts "\n"
+    end
+  end
+  
 end
 
 def should_import_cdf_invoice_freight_and_fees(parsed, cdf_invoice_file)
@@ -269,13 +283,13 @@ def should_import_cdf_invoice_freight_and_fees(parsed, cdf_invoice_file)
     db_record.record_code.should == '49'
 
     [:tracking_number].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
-    
-    
+
+
     [:net_price,
      :shipping,
      :handling,
      :gift_wrap,
-     :amount_due].each { |field| ImportFileHelper.should_match_money(db_record, record, field)}
+     :amount_due].each { |field| ImportFileHelper.should_match_money(db_record, record, field) }
   end
 end
 
