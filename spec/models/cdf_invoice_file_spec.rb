@@ -24,7 +24,7 @@ describe CdfInvoiceFile do
     end
   end
 
-  
+
   context "when working with remote files" do
     before(:all) do
       @sample_file = "0100001169797800000INGRAM BK CO 110822INVOICE COMMUNICATIONS                    
@@ -232,6 +232,10 @@ describe CdfInvoiceFile do
                 should_import_cdf_invoice_detail_totals(@parsed, @cdf_invoice_file)
               end
 
+              it "should import the CdfInvoiceTotals" do
+                should_import_cdf_invoice_totals(@parsed, @cdf_invoice_file)
+              end
+
             end
 
           end
@@ -242,6 +246,25 @@ describe CdfInvoiceFile do
     end
 
   end
+end
+
+def should_import_cdf_invoice_totals(parsed, cdf_invoice_file)
+  parsed[:cdf_invoice_total].each do |record|
+    db_record = CdfInvoiceTotal.find_self cdf_invoice_file, record[:__LINE_NUMBER__]
+    db_record.should_not == nil
+    db_record.cdf_invoice_file.should == cdf_invoice_file
+    db_record.record_code.should == '55'
+
+    [:bill_of_lading_number].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
+    [:total_invoice_weight,
+     :total_number_of_units,
+     :number_of_titles,
+     :invoice_record_count
+    ].each { |field| ImportFileHelper.should_match_i(db_record, record, field) }
+
+    puts db_record.to_yaml
+  end
+
 end
 
 def should_import_cdf_invoice_detail_totals(parsed, cdf_invoice_file)
@@ -264,7 +287,7 @@ def should_import_cdf_invoice_detail_totals(parsed, cdf_invoice_file)
   LineItem.all.each do |line_item|
     puts "\nLine Item: #{line_item.variant.sku}"
     line_item.cdf_invoice_detail_totals.each do |total|
-      puts "#{total.title}: $#{total.ingram_list_price} (list), $#{total.discount} (discount), $#{total.net_price} (net) "      
+      puts "#{total.title}: $#{total.ingram_list_price} (list), $#{total.discount} (discount), $#{total.net_price} (net) "
       puts "#{total.quantity_shipped} [#{total.isbn_10_shipped}, #{total.ean_shipped}] copy(s)"
       puts "Metered Date: #{total.metered_date.strftime("%h. %d, %y")}"
       f = total.cdf_invoice_freight_and_fee
@@ -272,7 +295,7 @@ def should_import_cdf_invoice_detail_totals(parsed, cdf_invoice_file)
       puts "\n"
     end
   end
-  
+
 end
 
 def should_import_cdf_invoice_freight_and_fees(parsed, cdf_invoice_file)
@@ -283,7 +306,6 @@ def should_import_cdf_invoice_freight_and_fees(parsed, cdf_invoice_file)
     db_record.record_code.should == '49'
 
     [:tracking_number].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
-
 
     [:net_price,
      :shipping,

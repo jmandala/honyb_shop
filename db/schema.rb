@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110825132919) do
+ActiveRecord::Schema.define(:version => 20110825154956) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -285,9 +285,9 @@ ActiveRecord::Schema.define(:version => 20110825132919) do
     t.integer  "invoice_record_count"
     t.integer  "number_of_titles"
     t.integer  "total_number_of_units"
-    t.string   "bill_of_lading",        :limit => 10
     t.integer  "total_invoice_weight"
     t.integer  "line_number"
+    t.string   "bill_of_lading_number"
   end
 
   create_table "cdf_invoice_trailers", :force => true do |t|
