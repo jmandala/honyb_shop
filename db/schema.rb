@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110823135112) do
+ActiveRecord::Schema.define(:version => 20110823155635) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -188,6 +188,7 @@ ActiveRecord::Schema.define(:version => 20110823135112) do
     t.integer  "line_item_id"
     t.integer  "cdf_invoice_isbn_detail_id"
     t.integer  "cdf_invoice_ean_detail_id"
+    t.integer  "line_number"
   end
 
   create_table "cdf_invoice_ean_details", :force => true do |t|
@@ -198,6 +199,7 @@ ActiveRecord::Schema.define(:version => 20110823135112) do
     t.datetime "updated_at"
     t.integer  "cdf_invoice_file_id"
     t.string   "ean_shipped",         :limit => 14
+    t.integer  "line_number"
   end
 
   create_table "cdf_invoice_file_trailers", :force => true do |t|
@@ -209,6 +211,7 @@ ActiveRecord::Schema.define(:version => 20110823135112) do
     t.integer  "total_invoices"
     t.integer  "total_units"
     t.integer  "cdf_invoice_file_id"
+    t.integer  "line_number"
   end
 
   create_table "cdf_invoice_files", :force => true do |t|
@@ -223,6 +226,7 @@ ActiveRecord::Schema.define(:version => 20110823135112) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "parent_id"
+    t.integer  "line_number"
   end
 
   create_table "cdf_invoice_freight_and_fees", :force => true do |t|
@@ -238,6 +242,7 @@ ActiveRecord::Schema.define(:version => 20110823135112) do
     t.decimal  "handling",                         :default => 0.0, :null => false
     t.decimal  "gift_wrap",                        :default => 0.0, :null => false
     t.decimal  "amount_due",                       :default => 0.0, :null => false
+    t.integer  "line_number"
   end
 
   create_table "cdf_invoice_headers", :force => true do |t|
@@ -250,6 +255,7 @@ ActiveRecord::Schema.define(:version => 20110823135112) do
     t.integer  "company_account_id_number"
     t.integer  "warehouse_san"
     t.datetime "invoice_date"
+    t.integer  "line_number"
   end
 
   create_table "cdf_invoice_isbn_details", :force => true do |t|
@@ -265,6 +271,7 @@ ActiveRecord::Schema.define(:version => 20110823135112) do
     t.decimal  "discount",                         :default => 0.0, :null => false
     t.decimal  "net_price",                        :default => 0.0, :null => false
     t.datetime "metered_date"
+    t.integer  "line_number"
   end
 
   create_table "cdf_invoice_totals", :force => true do |t|
@@ -279,6 +286,7 @@ ActiveRecord::Schema.define(:version => 20110823135112) do
     t.integer  "total_number_of_units"
     t.string   "bill_of_lading",        :limit => 10
     t.integer  "total_invoice_weight"
+    t.integer  "line_number"
   end
 
   create_table "cdf_invoice_trailers", :force => true do |t|
@@ -293,6 +301,7 @@ ActiveRecord::Schema.define(:version => 20110823135112) do
     t.decimal  "total_handling",                   :default => 0.0, :null => false
     t.decimal  "total_gift_wrap",                  :default => 0.0, :null => false
     t.decimal  "total_invoice",                    :default => 0.0, :null => false
+    t.integer  "line_number"
   end
 
   create_table "configurations", :force => true do |t|
