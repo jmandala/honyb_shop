@@ -277,8 +277,6 @@ def should_import_cdf_invoice_trailers(parsed, cdf_invoice_file)
 end
 
 def should_import_cdf_invoice_file_trailers(parsed, cdf_invoice_file)
-  #CdfInvoiceFileTrailer.all.each { |c| puts c.to_yaml }
-
   parsed[:cdf_invoice_file_trailer].each do |record|
     db_record = CdfInvoiceFileTrailer.find_self! cdf_invoice_file, record[:__LINE_NUMBER__]
     db_record.should_not == nil
