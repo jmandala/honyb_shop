@@ -236,6 +236,9 @@ describe CdfInvoiceFile do
                 should_import_cdf_invoice_totals(@parsed, @cdf_invoice_file)
               end
 
+              it "should import the CdfInvoiceTrailer" do
+                should_import_cdf_invoice_trailers(@parsed, @cdf_invoice_file)
+              end
             end
 
           end
@@ -246,6 +249,25 @@ describe CdfInvoiceFile do
     end
 
   end
+end
+
+def should_import_cdf_invoice_trailers(parsed, cdf_invoice_file)
+  parsed[:cdf_invoice_trailer].each do |record|
+    db_record = CdfInvoiceTrailer.find_self cdf_invoice_file, record[:__LINE_NUMBER__]
+    db_record.should_not == nil
+    db_record.cdf_invoice_file.should == cdf_invoice_file
+    db_record.record_code.should == '57'
+
+    [:total_invoice,
+     :total_gift_wrap,
+     :total_handling,
+     :total_shipping,
+     :total_net_price
+    ].each { |field| ImportFileHelper.should_match_money(db_record, record, field) }
+
+    puts db_record.to_yaml
+  end
+
 end
 
 def should_import_cdf_invoice_totals(parsed, cdf_invoice_file)
@@ -262,7 +284,7 @@ def should_import_cdf_invoice_totals(parsed, cdf_invoice_file)
      :invoice_record_count
     ].each { |field| ImportFileHelper.should_match_i(db_record, record, field) }
 
-    puts db_record.to_yaml
+    #puts db_record.to_yaml
   end
 
 end
