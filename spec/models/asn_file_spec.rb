@@ -88,6 +88,8 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
         end
 
         it "should download the file, create an AsnFile record, and delete the file from the server" do
+          @ftp.should_receive(:delete).once
+
           AsnFile.needs_import.count.should == 0
           downloaded = AsnFile.download
           downloaded.size.should == 1
@@ -190,11 +192,9 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
           end
         end
 
-
       end
 
     end
-
 
   end
 end
@@ -208,21 +208,36 @@ def should_import_asn_shipment_detail_record(parsed, asn_file)
     db_record.record_code.should == 'OD'
     db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
 
-    puts record.to_yaml
-    
     [:ingram_order_entry_number,
      :isbn_10_ordered,
      :isbn_10_shipped,
      :tracking_number,
-     :scac,
+     :standard_carrier_address_code,
      :ssl,
      :isbn_13].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
 
     [:ingram_item_list_price,
      :net_discounted_price].each { |field| ImportFileHelper.should_match_money(db_record, record, field) }
 
-    db_record.weight.should == BigDecimal.new((record[:weight].to_f / 100).to_s)
+    [:quantity_canceled,
+    :quantity_predicted,
+    :quantity_slashed,
+    :quantity_shipped].each {|field| ImportFileHelper.should_match_i(db_record, record, field)}
+    
+    db_record.weight.should == BigDecimal.new((record[:weight].to_f / 100).to_s, 0)
 
+    db_record.asn_shipping_method_code.should == AsnShippingMethodCode.find_by_code(record[:shipping_method_or_slash_reason_code])
+
+    db_record.asn_order_status.code.should == record[:item_detail_status_code]
+
+    db_record.dc_code.should_not == nil
+    first = record[:shipping_warehouse_code].match(/./).to_s
+    codes = DcCode.where("asn_dc_code LIKE ?", "#{first}%")
+    db_record.dc_code.should == codes.first
+
+    DcCode.find_by_asn_dc_code(record[:shipping_warehouse_code]).to_yaml
+
+    db_record.line_item = LineItem.find_by_id(record[:line_item_id_number])
   end
 end
 
@@ -234,15 +249,16 @@ def should_import_asn_shipment_record(parsed, asn_file)
     db_record.order.should_not == nil
     db_record.record_code.should == 'OR'
     db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
-    [:consumer_po_number].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
     db_record.asn_order_status.code.should == record[:order_status_code]
+
+    [:consumer_po_number].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
 
     [:order_subtotal,
      :order_discount_amount,
      :order_total,
      :freight_charge].each { |field| ImportFileHelper.should_match_money(db_record, record, field) }
 
-    db_record.shipping_and_handling.should == BigDecimal.new((record[:shipping_and_handling].to_f / 10000).to_s)
+    db_record.shipping_and_handling.should == BigDecimal.new((record[:shipping_and_handling].to_f / 10000).to_s, 0)
   end
 end
 
@@ -253,11 +269,12 @@ def should_import_asn_file_data(parsed, asn_file, file_name)
   parsed = all.first
 
   db_record = asn_file
+  db_record.record_code.should == 'CR'
   db_record.created_at.should_not == nil
 
-  [:company_account_id_number,
-   :file_version_number,
-   :record_code].each { |field| ImportFileHelper.should_match_text(db_record, parsed, field) }
+  [:company_account_id_number, :file_version_number, :record_code].each do |field|
+    ImportFileHelper.should_match_text(db_record, parsed, field)
+  end
 
   [:total_order_count].each { |field| ImportFileHelper.should_match_i(db_record, parsed, field) }
 

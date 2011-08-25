@@ -12,22 +12,35 @@ class ImportFileHelper
   end
 
   def self.should_match_money(object, record, field)
-    import_value = record[field]
+    import_value = BigDecimal.new((record[field].to_f / 100).to_s, 0)
     object_value = object.read_attribute(field)
-    object_value.should == BigDecimal.new((import_value.to_f / 100).to_s)
-    
+    if object_value != import_value
+      puts "error on field: #{field}. Import value:'#{import_value.to_s}' != Object value:'#{object_value.to_s}'"
+    end
+
+    object_value.should == import_value
+
   end
 
   def self.should_match_text(object, record, field)
     value = object.read_attribute(field)
     if record[field].nil?
-      value.should == '' || value.should == nil    
+      value.should == '' || value.should == nil
     else
-      value.should == record[field].strip      
+
+      if object.send(field) != record[field].strip
+        puts "error on field: #{field}. '#{record[field]}' != '#{object.send(field)}'"
+      end
+
+      value.should == record[field].strip
     end
   end
 
   def self.should_match_i(object, record, field)
+    if object.send(field) != record[field].strip.to_i
+      puts "error on field: #{field}. '#{record[field]}' != '#{object.send(field)}'"
+    end
+
     object.send(field).should == record[field].strip.to_i
   end
 

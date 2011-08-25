@@ -30,6 +30,6 @@ Feature: Import POA (Purchase Order Acknowledgement) Files
     | 1           | 2          | 1        |
     | 1           | 2          | 2        |
     | 2           | 1          | 1        |
-    | 2           | 1          | 2        |
-    | 2           | 2          | 1        |
-    | 2           | 2          | 2        |
+#    | 2           | 1          | 2        |
+#    | 2           | 2          | 1        |
+#    | 2           | 2          | 2        |

@@ -3,8 +3,9 @@ require 'spec_helper'
 describe PoaAdditionalDetail do
 
   after(:all) do
-    PoaFile.all.each { |p| p.destroy }
-    LineItem.all.each { |l| l.destroy }
+    PoaFile.all.each &:destroy
+    Order.all.each &:destroy
+    LineItem.all.each &:destroy
   end
 
   context "when creating a new instance" do
