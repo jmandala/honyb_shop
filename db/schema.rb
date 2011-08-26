@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110825165712) do
+ActiveRecord::Schema.define(:version => 20110826093826) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -175,21 +175,18 @@ ActiveRecord::Schema.define(:version => 20110825165712) do
   end
 
   create_table "cdf_invoice_detail_totals", :force => true do |t|
-    t.string   "record_code",                    :limit => 2
-    t.string   "sequence_number",                :limit => 5
+    t.string   "record_code",                :limit => 2
+    t.string   "sequence_number",            :limit => 5
     t.integer  "invoice_number"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "cdf_invoice_header_id"
-    t.string   "title",                          :limit => 16
-    t.integer  "client_order_id"
-    t.string   "line_item_id_number"
+    t.string   "title",                      :limit => 16
     t.integer  "order_id"
     t.integer  "line_item_id"
     t.integer  "cdf_invoice_isbn_detail_id"
     t.integer  "cdf_invoice_ean_detail_id"
     t.integer  "line_number"
-    t.integer  "cdf_invoice_freight_and_fee_id"
   end
 
   create_table "cdf_invoice_ean_details", :force => true do |t|
@@ -231,19 +228,21 @@ ActiveRecord::Schema.define(:version => 20110825165712) do
   end
 
   create_table "cdf_invoice_freight_and_fees", :force => true do |t|
-    t.string   "record_code",           :limit => 2
-    t.string   "sequence_number",       :limit => 5
+    t.string   "record_code",                 :limit => 2
+    t.string   "sequence_number",             :limit => 5
     t.integer  "invoice_number"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "cdf_invoice_header_id"
     t.string   "tracking_number"
-    t.decimal  "net_price",                          :default => 0.0, :null => false
-    t.decimal  "shipping",                           :default => 0.0, :null => false
-    t.decimal  "handling",                           :default => 0.0, :null => false
-    t.decimal  "gift_wrap",                          :default => 0.0, :null => false
-    t.decimal  "amount_due",                         :default => 0.0, :null => false
+    t.decimal  "net_price",                                :default => 0.0, :null => false
+    t.decimal  "shipping",                                 :default => 0.0, :null => false
+    t.decimal  "handling",                                 :default => 0.0, :null => false
+    t.decimal  "gift_wrap",                                :default => 0.0, :null => false
+    t.decimal  "amount_due",                               :default => 0.0, :null => false
     t.integer  "line_number"
+    t.integer  "cdf_invoice_detail_total_id"
+    t.integer  "order_id"
   end
 
   create_table "cdf_invoice_headers", :force => true do |t|
