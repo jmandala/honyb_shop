@@ -1,4 +1,4 @@
-require 'spec_helper'
+require_relative '../spec_helper'
 
 describe CdfBindingCode do
 
@@ -17,8 +17,8 @@ describe CdfBindingCode do
     end
 
     it "should allow access to #other" do
-      CdfBindingCode.other.should_not == nil
-      CdfBindingCode.other.name == FactoryGirl.build(:other)
+      CdfBindingCode.other_code.should_not == nil
+      CdfBindingCode.other_code.name == FactoryGirl.build(:other)
     end
 
 

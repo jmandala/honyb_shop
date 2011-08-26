@@ -1,9 +1,13 @@
-require "spec_helper"
+require_relative '../spec_helper'
 
 describe CdfInvoiceFile do
 
   before(:all) do
     CdfInvoiceFile.all.each &:destroy
+    AsnFile.all.each &:destroy    
+    PoaFile.all.each &:destroy
+    PoFile.all.each &:destroy        
+    Order.all.each &:destroy
   end
 
   after(:all) do
@@ -277,9 +281,7 @@ describe CdfInvoiceFile do
               end
 
               it "should have a reference from Order to CdfInvoiceDetailTotal" do
-                Order.all.each do |i|
-                  i.cdf_invoice_detail_totals.count.should > 0
-                end
+                Order.all.each { |i| i.cdf_invoice_detail_totals.count.should > 0 }
               end
               it "should have a reference from Order to CdfInvoiceFreightAndFee" do
                 Order.all.each { |i| i.cdf_invoice_freight_and_fees.count.should > 0 }
@@ -288,7 +290,7 @@ describe CdfInvoiceFile do
               it "should have a reference from LineItem to CdfInvoiceDetailTotal" do
                 LineItem.all.each { |li| li.cdf_invoice_detail_totals.count > 0 }
               end
-              
+
             end
 
           end
