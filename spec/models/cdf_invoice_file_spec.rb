@@ -325,7 +325,7 @@ def should_import_cdf_invoice_trailers(parsed, cdf_invoice_file)
      :total_net_price
     ].each { |field| ImportFileHelper.should_match_money(db_record, record, field) }
 
-    #puts db_record.to_yaml
+    db_record.cdf_invoice_header.should_not == nil
   end
 
 end
@@ -453,6 +453,7 @@ def should_import_cdf_invoice_header(parsed, cdf_invoice_file)
 
     db_record.cdf_invoice_detail_totals.should_not == nil
     db_record.cdf_invoice_freight_and_fees.should_not == nil
+    db_record.cdf_invoice_trailer.should_not == nil
   end
 end
 
