@@ -1,4 +1,4 @@
-require "spec_helper"
+require_relative "../spec_helper"
 
 describe "test factories" do
   it "should save an order, and retrieve and order" do

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require_relative '../spec_helper'
 
 MAX_POA_VENDOR_RECORDS = 6
 
