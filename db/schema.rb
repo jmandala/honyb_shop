@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110823155635) do
+ActiveRecord::Schema.define(:version => 20110826093826) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -180,10 +180,8 @@ ActiveRecord::Schema.define(:version => 20110823155635) do
     t.integer  "invoice_number"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "cdf_invoice_file_id"
+    t.integer  "cdf_invoice_header_id"
     t.string   "title",                      :limit => 16
-    t.integer  "client_order_id"
-    t.string   "line_item_id_number"
     t.integer  "order_id"
     t.integer  "line_item_id"
     t.integer  "cdf_invoice_isbn_detail_id"
@@ -192,13 +190,13 @@ ActiveRecord::Schema.define(:version => 20110823155635) do
   end
 
   create_table "cdf_invoice_ean_details", :force => true do |t|
-    t.string   "record_code",         :limit => 2
-    t.string   "sequence_number",     :limit => 5
+    t.string   "record_code",           :limit => 2
+    t.string   "sequence_number",       :limit => 5
     t.integer  "invoice_number"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "cdf_invoice_file_id"
-    t.string   "ean_shipped",         :limit => 14
+    t.integer  "cdf_invoice_header_id"
+    t.string   "ean_shipped",           :limit => 14
     t.integer  "line_number"
   end
 
@@ -230,19 +228,21 @@ ActiveRecord::Schema.define(:version => 20110823155635) do
   end
 
   create_table "cdf_invoice_freight_and_fees", :force => true do |t|
-    t.string   "record_code",         :limit => 2
-    t.string   "sequence_number",     :limit => 5
+    t.string   "record_code",                 :limit => 2
+    t.string   "sequence_number",             :limit => 5
     t.integer  "invoice_number"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "cdf_invoice_file_id"
-    t.integer  "tracking_number"
-    t.decimal  "net_price",                        :default => 0.0, :null => false
-    t.decimal  "shipping",                         :default => 0.0, :null => false
-    t.decimal  "handling",                         :default => 0.0, :null => false
-    t.decimal  "gift_wrap",                        :default => 0.0, :null => false
-    t.decimal  "amount_due",                       :default => 0.0, :null => false
+    t.integer  "cdf_invoice_header_id"
+    t.string   "tracking_number"
+    t.decimal  "net_price",                                :default => 0.0, :null => false
+    t.decimal  "shipping",                                 :default => 0.0, :null => false
+    t.decimal  "handling",                                 :default => 0.0, :null => false
+    t.decimal  "gift_wrap",                                :default => 0.0, :null => false
+    t.decimal  "amount_due",                               :default => 0.0, :null => false
     t.integer  "line_number"
+    t.integer  "cdf_invoice_detail_total_id"
+    t.integer  "order_id"
   end
 
   create_table "cdf_invoice_headers", :force => true do |t|
@@ -259,17 +259,17 @@ ActiveRecord::Schema.define(:version => 20110823155635) do
   end
 
   create_table "cdf_invoice_isbn_details", :force => true do |t|
-    t.string   "record_code",         :limit => 2
-    t.string   "sequence_number",     :limit => 5
+    t.string   "record_code",           :limit => 2
+    t.string   "sequence_number",       :limit => 5
     t.integer  "invoice_number"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "cdf_invoice_file_id"
+    t.integer  "cdf_invoice_header_id"
     t.string   "isbn_10_shipped"
     t.integer  "quantity_shipped"
-    t.decimal  "ingram_list_price",                :default => 0.0, :null => false
-    t.decimal  "discount",                         :default => 0.0, :null => false
-    t.decimal  "net_price",                        :default => 0.0, :null => false
+    t.decimal  "ingram_list_price",                  :default => 0.0, :null => false
+    t.decimal  "discount",                           :default => 0.0, :null => false
+    t.decimal  "net_price",                          :default => 0.0, :null => false
     t.datetime "metered_date"
     t.integer  "line_number"
   end
@@ -280,27 +280,27 @@ ActiveRecord::Schema.define(:version => 20110823155635) do
     t.integer  "invoice_number"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "cdf_invoice_file_id"
+    t.integer  "cdf_invoice_header_id"
     t.integer  "invoice_record_count"
     t.integer  "number_of_titles"
     t.integer  "total_number_of_units"
-    t.string   "bill_of_lading",        :limit => 10
     t.integer  "total_invoice_weight"
     t.integer  "line_number"
+    t.string   "bill_of_lading_number"
   end
 
   create_table "cdf_invoice_trailers", :force => true do |t|
-    t.string   "record_code",         :limit => 2
-    t.string   "sequence_number",     :limit => 5
+    t.string   "record_code",           :limit => 2
+    t.string   "sequence_number",       :limit => 5
     t.integer  "invoice_number"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "cdf_invoice_file_id"
-    t.decimal  "total_net_price",                  :default => 0.0, :null => false
-    t.decimal  "total_shipping",                   :default => 0.0, :null => false
-    t.decimal  "total_handling",                   :default => 0.0, :null => false
-    t.decimal  "total_gift_wrap",                  :default => 0.0, :null => false
-    t.decimal  "total_invoice",                    :default => 0.0, :null => false
+    t.integer  "cdf_invoice_header_id"
+    t.decimal  "total_net_price",                    :default => 0.0, :null => false
+    t.decimal  "total_shipping",                     :default => 0.0, :null => false
+    t.decimal  "total_handling",                     :default => 0.0, :null => false
+    t.decimal  "total_gift_wrap",                    :default => 0.0, :null => false
+    t.decimal  "total_invoice",                      :default => 0.0, :null => false
     t.integer  "line_number"
   end
 

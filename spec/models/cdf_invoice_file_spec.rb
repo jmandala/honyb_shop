@@ -172,7 +172,6 @@ describe CdfInvoiceFile do
               @variant_1 = @product_1.master
               @line_item_1 = FactoryGirl.create(:line_item, :variant => @variant_1, :price => 10, :order => @order_1)
               LineItem.should_receive(:find_by_id!).any_number_of_times.with("43").and_return(@line_item_1)
-              
               @order_2 = FactoryGirl.create(:order, :number => 'R746668282')
               @product_2 = FactoryGirl.create(:product, :sku => '978-0-37320-000-2', :price => 10, :name => 'test product')
               @variant_2 = @product_2.master
@@ -213,17 +212,81 @@ describe CdfInvoiceFile do
               it "should import the CdfInvoiceHeader data" do
                 should_import_cdf_invoice_header(@parsed, @cdf_invoice_file)
               end
-              
+
+              it "should import 2 CdfInvoiceHeaders" do
+                ImportFileHelper.should_match_count(CdfInvoiceHeader, 2)
+              end
+
               it "should import the CdfInvoiceIsbnDetail data" do
                 should_import_cdf_invoice_isbn_detail(@parsed, @cdf_invoice_file)
               end
-              
+
+              it "should import 6 CdfInvoiceIsbnDetail" do
+                ImportFileHelper.should_match_count(CdfInvoiceIsbnDetail, 6)
+              end
+
               it "should import the CdfInvoiceEanDetail data" do
                 should_import_cdf_invoice_ean_detail(@parsed, @cdf_invoice_file)
               end
-              
+
+              it "should import 6 CdfInvoiceEanDetail" do
+                ImportFileHelper.should_match_count(CdfInvoiceEanDetail, 6)
+              end
+
+              it "should import the CdfInvoiceFreightAndFee data" do
+                should_import_cdf_invoice_freight_and_fees(@parsed, @cdf_invoice_file)
+              end
+
+
+              it "should import 4 CdfInvoiceFreightAndFee" do
+                ImportFileHelper.should_match_count(CdfInvoiceFreightAndFee, 4)
+              end
+
               it "should import the CdfInvoiceDetailTotals " do
                 should_import_cdf_invoice_detail_totals(@parsed, @cdf_invoice_file)
+              end
+
+
+              it "should import 6 CdfInvoiceDetailTotals" do
+                ImportFileHelper.should_match_count(CdfInvoiceDetailTotal, 6)
+              end
+
+              it "should import the CdfInvoiceTotals" do
+                should_import_cdf_invoice_totals(@parsed, @cdf_invoice_file)
+              end
+
+
+              it "should import 2 CdfInvoiceTotal" do
+                ImportFileHelper.should_match_count(CdfInvoiceTotal, 2)
+              end
+
+              it "should import the CdfInvoiceTrailer" do
+                should_import_cdf_invoice_trailers(@parsed, @cdf_invoice_file)
+              end
+
+              it "should import 2 CdfInvoiceTrailer" do
+                ImportFileHelper.should_match_count(CdfInvoiceTrailer, 2)
+              end
+
+              it "should import the CdfInvoiceFileTrailer" do
+                should_import_cdf_invoice_file_trailers(@parsed, @cdf_invoice_file)
+              end
+
+              it "should import 1 CdfInvoiceFileTrailer" do
+                ImportFileHelper.should_match_count(CdfInvoiceFileTrailer, 1)
+              end
+
+              it "should have a reference from Order to CdfInvoiceDetailTotal" do
+                Order.all.each do |i|
+                  i.cdf_invoice_detail_totals.count.should > 0
+                end
+              end
+              it "should have a reference from Order to CdfInvoiceFreightAndFee" do
+                Order.all.each { |i| i.cdf_invoice_freight_and_fees.count.should > 0 }
+              end
+
+              it "should have a reference from LineItem to CdfInvoiceDetailTotal" do
+                LineItem.all.each { |li| li.cdf_invoice_detail_totals.count > 0 }
               end
               
             end
@@ -238,9 +301,70 @@ describe CdfInvoiceFile do
   end
 end
 
+def dump_fees(f)
+  puts "FREIGHT & FEES: #{f.net_price} (net), #{f.shipping} (shipping), #{f.handling} (handling), #{f.gift_wrap} (gift wrap), #{f.amount_due} (amount due), #{f.tracking_number} (tracking)"
+  [:invoice_number, :line_number, :cdf_invoice_header_id, :cdf_invoice_detail_total_id, :id].each do |k|
+    puts "#{k} = #{f.send(k)}"
+  end
+  puts "\n"
+end
+
+def should_import_cdf_invoice_trailers(parsed, cdf_invoice_file)
+  parsed[:cdf_invoice_trailer].each do |record|
+    db_record = CdfInvoiceTrailer.find_self cdf_invoice_file, record[:__LINE_NUMBER__]
+    db_record.should_not == nil
+    db_record.cdf_invoice_file.should == cdf_invoice_file
+    db_record.record_code.should == '57'
+
+    [:total_invoice,
+     :total_gift_wrap,
+     :total_handling,
+     :total_shipping,
+     :total_net_price
+    ].each { |field| ImportFileHelper.should_match_money(db_record, record, field) }
+
+    #puts db_record.to_yaml
+  end
+
+end
+
+def should_import_cdf_invoice_file_trailers(parsed, cdf_invoice_file)
+  parsed[:cdf_invoice_file_trailer].each do |record|
+    db_record = CdfInvoiceFileTrailer.find_self! cdf_invoice_file, record[:__LINE_NUMBER__]
+    db_record.should_not == nil
+    db_record.cdf_invoice_file.should == cdf_invoice_file
+    db_record.record_code.should == '95'
+
+    [:total_titles,
+     :total_invoices,
+     :total_units
+    ].each { |field| ImportFileHelper.should_match_i(db_record, record, field) }
+  end
+
+end
+
+def should_import_cdf_invoice_totals(parsed, cdf_invoice_file)
+  parsed[:cdf_invoice_total].each do |record|
+    db_record = CdfInvoiceTotal.find_self cdf_invoice_file, record[:__LINE_NUMBER__]
+    db_record.should_not == nil
+    db_record.cdf_invoice_file.should == cdf_invoice_file
+    db_record.record_code.should == '55'
+
+    [:bill_of_lading_number].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
+    [:total_invoice_weight,
+     :total_number_of_units,
+     :number_of_titles,
+     :invoice_record_count
+    ].each { |field| ImportFileHelper.should_match_i(db_record, record, field) }
+
+    #puts db_record.to_yaml
+  end
+
+end
+
 def should_import_cdf_invoice_detail_totals(parsed, cdf_invoice_file)
   parsed[:cdf_invoice_detail_total].each do |record|
-    db_record = CdfInvoiceDetailTotal.find_self cdf_invoice_file, record[:sequence_number]
+    db_record = CdfInvoiceDetailTotal.find_self cdf_invoice_file, record[:__LINE_NUMBER__]
     db_record.should_not == nil
     db_record.cdf_invoice_file.should == cdf_invoice_file
     db_record.record_code.should == '48'
@@ -249,15 +373,34 @@ def should_import_cdf_invoice_detail_totals(parsed, cdf_invoice_file)
     db_record.order.should == Order.find_by_number!(record[:client_order_id].strip)
     db_record.line_item.should_not == nil
     db_record.line_item.should == LineItem.find_by_id!(record[:line_item_id_number].strip)
-    
     db_record.cdf_invoice_isbn_detail.should_not == nil
     db_record.cdf_invoice_ean_detail.should_not == nil
   end
 end
 
+def should_import_cdf_invoice_freight_and_fees(parsed, cdf_invoice_file)
+  parsed[:cdf_invoice_freight_and_fee].each do |record|
+    db_record = CdfInvoiceFreightAndFee.find_self cdf_invoice_file, record[:__LINE_NUMBER__]
+    db_record.should_not == nil
+    db_record.cdf_invoice_file.should == cdf_invoice_file
+    db_record.record_code.should == '49'
+
+    [:tracking_number].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
+
+    [:net_price,
+     :shipping,
+     :handling,
+     :gift_wrap,
+     :amount_due].each { |field| ImportFileHelper.should_match_money(db_record, record, field) }
+
+    db_record.cdf_invoice_header.should_not == nil
+    db_record.cdf_invoice_detail_total.should_not == nil
+  end
+end
+
 def should_import_cdf_invoice_ean_detail(parsed, cdf_invoice_file)
   parsed[:cdf_invoice_ean_detail].each do |record|
-    db_record = CdfInvoiceEanDetail.find_self cdf_invoice_file, record[:sequence_number]
+    db_record = CdfInvoiceEanDetail.find_self cdf_invoice_file, record[:__LINE_NUMBER__]
     db_record.should_not == nil
     db_record.cdf_invoice_file.should == cdf_invoice_file
     db_record.record_code.should == '46'
@@ -268,9 +411,10 @@ def should_import_cdf_invoice_ean_detail(parsed, cdf_invoice_file)
 
   end
 end
+
 def should_import_cdf_invoice_isbn_detail(parsed, cdf_invoice_file)
   parsed[:cdf_invoice_isbn_detail].each do |record|
-    db_record = CdfInvoiceIsbnDetail.find_self cdf_invoice_file, record[:sequence_number]
+    db_record = CdfInvoiceIsbnDetail.find_self cdf_invoice_file, record[:__LINE_NUMBER__]
     db_record.should_not == nil
     db_record.cdf_invoice_file.should == cdf_invoice_file
     db_record.record_code.should == '45'
@@ -291,7 +435,7 @@ end
 
 def should_import_cdf_invoice_header(parsed, cdf_invoice_file)
   parsed[:cdf_invoice_header].each do |record|
-    db_record = CdfInvoiceHeader.find_self cdf_invoice_file, record[:sequence_number]
+    db_record = CdfInvoiceHeader.find_self cdf_invoice_file, record[:__LINE_NUMBER__]
     db_record.should_not == nil
     db_record.cdf_invoice_file.should == cdf_invoice_file
     db_record.record_code.should == '15'
@@ -302,6 +446,9 @@ def should_import_cdf_invoice_header(parsed, cdf_invoice_file)
     end
 
     [:invoice_date].each { |field| ImportFileHelper.should_match_date(db_record, record, field, "%Y%m%d") }
+
+    db_record.cdf_invoice_detail_totals.should_not == nil
+    db_record.cdf_invoice_freight_and_fees.should_not == nil
   end
 end
 

@@ -1,5 +1,9 @@
 class ImportFileHelper
 
+  def self.should_match_count(klass, count)
+    klass.count.should == count
+  end
+  
   def self.should_match_date(object, record, field, fmt="%y%m%d")
     import_value = record[field]
     object_value = object.send(field)
