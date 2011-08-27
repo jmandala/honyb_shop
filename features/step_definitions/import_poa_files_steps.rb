@@ -6,7 +6,7 @@ Given /^a purchase order was submitted with (\d+) orders? and (\d+) line items? 
   needs_po_count = Order.needs_po.count
   @po_file = PoFile.generate
   @po_file.orders.size.should == needs_po_count
-  @po_file.put
+  #@po_file.put
 
 end
 

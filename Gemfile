@@ -37,7 +37,6 @@ group :cucumber, :test, :development do
   gem 'rspec-rails'
   gem 'webrat'
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
-  #gem 'rb-inotify', :require => false if RUBY_PLATFORM =~ /linux/i
   gem 'guard-rspec'
   gem 'guard-cucumber'
   gem 'guard-spork'
