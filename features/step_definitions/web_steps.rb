@@ -24,9 +24,22 @@ require 'cgi'
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "selectors"))
 
+class String
+  def to_css_name
+    self.downcase.gsub(" ","-")
+  end
+end
+
 module WithinHelpers
-  def with_scope(locator)
-    locator ? within(*selector_for(locator)) { yield } : yield
+  def with_scope(locator,css_type=nil)
+    locator = convert_locator_to_css(locator,css_type) if locator and css_type
+    locator ? within(locator) { yield } : yield
+  end
+
+  def convert_locator_to_css(locator,css_type)
+    locator = locator.to_css_name
+    return locator if locator =~ /^[.#]/
+    css_type==:css_class ? ".#{locator}" : "##{locator}"
   end
 end
 World(WithinHelpers)
@@ -54,6 +67,10 @@ When /^(?:|I )press "([^"]*)"$/ do |button|
 end
 
 When /^(?:|I )follow "([^"]*)"$/ do |link|
+  click_link(link)
+end
+
+When /^(?:|I )click (?:|the )"([^"]*)"(?:| link)$/ do |link|
   click_link(link)
 end
 
@@ -108,6 +125,10 @@ Then /^(?:|I )should see "([^"]*)"$/ do |text|
   else
     assert page.has_content?(text)
   end
+end
+
+Then /^(?:|I )should see a link for "([^"]*)"$/ do |link|
+    page.should have_link(link)
 end
 
 Then /^(?:|I )should see \/([^\/]*)\/$/ do |regexp|
