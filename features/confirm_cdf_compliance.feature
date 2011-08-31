@@ -11,7 +11,9 @@ Feature: Confirm CDF-Lite Integration Compliance
   Scenario: generate test orders
     When I click the "Fulfillment" link
     And I press "Generate Test Orders"
-    Then I should see "Test Orders Created"
+    Then I should see "Created 1 test order"
+    And I should see "Listing Orders"
+    And the "search_order_type_equals" drop-down should contain the option "test"
 
   @wip
   Scenario: run compliance test

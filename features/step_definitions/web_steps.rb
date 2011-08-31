@@ -44,11 +44,6 @@ module WithinHelpers
 end
 World(WithinHelpers)
 
-# Single-line step scoper
-When /^(.*) within (.*[^:])$/ do |step, parent|
-  with_scope(parent) { When step }
-end
-
 # Multi-line step scoper
 When /^(.*) within (.*[^:]):$/ do |step, parent, table_or_string|
   with_scope(parent) { When "#{step}:", table_or_string }
@@ -192,6 +187,14 @@ Then /^the "([^"]*)" checkbox(?: within (.*))? should be checked$/ do |label, pa
       assert field_checked
     end
   end
+end
+
+Then /^the "([^"]*)" drop-down should contain the option "([^"]*)"$/ do |id, value|
+  page.should have_xpath("//select[@id = '#{id}']/option[@value = '#{value}']")
+end
+
+Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, id|
+  page.should have_xpath("//select[@id = '#{id}']/option[@selected = 'selected'][text() = '#{value}']")
 end
 
 Then /^the "([^"]*)" checkbox(?: within (.*))? should not be checked$/ do |label, parent|

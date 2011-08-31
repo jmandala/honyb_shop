@@ -18,7 +18,6 @@ gem 'haml'
 # Followed by spree itself first, all spree-specific extensions second
 gem 'spree', '0.60.1'
 
-# Needed to help create test orders
 gem 'faker'
 gem "factory_girl_rails"
 
