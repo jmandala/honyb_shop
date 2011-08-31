@@ -233,3 +233,9 @@ end
 Then /^show me the page$/ do
   save_and_open_page
 end
+
+# Orders
+Then /^the test order should be completed$/ do
+  order = Order.test.order('created_at DESC').first
+  order.completed_at.should_not == nil
+end
