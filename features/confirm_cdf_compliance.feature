@@ -10,6 +10,7 @@ Feature: Confirm CDF-Lite Integration Compliance
    
   Scenario: generate test orders
     When I click the "Fulfillment" link
+    And I check "single order/single line/single quantity"
     And I press "Generate Test Orders"
     Then I should see "Created 1 test order"
     And I should see "Listing Orders"
