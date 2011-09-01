@@ -237,5 +237,9 @@ end
 # Orders
 Then /^the test order should be completed$/ do
   order = Order.test.order('created_at DESC').first
+  order.bill_address.should_not == nil
+  order.ship_address.should_not == nil
+  order.shipping_method.should_not == nil
+  order.payment_method.should_not == nil
   order.completed_at.should_not == nil
 end
