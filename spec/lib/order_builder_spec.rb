@@ -11,6 +11,11 @@ describe 'OrderBuilder' do
     order.errors.should == {}
     order.id.should_not == nil
     order.id.should > 0
+    order.line_items.count.should == 1
+    order.payment.source.should_not == nil
+    order.payment.payment_method.should_not == nil
+
+    order.payment.payment_method.environment.should == ENV['RAILS_ENV']
   end
   
 end
