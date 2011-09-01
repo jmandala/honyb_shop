@@ -16,6 +16,8 @@ describe 'OrderBuilder' do
     order.payment.payment_method.should_not == nil
 
     order.payment.payment_method.environment.should == ENV['RAILS_ENV']
+    
+    order.complete?.should == true
   end
   
 end
