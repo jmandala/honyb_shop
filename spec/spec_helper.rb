@@ -2,14 +2,12 @@ require 'rubygems'
 require 'spork'
 
 Spork.prefork do
-  
        
   # from http://avdi.org/devblog/2011/04/17/rubymine-spork-rspec-cucumber/
   if ENV["RUBYMINE_HOME"]  
     $:.unshift(File.expand_path("rb/testing/patch/common", ENV["RUBYMINE_HOME"]))  
     $:.unshift(File.expand_path("rb/testing/patch/bdd", ENV["RUBYMINE_HOME"]))  
   end    
-  
   
   # Loading more in this block will cause your tests to run faster. However,
   # if you change any configuration or code from libraries loaded here, you'll
@@ -25,7 +23,6 @@ Spork.prefork do
     module Models
       module DatabaseAuthenticatable
         protected
-
         def password_digest(password)
           password
         end
@@ -59,12 +56,16 @@ Spork.prefork do
 end
 
 Spork.each_run do
-
   GC.disable
-
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
-  Dir[Rails.root.join("cdf/lib/fixed_width/**/*.rb")].each { |f| require f }
+  Dir[Rails.root.join("cdf/lib/**/*.rb")].each { |f| require f }
+
+  Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator.rb")) do |f|
+    Rails.configuration.cache_classes ? require(f) : load(f)
+  end  
+  
+  require 'spree_core/testing_support/factories'
 end
