@@ -5,6 +5,10 @@ describe Cdf::ProductBuilder do
   it "should create a new in-stock product" do
     product = Cdf::ProductBuilder.new.next_in_stock!
     product.should_not == nil
+    product.has_stock?.should == true
+    product.on_hand.should > 0
+    product.master.in_stock?.should == true
+    product.master.on_backorder.should == 0
   end
 
   it "should create new in stock products with new skus" do
@@ -17,7 +21,6 @@ describe Cdf::ProductBuilder do
         end
       end
     end
-
   end
 
 end
