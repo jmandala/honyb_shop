@@ -44,11 +44,6 @@ module WithinHelpers
 end
 World(WithinHelpers)
 
-# Single-line step scoper
-When /^(.*) within (.*[^:])$/ do |step, parent|
-  with_scope(parent) { When step }
-end
-
 # Multi-line step scoper
 When /^(.*) within (.*[^:]):$/ do |step, parent, table_or_string|
   with_scope(parent) { When "#{step}:", table_or_string }
@@ -194,6 +189,14 @@ Then /^the "([^"]*)" checkbox(?: within (.*))? should be checked$/ do |label, pa
   end
 end
 
+Then /^the "([^"]*)" drop-down should contain the option "([^"]*)"$/ do |id, value|
+  page.should have_xpath("//select[@id = '#{id}']/option[@value = '#{value}']")
+end
+
+Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, id|
+  page.should have_xpath("//select[@id = '#{id}']/option[@selected = 'selected'][text() = '#{value}']")
+end
+
 Then /^the "([^"]*)" checkbox(?: within (.*))? should not be checked$/ do |label, parent|
   with_scope(parent) do
     field_checked = find_field(label)['checked']
@@ -229,4 +232,14 @@ end
 
 Then /^show me the page$/ do
   save_and_open_page
+end
+
+# Orders
+Then /^the test order should be completed$/ do
+  order = Order.test.order('created_at DESC').first
+  order.bill_address.should_not == nil
+  order.ship_address.should_not == nil
+  order.shipping_method.should_not == nil
+  order.payment_method.should_not == nil
+  order.completed_at.should_not == nil
 end

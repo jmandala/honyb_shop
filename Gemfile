@@ -18,6 +18,10 @@ gem 'haml'
 # Followed by spree itself first, all spree-specific extensions second
 gem 'spree', '0.60.1'
 
+gem 'faker'
+gem "factory_girl_rails"
+
+
 #
 # Dev/Test gems
 group :development, :test do
@@ -28,8 +32,6 @@ end
 
 group :cucumber, :test, :development do
   gem 'spork', '~> 0.9.0.rc'
-  gem 'faker'
-  gem "factory_girl_rails"
   gem 'capybara'
   gem 'cucumber'
   gem 'cucumber-rails'

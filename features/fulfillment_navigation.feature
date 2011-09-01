@@ -6,19 +6,21 @@ Feature: Confirm CDF-Lite Integration Compliance
 
   Background: user is logged in to the admin site
     Given I sign in with email "admin@honyb.com" and password "password"
-    And I go to the admin page
-   
-  Scenario: generate test orders
-    When I click the "Fulfillment" link
-    And I check "single order/single line/single quantity"
-    And I check "single order/single line/multiple quantity"
-    And I check "single order/multiple lines/single quantity"
-    And I check "single order/multiple lines/multiple quantity"
-    And I press "Generate Test Orders"
-    Then I should see "Created 4 test orders"
-    And I should see "Listing Orders"
-    And the "search_order_type_equals" drop-down should contain the option "test"
-    And the test order should be completed
+    Then I should not see "Log In as Existing Customer"
+    
+  Scenario: visit the admin page should should correct navigation
+    When I go to the admin page
+    And I click the "Fulfillment" link
+    Then I should see a link for "Dashboard"
+    And I should see a link for "PO Files"
+    And I should see a link for "POA Files"
+    And I should see a link for "ASN Files"
+    And I should see a link for "Invoice Files"
+    
+  Scenario: visit the CDF Compliance screen
+#    When I sign in
+#    And I visit the fulfillment management screen
+#    Then I should see the CDF Compliance screen
 
   @wip
   Scenario: run compliance test
