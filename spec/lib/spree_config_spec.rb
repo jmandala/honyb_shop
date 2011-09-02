@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe 'Spree::Config' do
+describe Spree::Config do
   before(:each) do
     @key = :test_config_key
   end

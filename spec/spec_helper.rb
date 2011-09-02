@@ -61,6 +61,7 @@ Spork.each_run do
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+  Dir[Rails.root.join("lib/**/*.rb")].each { |f| require f }
   Dir[Rails.root.join("cdf/lib/**/*.rb")].each { |f| require f }
 
   Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator.rb")) do |f|

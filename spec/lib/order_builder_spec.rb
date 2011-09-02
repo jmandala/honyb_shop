@@ -19,9 +19,9 @@ describe Cdf::OrderBuilder do
     order.line_items.count.should == 1
     order.payment.source.should_not == nil
     order.payment.payment_method.should_not == nil
-
     order.payment.payment_method.environment.should == ENV['RAILS_ENV']
-    
+    order.payment.state.should == 'completed'
+    order.outstanding_balance.should == 0
     order.complete?.should == true
   end
   
