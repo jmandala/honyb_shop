@@ -23,13 +23,33 @@ describe CdfFtpClient do
 
   context "when connecting to server" do
 
+    before(:all) do
+      Cdf::Config.set(:cdf_run_mode => :test)      
+    end
+    
     before(:each) do
+      
       @ftp = double('FTP server').as_null_object
       Net::FTP.should_receive(:open).with(@client.server).and_return(@ftp)
     end
 
     it "should login and close" do
       @client.connect
+    end
+  end
+
+  context "when run in mock mode" do
+    before(:all) do
+      Cdf::Config.set(:cdf_run_mode => :mock)
+    end
+
+    it "should know it's in mock mode" do
+      @client.run_mode.should == :mock
+      @client.mock?.should == true
+    end
+
+    it "should not do anything when #connect is called" do
+      @client.connect { raise StandardError, "this should not get called!" }
     end
   end
 end
