@@ -185,7 +185,6 @@ describe PoaFile do
             it "should import files one by one" do
               @poa_file.import.should_not == nil
               @poa_file.imported_at.should_not == nil
-
               PoaFile.needs_import.count.should == 0
             end
 
