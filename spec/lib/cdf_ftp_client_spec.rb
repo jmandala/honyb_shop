@@ -74,6 +74,31 @@ describe CdfFtpClient do
           @client.incoming_files.should_not == nil
         end
         
+        it "should put a file the archive and then download it and cleanup" do
+          content = "#{rand(50)}-#{rand(50)}-#{rand(50)}"
+          file_name = 'test.txt'
+          File.open(file_name, 'w') { |f| f.write content }
+          content.should ==  File.read(file_name)
+          
+          alive = CdfFtpClient.new({:keep_alive => true})
+          
+          alive.put('~/archive', file_name)
+          
+          files = alive.get_all('~/archive', '.*\.txt', 'download_dir')
+          files.should == [file_name]
+          
+          new_file = File.join('download_dir', file_name)
+          
+          content.should == File.read(new_file)
+          
+          File.delete file_name
+          File.delete new_file
+          FileUtils.rm_f 'download_dir'
+          
+          alive.delete('~/archive', file_name)
+          alive.close
+        end
+        
       end
 
       context "when server credentials are invalid" do

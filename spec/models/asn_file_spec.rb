@@ -41,8 +41,7 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
 
     context "and there are no ASN files on the server" do
       it "should count 0 files" do
-        @client.should_receive(:connect)
-        AsnFile.should_receive(:remote_file_path).any_number_of_times.and_return('test')
+        @client.should_receive(:dir).with('~/outgoing', '.*\#{@ext}').and_return([])
         AsnFile.remote_files.count.should == 0
       end
     end
@@ -50,12 +49,16 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
     context "and there is 1 ASN files on the server" do
       before(:each) do
 
-        @outgoing_files = [
+        @outgoing_all = [
             "drw-rw-rw-   1 user     group           0 Aug  3 21:52 ..",
             "drw-rw-rw-   1 user     group           0 Aug  3 21:52 .",
             "-rw-rw-rw-   1 user     group         128 Aug  3 13:30 05503677.PBS",
             "-rw-rw-rw-   1 user     group         128 Aug  3 13:30 05503670.pbs",
             "-rw-rw-rw-   1 user     group        1872 Aug  3 20:30 05503658.pbs"
+        ]
+        
+        @outgoing_filtered = [
+            "-rw-rw-rw-   1 user     group         128 Aug  3 13:30 05503677.PBS",            
         ]
 
         @test_files = [
@@ -66,13 +69,17 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
             "-rw-rw-rw-   1 user     group        1872 Aug  3 20:30 T5503658.pbs"
         ]
 
-        @ftp = double('ftp-server')
-        @ftp.stub(:chdir).with('outgoing').and_return(nil)
-        @ftp.stub(:list).with(AsnFile.file_mask).and_return(@outgoing_files)
-        @ftp.stub(:chdir).with('test').and_return(nil)
-        @ftp.stub(:list).with(AsnFile.file_mask).and_return(@outgoing_files)
-        @ftp.stub(:delete).and_return(nil)
-        @client.stub(:connect).and_yield(@ftp)
+        @client.should_receive(:delete).any_number_of_times.and_return(nil)        
+        @client.should_receive(:dir).with('~/outgoing', '.*\#{@ext}').any_number_of_times.and_return(@outgoing_filtered)
+        @client.should_receive(:name_from_path).with("-rw-rw-rw-   1 user     group         128 Aug  3 13:30 05503677.PBS").any_number_of_times.and_return("05503677.PBS")
+        @client.should_receive(:get).with("~/outgoing/05503677.PBS", AsnFile.create_path('05503677.PBS')).any_number_of_times.and_return do
+          file = File.new(AsnFile.create_path('05503677.PBS'), 'w')
+          file.write @sample_file
+          file.close
+          nil
+        end
+
+        @client.should_receive(:delete).with("~/outgoing/05503677.PBS").any_number_of_times.and_return(nil)
       end
 
       it "should count only the files ending with .PBS" do
@@ -84,12 +91,6 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
         before(:each) do
           @file_name = '05503677.PBS'
           asn_file = AsnFile.create_path(@file_name)
-          @ftp.should_receive(:gettextfile).any_number_of_times.with(@file_name, asn_file).and_return do
-            file = File.new(asn_file, 'w')
-            file.write @sample_file
-            file.close
-            nil
-          end
         end
 
         it "should have the correct number of records after the download" do
@@ -99,8 +100,6 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
         end
 
         it "should download the file, create an AsnFile record, and delete the file from the server" do
-          @ftp.should_receive(:delete).once
-
           AsnFile.needs_import.count.should == 0
           downloaded = AsnFile.download
           downloaded.size.should == 1
