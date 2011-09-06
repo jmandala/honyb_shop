@@ -6,8 +6,9 @@ describe PoFile do
     Cdf::Config.set(:cdf_ship_to_account => '1234567')
     Cdf::Config.set(:cdf_ship_to_password => '12345678')
     Cdf::Config.set(:cdf_bill_to_account => '1234567')
-    Cdf::Config.set(:cdf_ftp_user_name => 'ftp_user')
-    Cdf::Config.set(:cdf_ftp_password => 'ftp_password')
+    Cdf::Config.set(:cdf_ftp_user => 'c20N2730')
+    Cdf::Config.set(:cdf_ftp_password => 'q3429czhvf')
+    Cdf::Config.set(:cdf_run_mode => :test)
 
     @order = Factory(:order)
     add_line_item @order
@@ -25,6 +26,14 @@ describe PoFile do
       @po_file.destroy
     end
 
+    it "should init the counters" do
+      @po_file.count[:total_records].should_not == nil
+      @po_file.count[:total_purchase_orders].should_not == nil
+      @po_file.count[:total_line_items].should_not == nil
+      @po_file.count[:total_units].should_not == nil
+      (0..8).each { |i| @po_file.count[i.to_s].should_not == nil}
+    end
+    
     it "should init the file name after create" do
       @po_file.file_name.should == nil
       @po_file.save
@@ -74,7 +83,13 @@ describe PoFile do
       @po_file.read.should_not == nil
     end
     
-    
+    it "should put the file to the FTP server" do
+      puts @po_file.read
+      
+      @po_file.put.should == @po_file.submitted_at
+      @po_file.submitted_at.should_not == nil
+      puts @po_file.submitted_at
+    end
     
     context "when parsing a PoFile" do
 
