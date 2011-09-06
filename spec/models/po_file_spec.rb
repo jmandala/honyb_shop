@@ -8,6 +8,7 @@ describe PoFile do
     Cdf::Config.set(:cdf_bill_to_account => '1234567')
     Cdf::Config.set(:cdf_ftp_user => 'c20N2730')
     Cdf::Config.set(:cdf_ftp_password => 'q3429czhvf')
+    Cdf::Config.set(:cdf_ftp_server => 'ftp1.ingrambook.com')
     Cdf::Config.set(:cdf_run_mode => :test)
 
     @order = Factory(:order)
@@ -65,7 +66,10 @@ describe PoFile do
   context "when generating a purchase order" do
 
     before(:all) do
+      order_count = Order.needs_po.count
       @po_file = PoFile.generate
+      @po_file.orders.count.should == order_count
+      Order.needs_po.count.should == 0
     end
 
     after(:all) do
