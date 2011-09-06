@@ -3,9 +3,9 @@ require_relative '../spec_helper'
 describe PoFile do
 
   before(:all) do
-    Cdf::Config.set(:cdf_ship_to_account => '1234567')
-    Cdf::Config.set(:cdf_ship_to_password => '12345678')
-    Cdf::Config.set(:cdf_bill_to_account => '1234567')
+    Cdf::Config.set(:cdf_bill_to_account => '20N1031')
+    Cdf::Config.set(:cdf_ship_to_account => '20N2730')
+    Cdf::Config.set(:cdf_ship_to_password => 'MANDAFB4')
     Cdf::Config.set(:cdf_ftp_user => 'c20N2730')
     Cdf::Config.set(:cdf_ftp_password => 'q3429czhvf')
     Cdf::Config.set(:cdf_ftp_server => 'ftp1.ingrambook.com')
@@ -75,6 +75,7 @@ describe PoFile do
     after(:all) do
       @po_file.delete_file if @po_file
     end
+    
     it "should have orders" do
       @po_file.orders.count.should == 1
     end
@@ -94,6 +95,13 @@ describe PoFile do
       @po_file.submitted_at.should_not == nil
       puts @po_file.submitted_at
       @po_file.submitted?.should == true
+      
+      @client = CdfFtpClient.new
+      
+      puts @client.incoming_files.to_yaml
+      puts @client.archive_files.to_yaml
+      puts @client.outgoing_files.to_yaml
+      puts @client.test_files.to_yaml
     end
 
     it "should return the previous submitted at data if submitted twice" do

@@ -58,14 +58,25 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
             "-rw-rw-rw-   1 user     group        1872 Aug  3 20:30 05503658.pbs"
         ]
 
+        @test_files = [
+            "drw-rw-rw-   1 user     group           0 Aug  3 21:52 ..",
+            "drw-rw-rw-   1 user     group           0 Aug  3 21:52 .",
+            "-rw-rw-rw-   1 user     group         128 Aug  3 13:30 T5503677.PBS",
+            "-rw-rw-rw-   1 user     group         128 Aug  3 13:30 T5503670.pbs",
+            "-rw-rw-rw-   1 user     group        1872 Aug  3 20:30 T5503658.pbs"
+        ]
+
         @ftp = double('ftp-server')
         @ftp.stub(:chdir).with('outgoing').and_return(nil)
+        @ftp.stub(:list).with(AsnFile.file_mask).and_return(@outgoing_files)
+        @ftp.stub(:chdir).with('test').and_return(nil)
         @ftp.stub(:list).with(AsnFile.file_mask).and_return(@outgoing_files)
         @ftp.stub(:delete).and_return(nil)
         @client.stub(:connect).and_yield(@ftp)
       end
 
       it "should count only the files ending with .PBS" do
+        puts AsnFile.remote_files.to_yaml
         AsnFile.remote_files.size.should == 1
       end
 
@@ -220,10 +231,10 @@ def should_import_asn_shipment_detail_record(parsed, asn_file)
      :net_discounted_price].each { |field| ImportFileHelper.should_match_money(db_record, record, field) }
 
     [:quantity_canceled,
-    :quantity_predicted,
-    :quantity_slashed,
-    :quantity_shipped].each {|field| ImportFileHelper.should_match_i(db_record, record, field)}
-    
+     :quantity_predicted,
+     :quantity_slashed,
+     :quantity_shipped].each { |field| ImportFileHelper.should_match_i(db_record, record, field) }
+
     db_record.weight.should == BigDecimal.new((record[:weight].to_f / 100).to_s, 0)
 
     db_record.asn_shipping_method_code.should == AsnShippingMethodCode.find_by_code(record[:shipping_method_or_slash_reason_code])

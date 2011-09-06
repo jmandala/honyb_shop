@@ -58,6 +58,22 @@ describe CdfFtpClient do
           list.should_not == nil
           list.size.should == 6
         end
+        
+        it "should stay open when keep_alive is set" do
+          @alive_client = CdfFtpClient.new({:keep_alive => true})
+          @alive_client.dir
+          @alive_client.open?.should == true
+          @alive_client.close
+          @alive_client.open?.should == false
+          
+        end
+        it "should get a list of remote files" do
+          @client.outgoing_files.should_not == nil
+          @client.test_files.should_not == nil
+          @client.archive_files.should_not == nil
+          @client.incoming_files.should_not == nil
+        end
+        
       end
 
       context "when server credentials are invalid" do
