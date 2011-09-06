@@ -32,6 +32,12 @@ ODR374103387            C 01705          0373200005037320000500001     00001001Z
 ORR674657678                    00000039980000000000000000000000000000000000000000001000000000499800000200   000120110812                                                                               
 ODR674657678            C 01706          0373200005037320000500001     00001001ZTESTTRACKCI017060000   SCAC 2              000049900003242         TESTSSLCI01706000001000000020129780373200009         
 "
+      @test_sample_file = "CR20N2730   000000024.0                                                                                                                                                                                 
+ORR374103387                    00000019990000000000000000000000000000000000000000001000000000299900000100   000120110812                                                                               
+ODR374103387            C 01705          0373200005037320000500001     00001001ZTESTTRACKCI017050000   SCAC 1              000049900003241         TESTSSLCI01705000001000000020129780373200009         
+ORR674657678                    00000039980000000000000000000000000000000000000000001000000000499800000200   000120110812                                                                               
+ODR674657678            C 01706          0373200005037320000500001     00001001ZTESTTRACKCI017060000   SCAC 2              000049900003242         TESTSSLCI01706000001000000020129780373200009         
+"
     end
 
     before(:each) do
@@ -56,9 +62,13 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
             "-rw-rw-rw-   1 user     group         128 Aug  3 13:30 05503670.pbs",
             "-rw-rw-rw-   1 user     group        1872 Aug  3 20:30 05503658.pbs"
         ]
-        
+
         @outgoing_filtered = [
-            "-rw-rw-rw-   1 user     group         128 Aug  3 13:30 05503677.PBS",            
+            "-rw-rw-rw-   1 user     group         128 Aug  3 13:30 05503677.PBS",
+        ]
+
+        @test_filtered = [
+            "-rw-rw-rw-   1 user     group         128 Aug  3 13:30 T5503677.PBS",
         ]
 
         @test_files = [
@@ -68,143 +78,164 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
             "-rw-rw-rw-   1 user     group         128 Aug  3 13:30 T5503670.pbs",
             "-rw-rw-rw-   1 user     group        1872 Aug  3 20:30 T5503658.pbs"
         ]
+        
+        @file_name = '05503677.PBS'        
+        @test_file_name = 'T5503677.PBS'        
 
-        @client.should_receive(:delete).any_number_of_times.and_return(nil)        
+        @client.should_receive(:delete).any_number_of_times.and_return(nil)
         @client.should_receive(:dir).with('~/outgoing', '.*\#{@ext}').any_number_of_times.and_return(@outgoing_filtered)
         @client.should_receive(:name_from_path).with("-rw-rw-rw-   1 user     group         128 Aug  3 13:30 05503677.PBS").any_number_of_times.and_return("05503677.PBS")
-        @client.should_receive(:get).with("~/outgoing/05503677.PBS", AsnFile.create_path('05503677.PBS')).any_number_of_times.and_return do
-          file = File.new(AsnFile.create_path('05503677.PBS'), 'w')
+        @client.should_receive(:get).with("~/outgoing/05503677.PBS", AsnFile.create_path(@file_name)).any_number_of_times.and_return do
+          file = File.new(AsnFile.create_path(@file_name), 'w')
           file.write @sample_file
           file.close
           nil
         end
 
-        @client.should_receive(:delete).with("~/outgoing/05503677.PBS").any_number_of_times.and_return(nil)
+
+        @client.should_receive(:dir).with('~/test', '.*\#{@ext}').any_number_of_times.and_return(@test_filtered)
+        @client.should_receive(:name_from_path).with("-rw-rw-rw-   1 user     group         128 Aug  3 13:30 T5503677.PBS").any_number_of_times.and_return("T5503677.PBS")
+        @client.should_receive(:get).with("~/test/#{@test_file_name}", AsnFile.create_path(@test_file_name)).any_number_of_times.and_return do
+          file = File.new(AsnFile.create_path(@test_file_name), 'w')
+          file.write @test_sample_file
+          file.close
+          nil
+        end
+
+        @client.should_receive(:delete).with("~/outgoing/#{@file_name}").any_number_of_times.and_return(nil)
+        @client.should_receive(:delete).with("~/test/#{@test_file_name}").any_number_of_times.and_return(nil)
       end
 
       it "should count only the files ending with .PBS" do
-        puts AsnFile.remote_files.to_yaml
         AsnFile.remote_files.size.should == 1
       end
 
-      context "file is downloaded" do
+      context "and the ASN File is downloaded" do
         before(:each) do
-          @file_name = '05503677.PBS'
-          asn_file = AsnFile.create_path(@file_name)
+          @downloaded = AsnFile.download
+          @asn_file = AsnFile.find_by_file_name @file_name
         end
 
-        it "should have the correct number of records after the download" do
-          AsnFile.download
-          asn_file = AsnFile.find_by_file_name @file_name
-          asn_file.data.should == @sample_file
+        after(:each) do
+          AsnFile.all.each { |file| file.destroy }
         end
 
-        it "should download the file, create an AsnFile record, and delete the file from the server" do
-          AsnFile.needs_import.count.should == 0
+        it "should have the right data" do
+          @asn_file.data.should == @sample_file
+        end
+
+        it "should have 0 versions" do
+          @asn_file.versions.count.should == 0
+        end
+        
+        it "should create a new version when downloading a second time" do
+          AsnFile.needs_import.count.should == 2
+          @downloaded.size.should == 2
+          @downloaded.first.versions.size.should == 0
+
+          AsnFile.needs_import.count.should == 2
+          AsnFile.needs_import.first.should == @downloaded.first
           downloaded = AsnFile.download
-          downloaded.size.should == 1
-          downloaded.first.versions.size.should == 0
-
-          AsnFile.needs_import.count.should == 1
-          AsnFile.needs_import.first.should == downloaded.first
-          AsnFile.needs_import.first.file_name.should == @file_name
+          new_asn_file = AsnFile.find_by_file_name @file_name
+          new_asn_file.versions.count == 1
+          new_asn_file.versions.first.file_name.should == @file_name + ".1"
         end
 
         it "should have 200 chars in each line" do
-          AsnFile.download.size.should == 1
-          AsnFile.needs_import.first.data.split(/\n/).each do |line|
+          @asn_file.data.split(/\n/).each do |line|
             line.length.should == 200
           end
         end
 
-        context "and a Asn file with the same name has already been downloaded" do
+      end
+
+      context "and a Asn file with the same name has already been downloaded" do
+
+        before(:each) do
+          AsnFile.download
+          @orig_asn_file =  AsnFile.find_by_file_name @file_name
+        end
+        
+        it "should make the existing AsnFile old version the new file" do
+          @orig_asn_file.versions.should == []
+          @orig_asn_file.parent.should == nil
+
+          AsnFile.download
+
+          @orig_asn_file.reload
+          @orig_asn_file.parent.should_not == nil
+          @orig_asn_file.versions.should == []
+
+          AsnFile.count.should == 4
+
+          AsnFile.where(:file_name => @file_name).count.should == 1
+          asn_file = AsnFile.find_by_file_name @file_name
+          asn_file.versions.count.should == 1
+        end
+      end
+
+      context "and the file is imported" do
+
+        context "and there are no ASN files to import" do
+          it "should have no files that need import" do
+            AsnFile.needs_import.count.should == 0
+          end
+        end
+
+        context "and there are ASN files to import" do
           before(:each) do
+            @order_1 = FactoryGirl.create(:order, :number => 'R374103387')
+            @order_2 = FactoryGirl.create(:order, :number => 'R674657678')
+
+            @product = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
+            @variant = @product.master
+            @line_item = Factory(:line_item, :variant => @variant, :price => 10, :order => @order_1)
+            LineItem.should_receive(:find_by_id!).any_number_of_times.with("1").and_return(@line_item)
+
             AsnFile.download
+            AsnFile.needs_import.count.should > 0
+            @asn_file = AsnFile.needs_import.first
+            @parsed = @asn_file.parsed
           end
 
-          it "should make the existing AsnFile old version the new file" do
-            orig_asn_file = AsnFile.find_by_file_name @file_name
-            orig_asn_file.versions.should == []
-            orig_asn_file.parent.should == nil
-
-            AsnFile.download
-
-            orig_asn_file.reload
-            orig_asn_file.parent.should_not == nil
-            orig_asn_file.versions.should == []
-
-            AsnFile.count.should == 2
-
-            AsnFile.where(:file_name => @file_name).count.should == 1
-            AsnFile.where(:file_name => @file_name).count.should == 1
-            asn_file = AsnFile.find_by_file_name @file_name
-            asn_file.versions.count.should == 1
-          end
-        end
-
-        context "and the file is imported" do
-
-          context "and there are no ASN files to import" do
-            it "should have no files that need import" do
-              AsnFile.needs_import.count.should == 0
-            end
+          it "should import files one by one" do
+            @asn_file.import.should_not == nil
+            @asn_file.imported_at.should_not == nil
+            AsnFile.needs_import.count.should == 1
           end
 
-          context "and there are ASN files to import" do
+          it "should import all files" do
+            imported = AsnFile.import_all
+            imported.size.should == 2
+            AsnFile.all.count.should == 2
+            AsnFile.needs_import.count.should == 0
+          end
+
+          context "and asn file is imported" do
             before(:each) do
-              @order_1 = FactoryGirl.create(:order, :number => 'R374103387')
-              @order_2 = FactoryGirl.create(:order, :number => 'R674657678')
-
-              @product = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
-              @variant = @product.master
-              @line_item = Factory(:line_item, :variant => @variant, :price => 10, :order => @order_1)
-              LineItem.should_receive(:find_by_id!).any_number_of_times.with("1").and_return(@line_item)
-
-              AsnFile.download
-              AsnFile.needs_import.count.should > 0
-              @asn_file = AsnFile.needs_import.first
-              @parsed = @asn_file.parsed
+              @asn_file.import
+            end
+            it "should return the correct data" do
+              @asn_file.data.should == AsnFile.add_delimiters(@sample_file)
             end
 
-            it "should import files one by one" do
-              @asn_file.import.should_not == nil
-              @asn_file.imported_at.should_not == nil
-              AsnFile.needs_import.count.should == 0
+            it "should import the AsnFile data" do
+              should_import_asn_file_data(@parsed, @asn_file, @file_name)
             end
 
-            it "should import all files" do
-              imported = AsnFile.import_all
-              imported.size.should == 1
-              AsnFile.all.count.should == 1
-              AsnFile.needs_import.count.should == 0
+            it "should import the ASN Shipment record" do
+              should_import_asn_shipment_record(@parsed, @asn_file)
             end
-
-            context "and asn file is imported" do
-              before(:each) do
-                @asn_file.import
-              end
-              it "should return the correct data" do
-                @asn_file.data.should == AsnFile.add_delimiters(@sample_file)
-              end
-
-              it "should import the AsnFile data" do
-                should_import_asn_file_data(@parsed, @asn_file, @file_name)
-              end
-
-              it "should import the ASN Shipment record" do
-                should_import_asn_shipment_record(@parsed, @asn_file)
-              end
-              it "should import the ASN Shipment Detail record" do
-                should_import_asn_shipment_detail_record(@parsed, @asn_file)
-              end
+            it "should import the ASN Shipment Detail record" do
+              should_import_asn_shipment_detail_record(@parsed, @asn_file)
             end
-
           end
-        end
 
+        end
       end
 
     end
+
 
   end
 end
