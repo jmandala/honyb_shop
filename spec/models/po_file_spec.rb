@@ -15,12 +15,41 @@ describe PoFile do
   end
   
   context "default behaviors" do
+
+    before(:each) do
+      @po_file = PoFile.new     
+      @po_file.should_not == nil
+    end
+
+    after(:each) do
+      @po_file.destroy
+    end
+
     it "should init the file name after create" do
-      po_file = PoFile.new
-      po_file.file_name.should == nil
-      po_file.save
-      po_file.file_name.should_not == nil
-      po_file.file_name.should == po_file.prefix + po_file.created_at.strftime("%y%m%d%H%M%S") + po_file.ext
+      @po_file.file_name.should == nil
+      @po_file.save
+      @po_file.file_name.should_not == nil
+      @po_file.file_name.should == PoFile.prefix + @po_file.created_at.strftime("%y%m%d%H%M%S") + PoFile.ext
+    end
+    
+    it "should do nothing if attempting to delete non-existent file" do
+      @po_file.has_file?.should == false
+      @po_file.delete_file.should == false
+    end
+    
+    it "should raise error if path is called" do
+      error = nil
+      begin
+        @po_file.path
+      rescue => e
+        error = e
+      end 
+      
+      error.should_not == nil
+    end
+    
+    it "should not have a file yet" do
+      @po_file.has_file?.should == false
     end
   end
 
@@ -33,7 +62,6 @@ describe PoFile do
     after(:all) do
       @po_file.delete_file if @po_file
     end
-    
     it "should have orders" do
       @po_file.orders.count.should == 1
     end
