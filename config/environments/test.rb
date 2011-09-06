@@ -7,6 +7,9 @@ HonybShop::Application.configure do
   # and recreated between test runs.  Don't rely on the data there!
   config.cache_classes = false
 
+  # Don't want to use the file system cache because it cross-pollutes with development
+  config.cache_store = :memory_store
+  
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
 

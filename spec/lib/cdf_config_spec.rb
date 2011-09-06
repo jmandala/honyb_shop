@@ -6,10 +6,10 @@ describe Cdf::Config do
   end
 
   after(:each) do
-    Cdf::Config.set({@key => @value})
-    Cdf::Config.get(@key).should == @value
-    puts "#{@key} = #{Cdf::Config.get(@key)}"
-  end
+      Cdf::Config.set({@key => @value})
+      Cdf::Config.get(@key).should == @value
+      puts "#{@key} = #{Cdf::Config.get(@key)}"
+    end    
 
   it "should set values once" do
     @value = 'my test configuration'
