@@ -31,6 +31,7 @@ group :development, :test do
 end
 
 group :cucumber, :test, :development do
+  gem 'ruby-debug19'
   gem 'spork', '~> 0.9.0.rc'
   gem 'capybara'
   gem 'cucumber'

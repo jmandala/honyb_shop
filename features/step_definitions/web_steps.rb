@@ -58,7 +58,14 @@ When /^(?:|I )go to (.+)$/ do |page_name|
 end
 
 When /^(?:|I )press "([^"]*)"$/ do |button|
+  begin
   click_button(button)
+  rescue => e
+    puts e.message
+    e.backtrace.each {|line| puts line}
+    raise e
+  end
+  
 end
 
 When /^(?:|I )follow "([^"]*)"$/ do |link|
