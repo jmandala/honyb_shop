@@ -15,11 +15,11 @@ describe PoFile do
     add_line_item @order
     complete_order @order
   end
-  
+
   context "default behaviors" do
 
     before(:each) do
-      @po_file = PoFile.new     
+      @po_file = PoFile.new
       @po_file.should_not == nil
     end
 
@@ -32,32 +32,32 @@ describe PoFile do
       @po_file.count[:total_purchase_orders].should_not == nil
       @po_file.count[:total_line_items].should_not == nil
       @po_file.count[:total_units].should_not == nil
-      (0..8).each { |i| @po_file.count[i.to_s].should_not == nil}
+      (0..8).each { |i| @po_file.count[i.to_s].should_not == nil }
     end
-    
+
     it "should init the file name after create" do
       @po_file.file_name.should == nil
       @po_file.save
       @po_file.file_name.should_not == nil
       @po_file.file_name.should == PoFile.prefix + @po_file.created_at.strftime("%y%m%d%H%M%S") + PoFile.ext
     end
-    
+
     it "should do nothing if attempting to delete non-existent file" do
       @po_file.has_file?.should == false
       @po_file.delete_file.should == false
     end
-    
+
     it "should raise error if path is called" do
       error = nil
       begin
         @po_file.path
       rescue => e
         error = e
-      end 
-      
+      end
+
       error.should_not == nil
     end
-    
+
     it "should not have a file yet" do
       @po_file.has_file?.should == false
     end
@@ -78,7 +78,7 @@ describe PoFile do
     it "should have orders" do
       @po_file.orders.count.should == 1
     end
-    
+
     it "should not have poa_files" do
       @po_file.poa_files.count.should == 0
     end
@@ -86,15 +86,21 @@ describe PoFile do
     it "should read the purchase order" do
       @po_file.read.should_not == nil
     end
-    
+
     it "should put the file to the FTP server" do
       puts @po_file.read
-      
+
       @po_file.put.should == @po_file.submitted_at
       @po_file.submitted_at.should_not == nil
       puts @po_file.submitted_at
+      @po_file.submitted?.should == true
     end
-    
+
+    it "should return the previous submitted at data if submitted twice" do
+      previous = @po_file.submitted_at
+      @po_file.put.should == previous
+    end
+
     context "when parsing a PoFile" do
 
       before(:all) do
@@ -335,10 +341,10 @@ describe PoFile do
             l.record_count_80 5
           end
 
-        end        
-        
+        end
+
         @parsed = FixedWidth.parse(File.new(@po_file.path), :po_file)
-        
+
       end
 
       it "should have 80 characters in each line" do
