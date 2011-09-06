@@ -23,4 +23,8 @@ describe Cdf::Config do
   it "should set the values a third time" do
     @value = 'my test configuration part III'
   end
+  
+  it "should have run modes" do
+    Cdf::Config::RUN_MODE.should == [:live, :test, :mock]
+  end
 end

@@ -16,7 +16,7 @@ Feature: Configure Fulfillment Settings
     And I should see "Cdf Ftp Server"
     And I should see "Cdf Ftp User"
     And I should see "Cdf Ftp Password"
-    And I should see "Cdf Test Mode"
+    And I should see "Cdf Run Mode"
     
   Scenario: visit the settings edit page
     When I go to the fulfillment settings page
@@ -27,8 +27,8 @@ Feature: Configure Fulfillment Settings
     And I should see "Cdf Ftp Server"
     And I should see "Cdf Ftp User"
     And I should see "Cdf Ftp Password"
-    And I should see "Cdf Test Mode"
-    
+    And I should see "Cdf Run Mode"
+    And the "preferences_cdf_run_mode" drop-down should contain the option "test"
     
   Scenario: modify the settings edit page
     When I go to the fulfillment settings page
@@ -40,7 +40,7 @@ Feature: Configure Fulfillment Settings
      | Cdf Ftp Server       | ftp_server       |
      | Cdf Ftp User         | ftp_user         |
      | Cdf Ftp Password     | ftp_password     |
-     | Cdf Test Mode        | true             |
+    And I select "mock" from "Cdf Run Mode"
     And I press "Update"
     Then I should see "ship_to_password"
     And I should see "ship_to_account"
@@ -48,4 +48,4 @@ Feature: Configure Fulfillment Settings
     And I should see "ftp_server"
     And I should see "ftp_user"
     And I should see "******"
-    And I should see "true"
+    And I should see "mock"
