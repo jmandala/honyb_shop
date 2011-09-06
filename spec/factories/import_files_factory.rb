@@ -76,7 +76,7 @@ FactoryGirl.define do
     sequence_number { Factory.next :row_number }
     acknowledgement_date Time.now
     icg_san '1697978'
-    icg_ship_to_account_number Spree::Config.get(:cdf_ship_to_account_number)
+    icg_ship_to_account_number Cdf::Config.get(:cdf_ship_to_account_number)
     po_cancellation_date { Time.new + 3.months }
     #po_date { order.updated_at }
     toc 'C123456789012'

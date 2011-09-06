@@ -9,15 +9,15 @@ describe CdfFtpClient do
 
   context "when using default initialization" do
 
-    it "has the ftp server name specified in Spree::Config" do
-      @client.server.should == Spree::Config.get(:cdf_ftp_server)
+    it "has the ftp server name specified in Cdf::Config" do
+      @client.server.should == Cdf::Config.get(:cdf_ftp_server)
     end
 
-    it "has the user name Spree::Config" do
-      @client.user.should == Spree::Config.get(:cdf_ftp_user)
+    it "has the user name Cdf::Config" do
+      @client.user.should == Cdf::Config.get(:cdf_ftp_user)
     end
-    it "has the password Spree::Config" do
-      @client.password.should == Spree::Config.get(:cdf_ftp_password)
+    it "has the password Cdf::Config" do
+      @client.password.should == Cdf::Config.get(:cdf_ftp_password)
     end
   end
 

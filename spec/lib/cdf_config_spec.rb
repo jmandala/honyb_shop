@@ -1,14 +1,14 @@
 require_relative '../spec_helper'
 
-describe Spree::Config do
+describe Cdf::Config do
   before(:each) do
     @key = :test_config_key
   end
 
   after(:each) do
-    Spree::Config.set({@key => @value})
-    Spree::Config.get(@key).should == @value
-    puts "#{@key} = #{Spree::Config.get(@key)}"
+    Cdf::Config.set({@key => @value})
+    Cdf::Config.get(@key).should == @value
+    puts "#{@key} = #{Cdf::Config.get(@key)}"
   end
 
   it "should set values once" do

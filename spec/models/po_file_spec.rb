@@ -5,9 +5,9 @@ describe PoFile do
   context "when creating a purchase order" do
 
     before(:all) do
-      Spree::Config.set({:cdf_ship_to_account => '1234567'})
-      Spree::Config.set({:cdf_ship_to_password => '12345678'})
-      Spree::Config.set({:cdf_bill_to_account => '1234567'})
+      Cdf::Config.set({:cdf_ship_to_account => '1234567'})
+      Cdf::Config.set({:cdf_ship_to_password => '12345678'})
+      Cdf::Config.set({:cdf_bill_to_account => '1234567'})
 
       @order = Factory(:order)
       add_line_item @order
@@ -126,7 +126,7 @@ describe PoFile do
       record = record.first
       record[:record_code].should == '10'
       record[:sequence_number].should == '00002'
-      record[:ingram_bill_to_account_number].should == Spree::Config.get(:cdf_bill_to_account)
+      record[:ingram_bill_to_account_number].should == Cdf::Config.get(:cdf_bill_to_account)
       record[:vendor_san].should == '1697978'
       record[:order_date].should == @order.completed_at.strftime("%y%m%d")
       record[:backorder_cancel_date].should == (@order.completed_at + 3.months).strftime("%y%m%d")
@@ -146,7 +146,7 @@ describe PoFile do
       record.length.should == 1
       record = record.first
       record[:record_code].should == '21'
-      record[:ingram_ship_to_account_number].should == Spree::Config.get(:cdf_ship_to_account)
+      record[:ingram_ship_to_account_number].should == Cdf::Config.get(:cdf_ship_to_account)
       record[:sequence_number].should == '00004'
       record[:po_number].should == @order.number.ljust_trim(22)
       record[:po_type].should == Records::Po::Po21::PO_TYPE[:purchase_order]
@@ -154,7 +154,7 @@ describe PoFile do
       record[:dc_code].should == ''
       record[:green_light].should == 'Y'
       record[:poa_type].should == Records::Po::Po21::POA_TYPE[:full_acknowledgement]
-      record[:ship_to_password].should == Spree::Config.get(:cdf_ship_to_password)
+      record[:ship_to_password].should == Cdf::Config.get(:cdf_ship_to_password)
       record[:carrier_shipping_method].should == '### 2ND DAY AIR'
       record[:split_order_allowed].should == 'Y'
 
