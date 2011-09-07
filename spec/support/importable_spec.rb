@@ -96,7 +96,8 @@ shared_examples "an importable file" do |klass, record_length, ext|
         after(:each) do
           @import_class.all.each { |file| file.destroy }
         end
-
+        
+        
         it "should have the right data" do
           @import_file.data.should == @import_class.add_delimiters(@sample_file[:outgoing])
         end
@@ -211,7 +212,10 @@ shared_examples "an importable file" do |klass, record_length, ext|
             end
 
             it "should validate import results" do
-              validations.each { |v| send(v, @parsed, @import_file) }
+              validations.each do |v| 
+                puts "Validates #{v}"
+                send(v, @parsed, @import_file)
+              end
             end
 
           end
