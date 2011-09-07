@@ -33,7 +33,17 @@ describe PoaFile do
       [:should_import_poa_line_item_pub_record,
        :should_import_poa_file_data,
        :should_import_poa_order_header,
-       :should_import_poa_line_items]
+       :should_import_poa_line_items,
+       :should_import_poa_additional_details,
+       :should_import_poa_file_control_total,
+       :should_import_poa_order_control_total,
+       :should_import_poa_line_item_pub_record,
+       :should_import_poa_line_item_title_record,
+       :should_not_have_poa_ship_to_name,
+       :should_not_have_poa_address_lines,
+       :should_not_have_poa_city_state_zip,
+       :should_import_poa_item_number_price_record
+      ]
     end
   end
 
@@ -66,178 +76,29 @@ describe PoaFile do
       result.class.should == CdfImportExceptionLog
     end
   end
-
-
-  context "when working with remote files" do
-    before(:all) do
-      @po_file_name = '110809180859.fbo'
-      @po_file = PoFile.create(:file_name => @po_file_name)
-
-
-      @sample_file = {
-          :outgoing => '02000011697978     INGRAM       110809RUNQX110809180859.FBO F030000000     1    1100002             R364143388            20N273016979780110809110809110809     2100003R364143388            THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 2100004R364143388            CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 2100005R364143388            NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 2100006R364143388            ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 2100007R364143388            EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 2100008R364143388             AT 1-800-234-6737.                                4000009R364143388            1                     9780373200009       00100100C4100010R364143388            000 000000{ 0000 0000 0000 0000 0000 0000 0000     4200011R364143388            HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M4300012R364143388            HQPB                030900019350000000010000000    4400013R364143388                                00004.99EN00003.240000001      4500014R364143388            1                                                  5900015R364143388            0001300000000010000000001000000000400000000000000019100016000000000000100001000000000100001000010002300000000060000100001          ',
-          :test => '02000011697978     INGRAM       110809RUNQXt10809180859.FBO F030000000     1    1100002             R364143388            20N273016979780110809110809110809     2100003R364143388            THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 2100004R364143388            CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 2100005R364143388            NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 2100006R364143388            ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 2100007R364143388            EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 2100008R364143388             AT 1-800-234-6737.                                4000009R364143388            1                     9780373200009       00100100C4100010R364143388            000 000000{ 0000 0000 0000 0000 0000 0000 0000     4200011R364143388            HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M4300012R364143388            HQPB                030900019350000000010000000    4400013R364143388                                00004.99EN00003.240000001      4500014R364143388            1                                                  5900015R364143388            0001300000000010000000001000000000400000000000000019100016000000000000100001000000000100001000010002300000000060000100001          '
-      }
-
-      @file_names = {
-          :outgoing => '110809180859.fbc',
-          :test => 't10809180859.fbc'
-      }
-
-      @poa_file_name = '110809180859.fbc'
-      @test_poa_file_name = 't10809180859.fbc'
-      @file_name = @poa_file_name
-
-
-      @outgoing_files = [
-          "drw-rw-rw-   1 user     group           0 Aug  3 21:52 ..",
-          "drw-rw-rw-   1 user     group           0 Aug  3 21:52 .",
-          "-rw-rw-rw-   1 user     group         128 Aug  3 13:30 #{@poa_file_name}",
-          "-rw-rw-rw-   1 user     group        1872 Aug  3 20:30 110809180859.fbo"
-      ]
-
-      @remote = {
-          :outgoing => ["-rw-rw-rw-   1 user     group         128 Aug  3 13:30 #{@poa_file_name}"],
-          :test => ["-rw-rw-rw-   1 user     group         128 Aug  3 13:30 #{@test_poa_file_name}"]
-      }
-
-
-    end
-
-
-    before(:each) do
-      @client = double('CdfFtpClient')
-      CdfFtpClient.should_receive(:new).any_number_of_times.and_return(@client)
-    end
-
-
-    context "and there is 1 POA files on the server" do
-      before(:each) do
-        ['test', 'outgoing'].each do |dir|
-          @client.should_receive(:delete).with("~/#{dir}/#{@file_names[dir.to_sym]}").any_number_of_times.and_return(nil)
-          @client.should_receive(:dir).with("~/#{dir}", ".*\\\#{@ext}").any_number_of_times.and_return(@remote[dir.to_sym])
-          @client.should_receive(:name_from_path).with(@remote[dir.to_sym].first).any_number_of_times.and_return(@file_names[dir.to_sym])
-          @client.should_receive(:get).with("~/#{dir}/#{@file_names[dir.to_sym]}", PoaFile.create_path(@file_names[dir.to_sym])).any_number_of_times.and_return do
-            file = File.new(PoaFile.create_path(@file_names[dir.to_sym]), 'w')
-            file.write @sample_file[dir.to_sym]
-            file.close
-            nil
-          end
-        end
-
-      end
-
-
-      context "file is downloaded" do
-
-        context "and the file is imported" do
-
-          context "and there are POA files to import" do
-            before(:each) do
-              @po_file_name = @file_name.gsub(/fbc$/, 'fbo')
-              PoFile.should_receive(:find_by_file_name!).any_number_of_times.with(@po_file_name).and_return(@po_file)
-
-              @order = Factory(:order, :number => 'R364143388')
-              @product = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
-              @variant = @product.master
-              @line_item = Factory(:line_item, :variant => @variant, :price => 10, :order => @order)
-              LineItem.should_receive(:find_by_id!).any_number_of_times.with("1").and_return(@line_item)
-
-              PoaFile.download
-              PoaFile.needs_import.count.should > 0
-              @poa_file = PoaFile.needs_import.first
-            end
-
-
-            context "and the po contains 2 orders with 2 line items each with a quantity of 2" do
-              before(:all) do
-
-                @product_1 = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
-                @product_2 = Factory(:product, :sku => '978-0-37352-80-5', :price => 10, :name => 'test product 2')
-
-
-                @order_1 = Factory(:order, :number => 'R543255800')
-
-                @line_item_1 = Factory(:line_item, :quantity => 2, :variant => @product_1.master, :price => 10, :order => @order_1)
-                LineItem.should_receive(:find_by_id!).any_number_of_times.with("2").and_return(@line_item_1)
-
-                @line_item_2 = Factory(:line_item, :quantity => 2, :variant => @product_2.master, :price => 10, :order => @order_1)
-                LineItem.should_receive(:find_by_id!).any_number_of_times.with("5").and_return(@line_item_2)
-
-                @order_2 = Factory(:order, :number => 'R554266337')
-                @line_item_3 = Factory(:line_item, :quantity => 2, :variant => @product_1.master, :price => 10, :order => @order_2)
-                LineItem.should_receive(:find_by_id!).any_number_of_times.with("3").and_return(@line_item_3)
-
-                @line_item_4 = Factory(:line_item, :quantity => 2, :variant => @product_2.master, :price => 10, :order => @order_2)
-                LineItem.should_receive(:find_by_id!).any_number_of_times.with("6").and_return(@line_item_4)
-
-
-                @poa_with_2_by_2_by_2 = "02000011697978     INGRAM       110810RUYFU110809180859.FBO F030000000     1    1100002             R543255800            20N273016979780110810110810110810     2100003R543255800            THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 2100004R543255800            CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 2100005R543255800            NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 2100006R543255800            ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 2100007R543255800            EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 2100008R543255800             AT 1-800-234-6737.                                4000009R543255800            2                     9780373200009       00100100C4100010R543255800            000 000000{ 0000 0000 0000 0000 0000 0000 0000     4200011R543255800            HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M4300012R543255800            HQPB                030900019350000000010000000    4400013R543255800                                00004.99EN00003.240000001      4500014R543255800            2                                                  4000015R543255800            5                     978037352805        00100005C4100016R543255800            000         0000 0000 0000 0000 0000 0000 0000     4100017R543255800            000 000000  0000 0000 0000 0000 0000 0000 0000     4200018R543255800                                                               4300019R543255800                                    00022000000000000000000    4400020R543255800                                00000.00EN00000.000000001      4500021R543255800            5                                                  5900022R543255800            0002000000000020000000001000000000400000000000000011100023             R554266337            20N273016979780110810110810110810     2100024R554266337            THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 2100025R554266337            CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 2100026R554266337            NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 2100027R554266337            ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 2100028R554266337            EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 2100029R554266337             AT 1-800-234-6737.                                4000030R554266337            3                     9780373200009       00100100C4100031R554266337            000 000000{ 0000 0000 0000 0000 0000 0000 0000     4200032R554266337            HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M4300033R554266337            HQPB                030900043350000000010000000    4400034R554266337                                00004.99EN00003.240000001      4500035R554266337            3                                                  4000036R554266337            6                     978037352805        00100005C4100037R554266337            000         0000 0000 0000 0000 0000 0000 0000     4100038R554266337            000 000000  0000 0000 0000 0000 0000 0000 0000     4200039R554266337                                                               4300040R554266337                                    00046000000000000000000    4400041R554266337                                00000.00EN00000.000000001      4500042R554266337            6                                                  5900043R554266337            0002000000000020000000001000000000400000000000000019100044000000000000400002000000000200001000020001200000000260000200001          "
-              end
-              before(:each) do
-                @poa_file.write_data @poa_with_2_by_2_by_2
-                @parsed = @poa_file.parsed
-
-                #@poa_file.import
-              end
-
-              # todo: need to determine behavior for when this value is altered by ingram
-              it "should not have any PoaShipToName" do
-                @parsed[:poa_ship_to_name].should == nil
-                #@poa_file.poa_order_headers.first.poa_ship_to_name.should == nil
-              end
-
-              # todo: need to determine behavior for when this value is altered by ingram
-              it "should not have any PoaAddressLines" do
-                @parsed[:poa_address_lines].should == nil
-                #@poa_file.poa_order_headers.first.poa_address_lines.should == []
-              end
-
-              # todo: need to determine behavior for when this value is altered by ingram
-              it "should not have any PoaCityStateZip" do
-                @parsed[:poa_city_state_zip].should == nil
-                #@poa_file.poa_order_headers.first.poa_city_state_zip.should == nil
-              end
-
-              it "should import the PoaLineItems" do
-                #should_import_poa_line_items @parsed
-              end
-
-              it "should import the PoaAdditionalDetails" do
-                #should_import_poa_additional_details @poa_file, @parsed
-              end
-
-              it "should import the PoaAdditionalLineItemRecord" do
-                #should_import_poa_line_item_title_record @poa_file, @parsed
-              end
-
-              it "should import the PoaLineItemPubRecord" do
-                #should_import_poa_line_item_pub_record @parsed, @poa_file
-              end
-
-              it "should import the PoaItemNumberPriceRecord" do
-                parsed = @parsed[:poa_item_number_price_records]
-                parsed.should == nil
-              end
-
-              it "should import the PoaOrderControlTotal" do
-                #should_import_poa_order_control_total @poa_file, @parsed
-              end
-
-              it "should import the PoaFileControlTotal" do
-                #should_import_poa_file_control_total @poa_file, @parsed
-              end
-
-
-            end
-
-          end
-        end
-      end
-    end
-  end
 end
 
+def should_import_poa_item_number_price_record(parsed, poa_file)
+  parsed = parsed[:poa_item_number_price_records]
+  parsed.should == nil
+end
+
+
+def should_not_have_poa_city_state_zip(parsed, poa_file)
+  parsed[:poa_city_state_zip].should == nil
+  poa_file.poa_order_headers.first.poa_city_state_zip.should == nil
+end
+
+
+def should_not_have_poa_address_lines(parsed, poa_file)
+  parsed[:poa_address_lines].should == nil
+  poa_file.poa_order_headers.first.poa_address_lines.should == []
+end
+
+def should_not_have_poa_ship_to_name(parsed, poa_file)
+  parsed[:poa_ship_to_name].should == nil
+  poa_file.poa_order_headers.first.poa_ship_to_name.should == nil
+end
 
 def should_match_text(object, record, field)
   object.read_attribute(field).should == record[field].strip
@@ -298,7 +159,7 @@ def should_import_poa_order_header(parsed, poa_file)
   end
 end
 
-def should_import_poa_additional_details(poa_file, parsed)
+def should_import_poa_additional_details(parsed, poa_file)
   parsed[:poa_additional_detail].each do |record|
     db_record = PoaAdditionalDetail.find_self poa_file, record[:sequence_number]
     db_record.should_not == nil
@@ -317,7 +178,7 @@ def should_import_poa_additional_details(poa_file, parsed)
   end
 end
 
-def should_import_poa_line_item_title_record(poa_file, parsed)
+def should_import_poa_line_item_title_record(parsed, poa_file)
   parsed[:poa_line_item_title_record].each do |record|
     db_record = PoaLineItemTitleRecord.find_self poa_file, record[:sequence_number]
 
@@ -378,7 +239,7 @@ def should_import_poa_file_data(parsed, poa_file)
   db_record.po_file.should == PoFile.find_by_file_name!(po_file_name)
 end
 
-def should_import_poa_file_control_total(poa_file, parsed)
+def should_import_poa_file_control_total(parsed, poa_file)
   parsed[:poa_file_control_total].each do |record|
 
     db_record = PoaFileControlTotal.find_by_poa_file_id(poa_file.id)
@@ -397,9 +258,9 @@ def should_import_poa_file_control_total(poa_file, parsed)
 end
 
 
-def should_import_poa_order_control_total(poa_file, parsed)
-  @parsed[:poa_order_control_total].each do |record|
-    db_record = PoaOrderControlTotal.find_self(@poa_file, record[:sequence_number])
+def should_import_poa_order_control_total(parsed, poa_file)
+  parsed[:poa_order_control_total].each do |record|
+    db_record = PoaOrderControlTotal.find_self(poa_file, record[:sequence_number])
 
     [:record_code,
      :sequence_number].each { |k| should_match_text(db_record, record, k) }
