@@ -61,11 +61,15 @@ Spork.each_run do
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+  Dir[Rails.root.join("lib/**/*.rb")].each { |f| require f }
   Dir[Rails.root.join("cdf/lib/**/*.rb")].each { |f| require f }
 
   Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator.rb")) do |f|
     Rails.configuration.cache_classes ? require(f) : load(f)
   end  
+
+  DatabaseCleaner.strategy = :truncation, {:except => %w[users asn_slash_codes asn_order_statuses cdf_binding_codes dc_codes po_statuses po_types poa_statuses poa_types]}
+  
   
   require 'spree_core/testing_support/factories'
 end
