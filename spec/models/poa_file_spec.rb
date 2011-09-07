@@ -5,7 +5,6 @@ MAX_POA_VENDOR_RECORDS = 6
 describe PoaFile do
 
   before(:all) do
-    PoaFile.all.each &:destroy
     LineItem.all.each &:destroy
     Order.all.each &:destroy
   end
@@ -16,6 +15,10 @@ describe PoaFile do
     Order.all.each &:destroy
   end
 
+  before(:each) do
+    PoaFile.all.each &:destroy    
+  end
+  
   context "when defining a PoaFile" do
     it "should specify a record length of 80" do
       PoaFile.record_length.should == 80
@@ -34,36 +37,63 @@ describe PoaFile do
     before(:all) do
       @po_file_name = '110809180859.fbo'
       @po_file = PoFile.create(:file_name => @po_file_name)
-      @sample_file = '02000011697978     INGRAM       110809RUNQX110809180859.FBO F030000000     1    1100002             R364143388            20N273016979780110809110809110809     2100003R364143388            THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 2100004R364143388            CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 2100005R364143388            NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 2100006R364143388            ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 2100007R364143388            EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 2100008R364143388             AT 1-800-234-6737.                                4000009R364143388            1                     9780373200009       00100100C4100010R364143388            000 000000{ 0000 0000 0000 0000 0000 0000 0000     4200011R364143388            HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M4300012R364143388            HQPB                030900019350000000010000000    4400013R364143388                                00004.99EN00003.240000001      4500014R364143388            1                                                  5900015R364143388            0001300000000010000000001000000000400000000000000019100016000000000000100001000000000100001000010002300000000060000100001          '
+
+      @sample_file = {
+          :outgoing => '02000011697978     INGRAM       110809RUNQX110809180859.FBO F030000000     1    1100002             R364143388            20N273016979780110809110809110809     2100003R364143388            THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 2100004R364143388            CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 2100005R364143388            NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 2100006R364143388            ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 2100007R364143388            EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 2100008R364143388             AT 1-800-234-6737.                                4000009R364143388            1                     9780373200009       00100100C4100010R364143388            000 000000{ 0000 0000 0000 0000 0000 0000 0000     4200011R364143388            HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M4300012R364143388            HQPB                030900019350000000010000000    4400013R364143388                                00004.99EN00003.240000001      4500014R364143388            1                                                  5900015R364143388            0001300000000010000000001000000000400000000000000019100016000000000000100001000000000100001000010002300000000060000100001          ',
+          :test => '02000011697978     INGRAM       110809RUNQXt10809180859.FBO F030000000     1    1100002             R364143388            20N273016979780110809110809110809     2100003R364143388            THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 2100004R364143388            CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 2100005R364143388            NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 2100006R364143388            ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 2100007R364143388            EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 2100008R364143388             AT 1-800-234-6737.                                4000009R364143388            1                     9780373200009       00100100C4100010R364143388            000 000000{ 0000 0000 0000 0000 0000 0000 0000     4200011R364143388            HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M4300012R364143388            HQPB                030900019350000000010000000    4400013R364143388                                00004.99EN00003.240000001      4500014R364143388            1                                                  5900015R364143388            0001300000000010000000001000000000400000000000000019100016000000000000100001000000000100001000010002300000000060000100001          '
+      }
+
+      @file_names = {
+          :outgoing => '110809180859.fbc',
+          :test => 't10809180859.fbc'
+      }
+      @poa_file_name = '110809180859.fbc'
+      @test_poa_file_name = 't10809180859.fbc'
+      @file_name = @poa_file_name
+
+
+      @outgoing_files = [
+          "drw-rw-rw-   1 user     group           0 Aug  3 21:52 ..",
+          "drw-rw-rw-   1 user     group           0 Aug  3 21:52 .",
+          "-rw-rw-rw-   1 user     group         128 Aug  3 13:30 #{@poa_file_name}",
+          "-rw-rw-rw-   1 user     group        1872 Aug  3 20:30 110809180859.fbo"
+      ]
+
+      @remote = {
+          :outgoing =>  ["-rw-rw-rw-   1 user     group         128 Aug  3 13:30 #{@poa_file_name}"],
+          :test =>  ["-rw-rw-rw-   1 user     group         128 Aug  3 13:30 #{@test_poa_file_name}"]
+          }
+                 
+
     end
 
 
     before(:each) do
       @client = double('CdfFtpClient')
-      CdfFtpClient.stub(:new).and_return(@client)
+      CdfFtpClient.should_receive(:new).any_number_of_times.and_return(@client)
     end
 
     context "and there are no POA files on the server" do
       it "should count 0 files" do
-        @client.should_receive(:connect)
+        @client.should_receive(:dir).with("~/outgoing", ".*\\\#{@ext}").any_number_of_times.and_return([])
         PoaFile.remote_files.count.should == 0
       end
     end
 
     context "and there is 1 POA files on the server" do
       before(:each) do
-        @outgoing_files = [
-            "drw-rw-rw-   1 user     group           0 Aug  3 21:52 ..",
-            "drw-rw-rw-   1 user     group           0 Aug  3 21:52 .",
-            "-rw-rw-rw-   1 user     group         128 Aug  3 13:30 110809180859.fbc",
-            "-rw-rw-rw-   1 user     group        1872 Aug  3 20:30 110809180859.fbo"
-        ]
+        ['test', 'outgoing'].each do |dir|
+          @client.should_receive(:delete).with("~/#{dir}/#{@file_names[dir.to_sym]}").any_number_of_times.and_return(nil)
+          @client.should_receive(:dir).with("~/#{dir}", ".*\\\#{@ext}").any_number_of_times.and_return(@remote[dir.to_sym])
+          @client.should_receive(:name_from_path).with(@remote[dir.to_sym].first).any_number_of_times.and_return(@file_names[dir.to_sym])
+          @client.should_receive(:get).with("~/#{dir}/#{@file_names[dir.to_sym]}", PoaFile.create_path(@file_names[dir.to_sym])).any_number_of_times.and_return do
+            file = File.new(PoaFile.create_path(@file_names[dir.to_sym]), 'w')
+            file.write @sample_file[dir.to_sym]
+            file.close
+            nil
+          end
+        end
 
-        @ftp = double('ftp-server')
-        @ftp.stub(:chdir).with('outgoing').and_return(nil)
-        @ftp.stub(:list).with('*.fbc').and_return(@outgoing_files)
-        @ftp.stub(:delete).and_return(nil)
-        @client.stub(:connect).and_yield(@ftp)
       end
 
       it "should count only the files ending with .fbc" do
@@ -72,31 +102,14 @@ describe PoaFile do
 
       context "when importing an exception file" do
         before(:each) do
-          @file_name = '110809180859.fbc'
-          poa_file = PoaFile.create_path(@file_name)
-          @ftp.should_receive(:gettextfile).any_number_of_times.with(@file_name, poa_file).and_return do
-            file = File.new(poa_file, 'w')
-            file.write 'NO MAINFRAME'
-            file.close
-            nil
-          end
-
-          @po_file_name = @file_name.gsub(/fbc$/, 'fbo')
-          PoFile.should_receive(:find_by_file_name!).any_number_of_times.with(@po_file_name).and_return(@po_file)
-
-          @order = Factory(:order, :number => 'R364143388')
-          @product = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product')
-          @variant = @product.master
-          @line_item = Factory(:line_item, :variant => @variant, :price => 10, :order => @order)
-          LineItem.should_receive(:find_by_id!).any_number_of_times.with("1").and_return(@line_item)
-
-          PoaFile.download
-          PoaFile.needs_import.count.should > 0
-          @poa_file = PoaFile.needs_import.first
+          @error_file_name = 'error_file.FBC'
+          @error_file = PoaFile.create(:file_name => @error_file_name)
+          @error_file.write_data 'NO MAINFRAME'
+          @error_file.save!
         end
 
         it "should log an error message" do
-          result = @poa_file.import
+          result = @error_file.import
           result.class.should == CdfImportExceptionLog
         end
       end
@@ -104,30 +117,20 @@ describe PoaFile do
 
       context "file is downloaded" do
 
-        before(:each) do
-          @file_name = '110809180859.fbc'
-          poa_file = PoaFile.create_path(@file_name)
-          @ftp.should_receive(:gettextfile).any_number_of_times.with(@file_name, poa_file).and_return do
-            file = File.new(poa_file, 'w')
-            file.write @sample_file
-            file.close
-            nil
-          end
-        end
-
         it "should download the file, create a PaoFile record, and delete the file from the server" do
           PoaFile.needs_import.count.should == 0
           downloaded = PoaFile.download
-          downloaded.size.should == 1
+          downloaded.size.should == 2
           downloaded.first.versions.size.should == 0
 
-          PoaFile.needs_import.count.should == 1
-          PoaFile.needs_import.first.should == downloaded.first
-          PoaFile.needs_import.first.file_name.should == @file_name
+          PoaFile.needs_import.count.should == 2
+          poa_file = PoaFile.find_by_file_name(@poa_file_name)
+          poa_file.should_not == nil
+          poa_file.file_name.should == @poa_file_name
         end
 
         it "should have 80 chars in each line" do
-          PoaFile.download.size.should == 1
+          PoaFile.download.size.should == 2
           PoaFile.needs_import.first.data.split(/\n/).each do |line|
             line.chomp.length.should == 80
           end
@@ -135,11 +138,12 @@ describe PoaFile do
 
         context "and a POA file with the same name has already been downloaded" do
           before(:each) do
+            PoaFile.count.should == 0
             PoaFile.download
           end
 
           it "should make the existing PoaFile old version the new file" do
-            orig_poa_file = PoaFile.find_by_file_name @file_name
+            orig_poa_file = PoaFile.find_by_file_name @poa_file_name
             orig_poa_file.versions.should == []
             orig_poa_file.parent.should == nil
 
@@ -149,7 +153,7 @@ describe PoaFile do
             orig_poa_file.parent.should_not == nil
             orig_poa_file.versions.should == []
 
-            PoaFile.count.should == 2
+            PoaFile.count.should == 4
 
             PoaFile.where(:file_name => @file_name).count.should == 1
             PoaFile.where(:file_name => @file_name).count.should == 1
@@ -185,7 +189,7 @@ describe PoaFile do
             it "should import files one by one" do
               @poa_file.import.should_not == nil
               @poa_file.imported_at.should_not == nil
-              PoaFile.needs_import.count.should == 0
+              PoaFile.needs_import.count.should == 1
             end
 
             it "should import all files" do
