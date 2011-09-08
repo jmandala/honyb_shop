@@ -4,10 +4,12 @@ Feature: Confirm CDF-Lite Integration Compliance
   As an order manager
   I want to be able to create the required test orders and verify the results
 
+  @wip
   Background: user is logged in to the admin site
     Given I sign in with email "admin@honyb.com" and password "password"
     And I go to the admin page
-   
+
+  @wip
   Scenario: generate test orders
     When I click the "Fulfillment" link
     And I check "single order/single line/single quantity"
