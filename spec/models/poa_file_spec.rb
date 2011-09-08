@@ -48,6 +48,8 @@ describe PoaFile do
   end
 
   before(:all) do
+    FactoryGirl.create(:chambersburg)
+    PoaFile.all.each &:destroy
     LineItem.all.each &:destroy
     Order.all.each &:destroy
   end

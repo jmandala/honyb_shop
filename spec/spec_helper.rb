@@ -1,3 +1,5 @@
+$VERBOSE = nil
+
 require 'rubygems'
 require 'spork'
 
