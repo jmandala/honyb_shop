@@ -1,4 +1,10 @@
 HonybShop::Application.routes.draw do
+  get "system_check/index"
+
+  get "system_check/order_test"
+
+  get "system_check/ftp"
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

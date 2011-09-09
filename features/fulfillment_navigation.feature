@@ -14,11 +14,16 @@ Feature: Confirm CDF-Lite Integration Compliance
     When I go to the admin fulfillment dashboard page
     Then I should see "Fulfillment Dashboard"
     And page should have following links:
-      | url                                   | text               | within    |
-      | /admin/fulfillment/dashboard          | Dashboard          | #sub-menu |
-      | /admin/fulfillment/po_files           | PO Files           | #sub-menu |
-      | /admin/fulfillment/poa_files          | POA Files          | #sub-menu |
-      | /admin/fulfillment/asn_files          | ASN Files          | #sub-menu |
-      | /admin/fulfillment/cdf_invoice_files  | Invoice Files      | #sub-menu |
-      | /admin/fulfillment/compliance_testing | Compliance Testing | #sub-menu |
-   
+      | url                                  | text          | within    |
+      | /admin/fulfillment/dashboard         | Dashboard     | #sub-menu |
+      | /admin/fulfillment/po_files          | PO Files      | #sub-menu |
+      | /admin/fulfillment/poa_files         | POA Files     | #sub-menu |
+      | /admin/fulfillment/asn_files         | ASN Files     | #sub-menu |
+      | /admin/fulfillment/cdf_invoice_files | Invoice Files | #sub-menu |
+      | /admin/fulfillment/system_check      | System Check  | #sub-menu |
+    When I follow "System Check"
+    Then page should have following links:
+      | url                                        | text        | within   |
+      | /admin/fulfillment/system_check            | Dashboard   | #content |
+      | /admin/fulfillment/system_check/order_test | Test Orders | #content |
+      | /admin/fulfillment/system_check/ftp        | FTP         | #content |
