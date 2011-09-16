@@ -4,7 +4,7 @@ MAX_POA_VENDOR_RECORDS = 6
 
 describe PoaFile do
 
-  it_should_behave_like "an importable file", PoaFile, 80, '.fbc' do
+  it_should_behave_like "an importable file", PoaFile, 80, 'fbc' do
 
     let(:outgoing_file) { '110809180859.fbc' }
     let(:incoming_file) { 't10809180859.fbc' }
@@ -67,7 +67,7 @@ describe PoaFile do
 
   context "when importing an exception file" do
     before(:each) do
-      @error_file_name = 'error_file.FBC'
+      @error_file_name = 'error_file.fbc'
       @error_file = PoaFile.create(:file_name => @error_file_name)
       @error_file.write_data 'NO MAINFRAME'
       @error_file.save!
