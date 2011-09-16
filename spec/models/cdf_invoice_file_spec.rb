@@ -9,7 +9,7 @@ describe CdfInvoiceFile do
   
   
   
-  it_should_behave_like "an importable file", CdfInvoiceFile, 80, '.BIN' do
+  it_should_behave_like "an importable file", CdfInvoiceFile, 80, 'BIN' do
 
     let(:outgoing_file) { '05536017.BIN' }
     let(:incoming_file) { 'T5536017.BIN' }

@@ -2,7 +2,7 @@ require_relative '../spec_helper'
 
 describe AsnFile do
 
-  it_should_behave_like "an importable file", AsnFile, 200, '.PBS' do
+  it_should_behave_like "an importable file", AsnFile, 200, 'PBS' do
 
     let(:outgoing_file) { '05503677.PBS' }
     let(:incoming_file) { 'T5503677.PBS' }
