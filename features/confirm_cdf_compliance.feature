@@ -4,23 +4,18 @@ Feature: Confirm CDF-Lite Integration Compliance
   As an order manager
   I want to be able to create the required test orders and verify the results
 
-  @wip
   Background: user is logged in to the admin site
     Given I sign in with email "admin@honyb.com" and password "password"
-    And I go to the admin page
+    And I go to the admin fulfillment dashboard page
 
-  @wip
   Scenario: generate test orders
-    When I click the "Fulfillment" link
+    When I click the "System Check" link
+    And I click the "Order Compliance Check" link
     And I check "single order/single line/single quantity"
     And I check "single order/single line/multiple quantity"
     And I check "single order/multiple lines/single quantity"
     And I check "single order/multiple lines/multiple quantity"
     And I press "Generate Test Orders"
-    Then I should see "Created 4 test orders"
-    And I should see "Listing Orders"
-    And the "search_order_type_equals" drop-down should contain the option "test"
-    And the test order should be completed
 
   @wip
   Scenario: run compliance test

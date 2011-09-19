@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110831100445) do
+ActiveRecord::Schema.define(:version => 20110919215351) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -591,6 +591,7 @@ ActiveRecord::Schema.define(:version => 20110831100445) do
     t.string   "item_number_type",      :limit => 2
     t.decimal  "discounted_list_price",               :precision => 8, :scale => 2
     t.integer  "total_line_order_qty"
+    t.integer  "poa_line_item_id"
   end
 
   create_table "poa_line_item_pub_records", :force => true do |t|
