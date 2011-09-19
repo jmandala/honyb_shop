@@ -7,8 +7,6 @@ describe CdfInvoiceFile do
     Order.all.each &:destroy
   end
   
-  
-  
   it_should_behave_like "an importable file", CdfInvoiceFile, 80, 'BIN' do
 
     let(:outgoing_file) { '05536017.BIN' }
@@ -104,8 +102,6 @@ describe CdfInvoiceFile do
           :should_import_cdf_invoice_totals,
           :should_import_cdf_invoice_trailers,
           :should_import_cdf_invoice_file_trailers
-
-
       ]
     end
   end
@@ -307,4 +303,8 @@ def should_import_cdf_invoice_file_data(parsed, cdf_invoice_file)
   db_record.file_name.should == outgoing_file
   db_record.versions.should == []
   db_record.parent.should == nil
+  
+  db_record.orders.should_not == nil
+  db_record.orders.count.should == 2
+  db_record.orders.each { |o| o.class.should == Order }
 end
