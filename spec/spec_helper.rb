@@ -1,3 +1,5 @@
+$VERBOSE = nil
+
 require 'rubygems'
 require 'spork'
 
@@ -15,6 +17,8 @@ Spork.prefork do
   ENV["RAILS_ENV"] ||= 'test'
   require File.expand_path("../../config/environment", __FILE__)
   require 'rspec/rails'
+  require 'capybara/rspec'
+  require 'capybara/rails'
 
   # Don't need passwords in test DB to be secure, but we would like 'em to be
   # fast -- and the stretches mechanism is intended to make passwords

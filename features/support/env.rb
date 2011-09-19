@@ -1,3 +1,5 @@
+$VERBOSE = nil
+
 require 'rubygems'
 require 'spork'
 require 'spork/ext/ruby-debug'

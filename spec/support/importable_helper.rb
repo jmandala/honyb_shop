@@ -6,7 +6,6 @@ shared_examples "an importable file" do |klass, record_length, ext|
     @import_class = klass
     @record_length = record_length
     @ext = ext
-
     @import_class.all.each &:destroy
   end
 
@@ -71,7 +70,7 @@ shared_examples "an importable file" do |klass, record_length, ext|
         ImportFileHelper.should_have_remote_file_count(@client, @import_class, 0) do |client|
           ['test', 'outgoing'].each do |dir|
             remote_dir = "~/#{dir}"
-            client.should_receive(:dir).with(remote_dir, '.*\#{@ext}').once.and_return([])
+            client.should_receive(:dir).with(remote_dir, ".*#{@ext}").once.and_return([])
           end
           client.should_receive(:close).once.and_return(nil)
         end
@@ -80,7 +79,7 @@ shared_examples "an importable file" do |klass, record_length, ext|
 
     context "and there is 1 import files on the server" do
       before(:each) do
-        ImportFileHelper.init_client(@client, @file_names, @remote_dir, @sample_file)
+        ImportFileHelper.init_client(@client, @ext, @file_names, @remote_dir, @sample_file)
       end
 
       it "should count only the files ending with the correct extension" do

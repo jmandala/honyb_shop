@@ -1,35 +1,29 @@
 Given /^a purchase order was submitted with (\d+) orders? and (\d+) line items? with a quantity of (\d+) each$/ do |order_count, line_count, quantity|
-  Given "#{order_count} orders exist"
-  And "each order has #{line_count} line item with a quantity of #{quantity}"
-  And "each order is completed"
+  order_count.to_i.times do
+    Cdf::OrderBuilder.completed_test_order({:line_item_count => line_count.to_i, :line_item_qty => quantity.to_i})
+  end
 
   needs_po_count = Order.needs_po.count
   @po_file = PoFile.generate
   @po_file.orders.size.should == needs_po_count
   #@po_file.put
-
 end
 
 Given /^a POA file exists on the FTP server$/ do
   poa_file_name = @po_file.file_name.gsub /fbo$/, 'fbc'
 
-  CdfFtpClient.new.connect do |ftp|
+  remote_files = []
+  600.times do
+    remote_files = PoaFile.remote_files
+    puts remote_files
 
-    remote_files = []
-
-    i = 0
-    600.times do
-      i = i+1
-      if remote_files.length > 0
-        break
-      end
-      sleep 1
-      remote_files = ftp.list("outgoing/#{poa_file_name}")
-      puts "[#{i}] #{remote_files.count}"
+    if remote_files.length > 0
+      break
     end
-
-    remote_files.length.should == 1
+    sleep 1
   end
+
+  remote_files.length.should == 1
 end
 
 

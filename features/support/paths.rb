@@ -10,13 +10,7 @@ module NavigationHelpers
 
     when /^the home\s?page$/
       '/'
-
-    when /^the admin page$/
-      '/admin'
       
-    when /^the fulfillment settings page$/
-      '/admin/fulfillment/settings'
-        
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
     #
@@ -27,7 +21,8 @@ module NavigationHelpers
       begin
         page_name =~ /^the (.*) page$/
         path_components = $1.split(/\s+/)
-        self.send(path_components.push('path').join('_').to_sym)
+        path = path_components.push('path').join('_').to_sym
+        self.send(path)
       rescue NoMethodError, ArgumentError
         raise "Can't find mapping from \"#{page_name}\" to a path.\n" +
           "Now, go and add a mapping in #{__FILE__}"

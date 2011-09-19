@@ -53,12 +53,12 @@ class ImportFileHelper
     klass.remote_files.count.should == count
   end
 
-  def self.init_client(client, file_names, remote_dir, sample_files)
+  def self.init_client(client, ext, file_names, remote_dir, sample_files)
     client.should_receive(:close).any_number_of_times.and_return(nil)
 
     ['test', 'outgoing'].each do |dir|
-      client.should_receive(:delete).with("~/#{dir}/#{file_names[dir.to_sym]}").any_number_of_times.and_return(nil)
-      client.should_receive(:dir).with("~/#{dir}", ".*\\\#{@ext}").any_number_of_times.and_return(remote_dir[dir.to_sym])
+      client.stub!(:delete).with("~/#{dir}", "#{file_names[dir.to_sym]}").any_number_of_times.and_return(nil)
+      client.should_receive(:dir).with("~/#{dir}", ".*#{ext}").any_number_of_times.and_return(remote_dir[dir.to_sym])
       client.should_receive(:name_from_path).with(remote_dir[dir.to_sym].first).any_number_of_times.and_return(file_names[dir.to_sym])
       client.should_receive(:get).with("~/#{dir}/#{file_names[dir.to_sym]}", PoaFile.create_path(file_names[dir.to_sym])).any_number_of_times.and_return do
         file = File.new(PoaFile.create_path(file_names[dir.to_sym]), 'w')

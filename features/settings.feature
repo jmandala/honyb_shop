@@ -9,7 +9,7 @@ Feature: Configure Fulfillment Settings
     Then I should not see "Log In as Existing Customer"
     
   Scenario: visit the settings display page
-    When I go to the fulfillment settings page
+    When I go to the admin fulfillment settings page
     Then I should see "Cdf Ship To Password"
     And I should see "Cdf Ship To Account"
     And I should see "Cdf Bill To Account"
@@ -19,7 +19,7 @@ Feature: Configure Fulfillment Settings
     And I should see "Cdf Run Mode"
     
   Scenario: visit the settings edit page
-    When I go to the fulfillment settings page
+    When I go to the admin fulfillment settings page
     And I click "Edit"
     Then I should see "Cdf Ship To Password"
     And I should see "Cdf Ship To Account"
@@ -31,7 +31,7 @@ Feature: Configure Fulfillment Settings
     And the "preferences_cdf_run_mode" drop-down should contain the option "test"
     
   Scenario: modify the settings edit page
-    When I go to the fulfillment settings page
+    When I go to the admin fulfillment settings page
     And I click "Edit"
     And I fill in the following:
      | Cdf Ship To Password | ship_to_password |
