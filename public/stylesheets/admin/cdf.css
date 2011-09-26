@@ -21,8 +21,9 @@ table.settings td {
 .data_pair {
     overflow: hidden;
     width: 100%;
-    border-bottom: 1px solid #e3d3e3;
+    border-bottom: 1px solid #ccc;
     margin-bottom: 6px;
+    color: #666;
 }
 
 .data_pair label {
@@ -30,5 +31,30 @@ table.settings td {
     width: 80px;
     display: block;
     float: left;
-    
+}
+
+.data_group {
+    margin-bottom: 20px;
+    border: solid 1px #999;
+    -moz-border-radius: .5em;
+    -webkit-border-radius: .5em;
+    padding:  10px;
+    background-color: #e1e1e1;
+    overflow: hidden;
+    width: 95%;    
+}
+
+.data_group h2 {
+    color: #666;
+}
+
+.data_group h3 {
+    font-size: 130%;
+    color: #666;    
+}
+
+.col {
+    float: left;
+    width: 48%;
+    margin-right: 10px;
 }
