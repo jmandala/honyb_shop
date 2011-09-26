@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110919215351) do
+ActiveRecord::Schema.define(:version => 20110922163742) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -95,7 +95,10 @@ ActiveRecord::Schema.define(:version => 20110919215351) do
     t.string   "isbn_13"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "scac"
     t.integer  "asn_shipping_method_code_id"
+    t.integer  "asn_shipment_id"
+    t.integer  "line_number"
   end
 
   create_table "asn_shipments", :force => true do |t|
@@ -114,6 +117,7 @@ ActiveRecord::Schema.define(:version => 20110919215351) do
     t.string   "consumer_po_number",      :limit => 22
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "line_number"
   end
 
   create_table "asn_shipping_method_codes", :force => true do |t|
