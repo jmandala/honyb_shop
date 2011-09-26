@@ -95,7 +95,6 @@ ActiveRecord::Schema.define(:version => 20110919215351) do
     t.string   "isbn_13"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "asn_shipping_method_code"
     t.integer  "asn_shipping_method_code_id"
   end
 
@@ -295,13 +294,13 @@ ActiveRecord::Schema.define(:version => 20110919215351) do
     t.integer  "invoice_number"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "cdf_invoice_header_id"
     t.decimal  "total_net_price",                    :default => 0.0, :null => false
     t.decimal  "total_shipping",                     :default => 0.0, :null => false
     t.decimal  "total_handling",                     :default => 0.0, :null => false
     t.decimal  "total_gift_wrap",                    :default => 0.0, :null => false
     t.decimal  "total_invoice",                      :default => 0.0, :null => false
     t.integer  "line_number"
-    t.integer  "cdf_invoice_header_id"
   end
 
   create_table "configurations", :force => true do |t|
