@@ -58,3 +58,28 @@ table.settings td {
     width: 48%;
     margin-right: 10px;
 }
+
+table.index {
+    border-top:  1px solid #aaa;
+    border-left:  1px solid #aaa;
+    background-color:  white;
+}
+
+table.index td.invoice_group {
+    padding-top: 10px;
+}
+
+table.index h4 {
+    margin-bottom: 1em;
+    text-transform: uppercase;
+    color: #666;
+}
+
+table.index .inactive {
+    background-color:  #eee;
+}
+
+table.index .active {
+    background-color: yellow;
+    font-weight: 800;
+}
