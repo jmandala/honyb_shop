@@ -50,7 +50,7 @@ end
 def should_import_asn_shipment_detail_record(parsed, asn_file)
 
   parsed[:asn_shipment_detail].each do |record|
-    db_record = AsnShipmentDetail.find_self asn_file, record[:client_order_id]
+    db_record = AsnShipmentDetail.find_self asn_file, record[:__LINE_NUMBER__]
     db_record.should_not == nil
     db_record.asn_file.should == asn_file
     db_record.order.should_not == nil
@@ -92,7 +92,7 @@ end
 
 def should_import_asn_shipment_record(parsed, asn_file)
   parsed[:asn_shipment].each do |record|
-    db_record = AsnShipment.find_self asn_file, record[:client_order_id]
+    db_record = AsnShipment.find_self asn_file, record[:__LINE_NUMBER__]
     db_record.should_not == nil
     db_record.asn_file.should == asn_file
     db_record.order.should_not == nil
