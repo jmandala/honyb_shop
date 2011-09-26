@@ -1,0 +1,1 @@
+Spree::Config.set(:stylesheets => 'screen,honyb_theme')

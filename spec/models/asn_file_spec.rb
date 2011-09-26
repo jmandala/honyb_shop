@@ -57,6 +57,8 @@ def should_import_asn_shipment_detail_record(parsed, asn_file)
     db_record.record_code.should == 'OD'
     db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
 
+    db_record.asn_shipment.should_not == nil
+    
     [:ingram_order_entry_number,
      :isbn_10_ordered,
      :isbn_10_shipped,
@@ -99,6 +101,8 @@ def should_import_asn_shipment_record(parsed, asn_file)
     db_record.record_code.should == 'OR'
     db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
     db_record.asn_order_status.code.should == record[:order_status_code]
+    db_record.asn_shipment_details.should_not == nil
+    db_record.asn_shipment_details.count.should > 0
 
     [:consumer_po_number].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
 
