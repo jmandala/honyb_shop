@@ -17,3 +17,18 @@ table.settings td {
 .settings input {
     width: 300px;
 }
+
+.data_pair {
+    overflow: hidden;
+    width: 100%;
+    border-bottom: 1px solid #e3d3e3;
+    margin-bottom: 6px;
+}
+
+.data_pair label {
+    padding-right: 10px;
+    width: 80px;
+    display: block;
+    float: left;
+    
+}
