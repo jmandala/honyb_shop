@@ -7,8 +7,20 @@
 
   var methods = {
     init : function( options ) {  },
-    toggle : function() {
-        
+    collapseable : function() {
+        var hide = 'hide';
+        var show = 'show';
+        this.before('<div class="toggle">' + hide + '</div>');
+        $('.toggle').click(function() {          
+            var button = $(this);
+            content = button.next();
+            content.toggle();
+            if (content.is(':visible')) {
+                button.html(hide);
+            } else {
+                button.html(show);
+            }
+        });
     }
   };
 
@@ -32,7 +44,7 @@
 
 jQuery(document).ready(function($) {
     
-    $('.toggle').honyb('toggle');
+    $('.collapseable').honyb('collapseable');
     
     
 });
