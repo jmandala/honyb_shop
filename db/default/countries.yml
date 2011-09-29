@@ -300,6 +300,13 @@ countries_131:
   iso_name: MICRONESIA, FEDERATED STATES OF
   id: "131"
   numcode: "583"
+countries_581:
+  name: Minor Outlying Islands US
+  iso3: UMI
+  iso: UM
+  iso_name: MINOR OUTLYING ISLANDS US
+  id: "581"
+  numcode: "581"
 countries_213: 
   name: United Kingdom
   iso3: GBR
