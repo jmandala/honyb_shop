@@ -60,7 +60,7 @@ describe Cdf::OrderBuilder do
   end
 
   it "should create order for Hawaii" do
-    order = @builder.completed_test_order({:id => 5, :name => 'single order/multiple lines/multiple quantity: Hawaii', :line_item_count => 2, :line_item_qty => 2, :ship_location => :HI})
+    order = @builder.completed_test_order({:id => 5, :name => 'single order/multiple lines/multiple quantity: Hawaii', :line_item_count => 2, :line_item_qty => 2, :state_abbr => :HI})
     order.ship_address.state.abbr.should == 'HI'
     order.ship_address.country.iso3.should == 'USA'
     economy_mail = ShippingMethod.find_by_name 'Economy Mail'
@@ -68,12 +68,12 @@ describe Cdf::OrderBuilder do
   end
   
   it "should create order for USVI" do
-    order = @builder.completed_test_order({:id => 5, :name => 'single order/multiple lines/multiple quantity: Hawaii', :line_item_count => 2, :line_item_qty => 2, :ship_location => :VI})
+    order = @builder.completed_test_order({:id => 5, :name => 'single order/multiple lines/multiple quantity: Hawaii', :line_item_count => 2, :line_item_qty => 2, :state_abbr => :VI})
     order.ship_address.state.abbr.should == 'VI'
     order.ship_address.country.iso3.should == 'VIR'
     economy_mail = ShippingMethod.find_by_name 'Economy Mail'
     order.shipping_method.should == economy_mail
-  end
+  end  
 
   context "#create_address" do
     it "requires a state argument" do
@@ -90,7 +90,7 @@ describe Cdf::OrderBuilder do
     it "should error when state is invalid" do
       error = nil
       begin
-        @builder.create_address :xyz
+        @builder.create_address({:state_abbr => :xyz})
       rescue => e
         error = e
       end
@@ -100,25 +100,29 @@ describe Cdf::OrderBuilder do
     end
 
     it "creates a domestic address" do
-      address = @builder.create_address :ME
+      address = @builder.create_address({:state_abbr =>  :ME})
       address.state.abbr.should == 'ME'
       address.country.iso3.should == 'USA'
     end
 
     it "creates a foreign address" do
-      address = @builder.create_address :PR
+      address = @builder.create_address({:state_abbr =>  :PR })
       address.state.abbr.should == 'PR'
       address.country.iso3.should == 'PRI'
       address.country.numcode.should == 630
     end
 
-   it "creates an APO/FPO address" do
-      address = @builder.create_address :AE
+    it "creates an APO/FPO address" do
+      address = @builder.create_address({:state_abbr =>  :AE })
       address.state.name.should == 'Armed Forces Africa'
       address.country.iso3.should == 'USA'
       address.country.numcode.should == 840
     end
 
+    it "creates a PO Box address" do
+      address = @builder.create_address({:address1 => 'P. O. Box 123'})
+      address.address1.match(/p\.?\s*o\.?\s*box/i).should_not == nil
+    end
   end
 
 end
