@@ -112,6 +112,13 @@ describe Cdf::OrderBuilder do
       address.country.numcode.should == 630
     end
 
+   it "creates an APO/FPO address" do
+      address = @builder.create_address :AE
+      address.state.name.should == 'Armed Forces Africa'
+      address.country.iso3.should == 'USA'
+      address.country.numcode.should == 840
+    end
+
   end
 
 end
