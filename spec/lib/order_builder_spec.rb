@@ -59,6 +59,22 @@ describe Cdf::OrderBuilder do
     orders.count.should == 3
   end
 
+  it "should create order for Hawaii" do
+    order = @builder.completed_test_order({:id => 5, :name => 'single order/multiple lines/multiple quantity: Hawaii', :line_item_count => 2, :line_item_qty => 2, :ship_location => :HI})
+    order.ship_address.state.abbr.should == 'HI'
+    order.ship_address.country.iso3.should == 'USA'
+    economy_mail = ShippingMethod.find_by_name 'Economy Mail'
+    order.shipping_method.should == economy_mail
+  end
+  
+  it "should create order for USVI" do
+    order = @builder.completed_test_order({:id => 5, :name => 'single order/multiple lines/multiple quantity: Hawaii', :line_item_count => 2, :line_item_qty => 2, :ship_location => :VI})
+    order.ship_address.state.abbr.should == 'VI'
+    order.ship_address.country.iso3.should == 'VIR'
+    economy_mail = ShippingMethod.find_by_name 'Economy Mail'
+    order.shipping_method.should == economy_mail
+  end
+
   context "#create_address" do
     it "requires a state argument" do
       e = nil
@@ -88,7 +104,7 @@ describe Cdf::OrderBuilder do
       address.state.abbr.should == 'ME'
       address.country.iso3.should == 'USA'
     end
-    
+
     it "creates a foreign address" do
       address = @builder.create_address :PR
       address.state.abbr.should == 'PR'
