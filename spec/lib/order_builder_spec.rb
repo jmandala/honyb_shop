@@ -74,6 +74,18 @@ describe Cdf::OrderBuilder do
     economy_mail = ShippingMethod.find_by_name 'Economy Mail'
     order.shipping_method.should == economy_mail
   end  
+  
+  it "should specify the shipping method" do
+    order = @builder.completed_test_order({:id => 5, :name => '2nd Day Air', :shipping_method => '2nd Day Air'})
+    shipping_method = ShippingMethod.find_by_name '2nd Day Air'
+    order.shipping_method.should == shipping_method
+  end
+  
+  it "should specify the ean" do
+    order = @builder.completed_test_order({:id => 5, :name => 'not yet received ean', :ean => ''})
+    shipping_method = ShippingMethod.find_by_name '2nd Day Air'
+    order.shipping_method.should == shipping_method
+  end
 
   context "#create_address" do
     it "requires a state argument" do
