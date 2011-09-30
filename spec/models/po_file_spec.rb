@@ -11,9 +11,12 @@ describe PoFile do
     Cdf::Config.set(:cdf_ftp_server => 'ftp1.ingrambook.com')
     Cdf::Config.set(:cdf_run_mode => :test)
 
-    @order = Factory(:order)
-    add_line_item @order
-    complete_order @order
+    @builder = Cdf::OrderBuilder
+    @order = @builder.completed_test_order({:id => 5, 
+                                            :name => 'single order/multiple lines/multiple quantity: Hawaii', 
+                                            :line_item_count => 2,
+                                            :line_item_qty => 2, 
+                                            :ship_location => :HI})
   end
 
   context "default behaviors" do
@@ -418,14 +421,14 @@ describe PoFile do
                                     :green_light => 'Y',
                                     :poa_type => Records::Po::Po21::POA_TYPE[:full_acknowledgement],
                                     :ship_to_password => Cdf::Config.get(:cdf_ship_to_password),
-                                    :carrier_shipping_method => '### 2ND DAY AIR',
+                                    :carrier_shipping_method => '### USA ECONOMY',
                                     :split_order_allowed => 'Y'})
       end
 
-      it "should format po_40 correction" do
+      it "should format po_40 correctly" do
         record = @parsed[:po_40]
         record.should_not == nil
-        record.length.should == 1
+        record.length.should == 2
       end
 
     end
