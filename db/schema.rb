@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110927191624) do
+ActiveRecord::Schema.define(:version => 20110930103729) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -122,13 +122,14 @@ ActiveRecord::Schema.define(:version => 20110927191624) do
 
   create_table "asn_shipping_method_codes", :force => true do |t|
     t.string   "code",                   :limit => 2
-    t.string   "shipping_method"
+    t.string   "name"
     t.string   "big_bisac_code_sent_in"
     t.integer  "po_box_option_id"
     t.string   "address_type"
     t.string   "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "shipping_method_id"
   end
 
   create_table "asn_slash_codes", :force => true do |t|
