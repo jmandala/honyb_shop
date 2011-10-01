@@ -82,9 +82,10 @@ describe Cdf::OrderBuilder do
   end
   
   it "should specify the ean" do
-    order = @builder.completed_test_order({:id => 5, :name => 'not yet received ean', :ean => ''})
-    shipping_method = ShippingMethod.find_by_name '2nd Day Air'
-    order.shipping_method.should == shipping_method
+    order = @builder.completed_test_order({:id => 5, :name => 'not yet received ean', :ean_type => :backorder_cancel})
+    order.line_items.count.should == 1
+    product_builder = Cdf::ProductBuilder.new
+    order.line_items.first.variant.sku.no_dashes.should == product_builder.next_sku(:backorder_cancel).no_dashes
   end
 
   context "#create_address" do
