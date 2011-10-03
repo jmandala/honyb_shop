@@ -3,7 +3,7 @@ require_relative '../spec_helper'
 describe Cdf::ProductBuilder do
 
   it "should create a new in-stock product" do
-    product = Cdf::ProductBuilder.new.next_in_stock!
+    product = Cdf::ProductBuilder.new.next_product!
     product.should_not == nil
     product.has_stock?.should == true
     product.on_hand.should > 0

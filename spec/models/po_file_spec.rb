@@ -416,7 +416,7 @@ describe PoFile do
                                     :sequence_number => '00004',
                                     :po_number => @order.number.ljust_trim(22),
                                     :po_type => Records::Po::Po21::PO_TYPE[:purchase_order],
-                                    :order_type => Records::Po::Po21::ORDER_TYPE[:release_when_full],
+                                    :shplit_shipment_type => Order::SPLIT_SHIPMENT_TYPE[:release_when_full],
                                     :dc_code => '',
                                     :green_light => 'Y',
                                     :poa_type => Records::Po::Po21::POA_TYPE[:full_acknowledgement],
