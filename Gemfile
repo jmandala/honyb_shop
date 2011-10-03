@@ -45,4 +45,5 @@ group :cucumber, :test, :development do
 end
 
 gem "cdf", :path => "cdf", :require => "cdf"
-gem "spree_comments"
+gem "spree_comments", :git => 'git://github.com/spree/spree_comments.git', :branch => '0-60-x'
+gem "acts_as_commentable"
