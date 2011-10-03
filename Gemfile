@@ -45,3 +45,4 @@ group :cucumber, :test, :development do
 end
 
 gem "cdf", :path => "cdf", :require => "cdf"
+gem "spree_comments"
