@@ -179,5 +179,12 @@ describe Cdf::OrderBuilder do
     order = @builder.completed_test_order({:id => 23, :name => 'split shipment: default'})
   end
 
+  it "should set an order comment" do
+    order = @builder.completed_test_order({:id => 23, :name => 'set test order'})
+    order.comments.count.should == 1
+    order.comments.first.comment.should == 'set test order'
+    order.comments.first.comment_type.name.should == 'Order Name'
+    order.order_name.should == 'set test order'
+  end
 
 end
