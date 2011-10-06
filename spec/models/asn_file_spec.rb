@@ -41,9 +41,18 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
     let(:validations) do
       [:should_import_asn_shipment_detail_record,
        :should_import_asn_shipment_record,
-       :should_import_asn_file_data
+       :should_import_asn_file_data,
+       :should_reference_shipment
       ]
     end
+  end
+end
+
+def should_reference_shipment(parsed, asn_file)
+  parsed[:asn_shipment_detail].each do |record|
+    db_record = AsnShipmentDetail.find_self asn_file, record[:__LINE_NUMBER__]
+    
+    db_record.shipment.should_not == nil
   end
 end
 
