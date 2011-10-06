@@ -16,7 +16,7 @@ gem 'sqlite3-ruby', :require => 'sqlite3'
 gem 'haml'
 
 # Followed by spree itself first, all spree-specific extensions second
-gem 'spree', '0.60.1'
+gem 'spree', '0.60.2'
 
 gem 'faker'
 gem "factory_girl_rails"
