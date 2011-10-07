@@ -58,6 +58,12 @@ describe AsnShipmentDetail do
     let(:order) { mock_model(Order, :id => 1, :completed? => true, :canceled? => false, :line_items => [line_item_1]) }
     let(:inventory_unit_1) { InventoryUnit.new(:variant => variant_1, :order => order) }
     let(:shipping_method) { mock_model(ShippingMethod, :id => 1) }
+    let(:shipment) { mock_model(Shipment,
+                                :tracking => '',
+                                :inventory_units => [inventory_unit_1],
+                                :unassign_sold_inventory => :self,
+                                :ship => true,
+                                :ship! => true) }
 
     let(:asn_shipped) { mock_model(AsnShippingMethodCode, :shipping_method => shipping_method, :code => '00', :description => 'Shipped') }
     let(:asn_slashed) { mock_model(AsnShippingMethodCode, :code => 'S1', :description => 'DC Slash (warehouse)') }
@@ -69,12 +75,6 @@ describe AsnShipmentDetail do
 
       context "single line / single quantity" do
 
-        let(:shipment) { mock_model(Shipment,
-                                    :tracking => tracking,
-                                    :inventory_units => [inventory_unit_1],
-                                    :unassign_sold_inventory => :self,
-                                    :ship => true,
-                                    :ship! => true) }
 
         let(:asd_shipped) { AsnShipmentDetail.new(:order => order,
                                                   :line_item => line_item_1,
@@ -84,7 +84,7 @@ describe AsnShipmentDetail do
                                                   :quantity_shipped => 1) }
 
         let(:available_shipment_sql) { "order_id = #{order.id} AND shipping_method_id = #{shipping_method.id} AND tracking = '#{tracking}'" }
-        
+
         before :each do
           now = Time.now
           Time.stub(:now) { now }
@@ -97,30 +97,49 @@ describe AsnShipmentDetail do
         end
 
         it "should have available shipments" do
-          Shipment.should_receive(:where).with(available_shipment_sql) { [shipment]}         
+          Shipment.should_receive(:where).with(available_shipment_sql) { [shipment] }
           asd_shipped.available_shipments(tracking).should == [shipment]
         end
 
-
         context "all shipped" do
 
-          it "should assign a single asd to a single shipment, with a single line item and a single quantity" do
-            asd.init_shipment(tracking).should == shipment
-            asd.shipment.should_not == nil
-            asd.shipment.tracking.should == tracking
-            asd.inventory_units.should == [inventory_unit_1]
+          context "single AsnShipmentDetail to a single Shipment, with a single LineItem and a quantity of 1" do
+            let(:expect_available_shipments) { Shipment.should_receive(:where).with(available_shipment_sql) { [shipment] } }
+
+            before :each do
+              #expect_available_shipments
+            end
+
+            it "#init_shipment" do
+              expect_available_shipments
+              shipment.should_receive(:save!)
+              shipment.should_receive(:tracking=).with(tracking)
+
+              asd_shipped.init_shipment(tracking).should == shipment
+            end
+
+            it "#assign_shipment" do
+              shipment.should_receive(:save!)
+              shipment.should_receive(:tracking=).with(tracking)
+
+              asd_shipped.assign_shipment(shipment, tracking)
+              asd_shipped.shipment.should == shipment
+            end
+
+            it "#assign_inventory" do
+              asd_shipped.assign_inventory(shipment)
+              asd_shipped.inventory_units.should == [inventory_unit_1]
+            end
+
           end
 
-
-          it "should assign inventory units" do
-            asd.init_shipment(tracking).should == shipment
-          end
 
         end
         context "partial shipped"
         context "none shipped"
 
       end
+=begin
       context "multi-line / single quantity" do
         context "one order, one shipment, two AsnShipmentDetails" do
           let(:asd_2) { AsnShipmentDetail.new(:order => order, :tracking_number => tracking_2, :asn_order_status => shipped, :asn_shipping_method_code => asn_shipping_method_code, :quantity_shipped => 2) }
@@ -142,6 +161,8 @@ describe AsnShipmentDetail do
         end
 
       end
+=end
+
       context "single line / multiple quantity" do
 
       end
