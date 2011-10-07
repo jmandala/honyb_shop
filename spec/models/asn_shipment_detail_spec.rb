@@ -1,8 +1,8 @@
 describe AsnShipmentDetail do
 
-  let(:shipping_method) { mock_model(ShippingMethod, :id => 1) }  
+  let(:shipping_method) { mock_model(ShippingMethod, :id => 1) }
   let(:shipped_status) { mock_model(AsnOrderStatus, :shipped? => true) }
-  let(:asn_shipping_method_code_shipped) { mock_model(AsnShippingMethodCode, :shipping_method => shipping_method)}
+  let(:asn_shipping_method_code_shipped) { mock_model(AsnShippingMethodCode, :shipping_method => shipping_method) }
   let(:asd_shipped) { AsnShipmentDetail.new(:asn_order_status => shipped_status, :asn_shipping_method_code => asn_shipping_method_code_shipped) }
   let(:asd) { AsnShipmentDetail.new }
 
@@ -43,25 +43,24 @@ describe AsnShipmentDetail do
       asd.shipped?.should == false
       asd_shipped.shipped?.should == true
     end
-    
+
     it "#shipping_method" do
       asd.shipping_method.should == nil
       asd_shipped.asn_shipping_method_code.should_not == nil
       asd_shipped.shipping_method.should == shipping_method
     end
+
+    it "#missing_shipment" do
+      3.times { AsnShipmentDetail.create }
+      AsnShipmentDetail.missing_shipment.count.should == 3
+    end
+
+    it "#available_shipments" do
+      asd.available_shipments().count == 0
+    end
   end
 
-  it "#missing_shipment" do
-    3.times { AsnShipmentDetail.create }
-    AsnShipmentDetail.missing_shipment.count.should == 3
-  end
-  
-  it "#available_shipments" do
-    asd.available_shipments().count == 0
-  end
-
-  context "initializes shipment" do
-
+  context "items shipped" do
     let(:variant_1) { mock_model(Variant, :sku => '999', :id => 1) }
     let(:line_item_1) { mock_model(LineItem, :variant => variant_1, :quantity => 1) }
     let(:order) { mock_model(Order, :id => 1, :completed? => true, :canceled? => false, :line_items => [line_item_1]) }
@@ -77,13 +76,11 @@ describe AsnShipmentDetail do
     let(:asn_shipped) { mock_model(AsnShippingMethodCode, :shipping_method => shipping_method, :code => '00', :description => 'Shipped') }
     let(:asn_slashed) { mock_model(AsnShippingMethodCode, :code => 'S1', :description => 'DC Slash (warehouse)') }
 
-    context "has a tracking number" do
+    context "shipped in full" do
 
       let(:tracking) { '1234567' }
 
-
       context "single line / single quantity" do
-
 
         let(:asd_shipped) { AsnShipmentDetail.new(:order => order,
                                                   :line_item => line_item_1,
@@ -95,8 +92,6 @@ describe AsnShipmentDetail do
         let(:available_shipment_sql) { "order_id = #{order.id} AND shipping_method_id = #{shipping_method.id} AND tracking = '#{tracking}'" }
 
         before :each do
-          now = Time.now
-          Time.stub(:now) { now }
           order.stub(:inventory_units) { mock(Object, :sold => [inventory_unit_1]) }
         end
 
@@ -131,11 +126,9 @@ describe AsnShipmentDetail do
               asd_shipped.assign_inventory(shipment)
               asd_shipped.inventory_units.should == [inventory_unit_1]
             end
-          end        
+          end
 
         end
-        context "partial shipped"
-        context "none shipped"
 
       end
 =begin
@@ -169,13 +162,9 @@ describe AsnShipmentDetail do
 
     end
 
-    context "has no tracking number"
-
-
-    context "all items shipped" do
-
-
-    end
+    context "partial shipped"
+    context "none shipped"
+    
 
   end
 end
