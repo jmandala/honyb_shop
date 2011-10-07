@@ -1,54 +1,63 @@
 describe AsnShipmentDetail do
 
+  let(:shipping_method) { mock_model(ShippingMethod, :id => 1) }  
   let(:shipped_status) { mock_model(AsnOrderStatus, :shipped? => true) }
-  let(:asd_shipped) { AsnShipmentDetail.new(:asn_order_status => shipped_status) }
+  let(:asn_shipping_method_code_shipped) { mock_model(AsnShippingMethodCode, :shipping_method => shipping_method)}
+  let(:asd_shipped) { AsnShipmentDetail.new(:asn_order_status => shipped_status, :asn_shipping_method_code => asn_shipping_method_code_shipped) }
   let(:asd) { AsnShipmentDetail.new }
 
   after :each do
     AsnShipmentDetail.all.each &:destroy
   end
 
-  context "default associations" do
+  context "default values" do
     it "should have no line item" do
       asd.line_item.should == nil
     end
 
-    it "should have no order" do
+    it "#order" do
       asd.order.should == nil
     end
 
-    it "should have no inventory units" do
+    it "#inventory_untis" do
       asd.inventory_units.empty?.should == true
     end
 
-    it "should have no asn_file" do
+    it "#asn_file" do
       asd.asn_file.should == nil
     end
 
-    it "should have no asn_shipment" do
+    it "#asn_shipment" do
       asd.asn_shipment.should == nil
     end
 
-    it "should have no product" do
+    it "#product" do
       asd.product.should == nil
     end
 
-    it "should have no variant" do
+    it "#variant" do
       asd.variant.should == nil
     end
 
-    it "should not be shipped" do
+    it "#shipped?" do
       asd.shipped?.should == false
-    end
-
-    it "should be shipped if status is shipped" do
       asd_shipped.shipped?.should == true
+    end
+    
+    it "#shipping_method" do
+      asd.shipping_method.should == nil
+      asd_shipped.asn_shipping_method_code.should_not == nil
+      asd_shipped.shipping_method.should == shipping_method
     end
   end
 
   it "#missing_shipment" do
     3.times { AsnShipmentDetail.create }
     AsnShipmentDetail.missing_shipment.count.should == 3
+  end
+  
+  it "#available_shipments" do
+    asd.available_shipments().count == 0
   end
 
   context "initializes shipment" do
@@ -57,7 +66,7 @@ describe AsnShipmentDetail do
     let(:line_item_1) { mock_model(LineItem, :variant => variant_1, :quantity => 1) }
     let(:order) { mock_model(Order, :id => 1, :completed? => true, :canceled? => false, :line_items => [line_item_1]) }
     let(:inventory_unit_1) { InventoryUnit.new(:variant => variant_1, :order => order) }
-    let(:shipping_method) { mock_model(ShippingMethod, :id => 1) }
+    let(:inventory_unit_2) { InventoryUnit.new(:variant => variant_1, :order => order) }
     let(:shipment) { mock_model(Shipment,
                                 :tracking => '',
                                 :inventory_units => [inventory_unit_1],
@@ -91,11 +100,6 @@ describe AsnShipmentDetail do
           order.stub(:inventory_units) { mock(Object, :sold => [inventory_unit_1]) }
         end
 
-        it "should have a tracking number" do
-          asd = asd_shipped
-          asd.tracking_number.should_not == nil
-        end
-
         it "should have available shipments" do
           Shipment.should_receive(:where).with(available_shipment_sql) { [shipment] }
           asd_shipped.available_shipments(tracking).should == [shipment]
@@ -106,16 +110,13 @@ describe AsnShipmentDetail do
           context "single AsnShipmentDetail to a single Shipment, with a single LineItem and a quantity of 1" do
             let(:expect_available_shipments) { Shipment.should_receive(:where).with(available_shipment_sql) { [shipment] } }
 
-            before :each do
-              #expect_available_shipments
-            end
-
             it "#init_shipment" do
               expect_available_shipments
               shipment.should_receive(:save!)
               shipment.should_receive(:tracking=).with(tracking)
 
               asd_shipped.init_shipment(tracking).should == shipment
+              asd_shipped.inventory_units.should == [inventory_unit_1]
             end
 
             it "#assign_shipment" do
@@ -130,9 +131,7 @@ describe AsnShipmentDetail do
               asd_shipped.assign_inventory(shipment)
               asd_shipped.inventory_units.should == [inventory_unit_1]
             end
-
-          end
-
+          end        
 
         end
         context "partial shipped"
