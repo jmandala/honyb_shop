@@ -71,7 +71,7 @@ def should_import_asn_shipment_detail_record(parsed, asn_file)
     [:ingram_order_entry_number,
      :isbn_10_ordered,
      :isbn_10_shipped,
-     :tracking_number,
+     :tracking,
      :standard_carrier_address_code,
      :ssl,
      :isbn_13].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }

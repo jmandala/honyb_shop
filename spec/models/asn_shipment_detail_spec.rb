@@ -3,7 +3,7 @@ describe AsnShipmentDetail do
   let(:shipping_method) { mock_model(ShippingMethod, :id => 1) }
   let(:shipped_status) { mock_model(AsnOrderStatus, :shipped? => true) }
   let(:asn_shipping_method_code_shipped) { mock_model(AsnShippingMethodCode, :shipping_method => shipping_method) }
-  let(:asn_shipment) {mock_model(AsnShipment, :shipment_date => Date.today)}
+  let(:asn_shipment) { mock_model(AsnShipment, :shipment_date => Date.today) }
   let(:asd_shipped) { AsnShipmentDetail.new(:asn_order_status => shipped_status, :asn_shipping_method_code => asn_shipping_method_code_shipped) }
   let(:asd) { AsnShipmentDetail.new(:order => mock_model(Order, :id => 1)) }
 
@@ -85,10 +85,10 @@ describe AsnShipmentDetail do
       shipment.should_receive(:state?).with('shipped')
       shipment.should_receive(:save!)
       shipment.should_receive(:ship!)
-      shipment.should_receive(:tracking=).with(tracking)
+      shipment.should_receive(:tracking=).with(tracking) if tracking
     end
-    
-    
+
+
     context "single line / single quantity" do
 
       before :each do
@@ -115,16 +115,16 @@ describe AsnShipmentDetail do
         end
 
         it "#init_shipment" do
-          expect_available_shipments                
-          expect_shipment_assigned          
+          expect_available_shipments
+          expect_shipment_assigned
 
           asd_shipped.init_shipment.should == shipment
           asd_shipped.inventory_units.should == [inventory_unit_1]
         end
 
         it "#assign_shipment" do
-          expect_shipment_assigned      
-          
+          expect_shipment_assigned
+
           asd_shipped.assign_shipment(shipment)
           asd_shipped.shipment.should == shipment
         end
@@ -144,13 +144,18 @@ describe AsnShipmentDetail do
                                                    :line_item => line_item_1,
                                                    :asn_order_status => canceled,
                                                    :asn_slash_code => asn_slash_code,
+                                                   :asn_shipment => asn_shipment,
                                                    :quantity_shipped => 1) }
 
         let(:available_shipment_sql) { "order_id = #{order.id} AND shipping_method_id = #{shipping_method.id}" }
         let(:expect_available_shipments) { Shipment.should_receive(:where).with(available_shipment_sql) { [shipment] } }
 
+        let(:tracking) { nil }
+
         it "#init_shipment" do
-          Shipment.should_receive(:where).with("order_id = #{order.id}").and_return([shipment])          
+          expect_shipment_assigned
+
+          Shipment.should_receive(:where).with("order_id = #{order.id}").and_return([shipment])
           inventory_unit_1.should_receive(:cancel)
           asd_canceled.init_shipment
         end
