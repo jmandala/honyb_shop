@@ -109,7 +109,7 @@ describe CdfInvoiceFile do
 end
 
 def dump_fees(f)
-  puts "FREIGHT & FEES: #{f.net_price} (net), #{f.shipping} (shipping), #{f.handling} (handling), #{f.gift_wrap} (gift wrap), #{f.amount_due} (amount due), #{f.tracking} (tracking)"
+  puts "FREIGHT & FEES: #{f.net_price} (net), #{f.shipping} (shipping), #{f.handling} (handling), #{f.gift_wrap} (gift wrap), #{f.amount_due} (amount due), #{f.tracking_number} (tracking)"
   [:invoice_number, :line_number, :cdf_invoice_header_id, :cdf_invoice_detail_total_id, :id].each do |k|
     puts "#{k} = #{f.send(k)}"
   end
@@ -207,7 +207,7 @@ def should_import_cdf_invoice_freight_and_fees(parsed, cdf_invoice_file)
     db_record.cdf_invoice_file.should == cdf_invoice_file
     db_record.record_code.should == '49'
 
-    [:tracking].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
+    [:tracking_number].each { |field| ImportFileHelper.should_match_text(db_record, record, field) }
 
     [:net_price,
      :shipping,
