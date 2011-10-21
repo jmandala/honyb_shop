@@ -82,14 +82,19 @@ describe AsnShipmentDetail do
 
     let(:expect_shipment_assigned) do
       shipment.should_receive(:update!)
-      
+
       shipment.should_receive(:shipped_at=).with(Date.today)
       shipment.should_receive(:state?).with('shipped').and_return(false)
       shipment.should_receive(:can_ship?).and_return(true)
-      shipment.should_receive(:save!)
+      shipment.stub(:save!)
       shipment.should_receive(:ship!)
       shipment.should_receive(:tracking=).with(tracking) if tracking
-      
+
+    end
+
+    let(:expect_inventory_assigned) do
+      shipment.should_receive(:unassign_sold_inventory)
+      shipment.stub(:save!)
     end
 
 
@@ -109,7 +114,7 @@ describe AsnShipmentDetail do
                                                   :asn_shipment => asn_shipment,
                                                   :quantity_shipped => 1) }
 
-        let(:available_shipment_sql) { "order_id = #{order.id} AND shipping_method_id = #{shipping_method.id} AND (tracking IS NOT NULL AND tracking = '#{tracking}')" }
+        let(:available_shipment_sql) { "order_id = #{order.id} AND shipping_method_id = #{shipping_method.id} AND (tracking IS NULL OR tracking = '#{tracking}')" }
         let(:expect_available_shipments) { Shipment.should_receive(:where).with(available_shipment_sql) { [shipment] } }
 
 
@@ -134,6 +139,8 @@ describe AsnShipmentDetail do
         end
 
         it "#assign_inventory" do
+          expect_inventory_assigned
+
           asd_shipped.assign_inventory(shipment)
           asd_shipped.inventory_units.should == [inventory_unit_1]
         end
@@ -166,33 +173,82 @@ describe AsnShipmentDetail do
 
       end
     end
-=begin
-      context "multi-line / single quantity" do
-        context "one order, one shipment, two AsnShipmentDetails" do
-          let(:asd_2) { AsnShipmentDetail.new(:order => order, :tracking => tracking_2, :asn_order_status => shipped, :asn_shipping_method_code => asn_shipping_method_code, :quantity_shipped => 2) }
-          let(:tracking_2) { tracking + "123" }
-          let(:shipment_2) { mock_model(Shipment, :tracking => tracking_2, :ship => true, :ship! => true) }
 
-
-          before :each do
-            Shipment.stub(:where).with("order_id = #{order.id}\n      AND shipping_method_id = 1\n      AND (tracking IS NULL OR tracking = '#{tracking_2}')") { [shipment, shipment_2] }
-            shipment.stub(:tracking=).with(tracking)
-            shipment_2.stub(:tracking=).with(tracking_2)
-          end
-
-
-          it "should assign two AsnShipmentDetails to the same shipment when they have the same tracking" do
-            asd.init_shipment(tracking).should == shipment
-            asd_2.init_shipment(tracking_2).should == shipment_2
-          end
-        end
-
-      end
-=end
 
     context "single line / multiple quantity" do
 
+      before :each do
+        order.stub(:inventory_units) { mock(Object, :sold => [inventory_unit_1, inventory_unit_2]) }
+      end
+
+      context "all shipped" do
+        let(:asd_shipped) { AsnShipmentDetail.new(:order => order,
+                                                  :line_item => line_item_1,
+                                                  :tracking => tracking,
+                                                  :asn_order_status => shipped_status,
+                                                  :asn_shipping_method_code => asn_shipped,
+                                                  :asn_shipment => asn_shipment,
+                                                  :quantity_shipped => 2) }
+
+        let(:available_shipment_sql) { "order_id = #{order.id} AND shipping_method_id = #{shipping_method.id} AND (tracking IS NULL OR tracking = '#{tracking}')" }
+        let(:expect_available_shipments) { Shipment.should_receive(:where).with(available_shipment_sql) { [shipment] } }
+
+
+        it "should have available shipments" do
+          expect_available_shipments
+          asd_shipped.available_shipments.should == [shipment]
+        end
+
+        it "#init_shipment" do
+          expect_available_shipments
+          expect_shipment_assigned
+
+          asd_shipped.init_shipment.should == shipment
+          asd_shipped.inventory_units.should == [inventory_unit_1, inventory_unit_2]
+        end
+
+        it "#assign_shipment" do
+          expect_shipment_assigned
+
+          asd_shipped.assign_shipment(shipment)
+          asd_shipped.shipment.should == shipment
+        end
+
+        it "#assign_inventory" do
+          expect_inventory_assigned
+          
+          asd_shipped.assign_inventory(shipment)
+          asd_shipped.inventory_units.should == [inventory_unit_1, inventory_unit_2]
+        end
+      end
+
+
     end
+
+=begin
+    context "multi-line / single quantity" do
+      context "one order, one shipment, two AsnShipmentDetails" do
+        let(:asd_2) { AsnShipmentDetail.new(:order => order, :tracking => tracking_2, :asn_order_status => shipped, :asn_shipping_method_code => asn_shipping_method_code, :quantity_shipped => 2) }
+        let(:tracking_2) { tracking + "123" }
+        let(:shipment_2) { mock_model(Shipment, :tracking => tracking_2, :ship => true, :ship! => true) }
+
+
+        before :each do
+          Shipment.stub(:where).with("order_id = #{order.id}\n      AND shipping_method_id = 1\n      AND (tracking IS NULL OR tracking = '#{tracking_2}')") { [shipment, shipment_2] }
+          shipment.stub(:tracking=).with(tracking)
+          shipment_2.stub(:tracking=).with(tracking_2)
+        end
+
+
+        it "should assign two AsnShipmentDetails to the same shipment when they have the same tracking" do
+          asd.init_shipment(tracking).should == shipment
+          asd_2.init_shipment(tracking_2).should == shipment_2
+        end
+      end
+
+    end
+=end
+
     context "multi-line / multiple quantity"
 
   end
