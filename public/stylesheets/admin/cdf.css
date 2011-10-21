@@ -48,6 +48,7 @@ table.settings td {
     color: #666;
     float: left;
     margin-right: 10px;
+    font-size: 110%;    
 }
 
 .data_group h3 {
@@ -62,9 +63,20 @@ table.settings td {
 }
 
 table.index {
-    border-top: 1px solid #aaa;
-    border-left: 1px solid #aaa;
+    border: 1px solid #aaa;
     background-color: white;
+}
+
+table.index td {
+    background: white;
+}
+
+table.index th:last-child {
+    border-right:  none;
+}
+
+table.index .total td {
+    background-color: #eee;
 }
 
 table.index td.invoice_group {
@@ -127,4 +139,8 @@ li .status {
     position: relative;
     left: -20px;
     top: 0px;
+}
+
+.more {
+    margin-top: 10px;
 }

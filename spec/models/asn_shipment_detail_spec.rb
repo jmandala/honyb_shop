@@ -81,11 +81,15 @@ describe AsnShipmentDetail do
     let(:tracking) { '1234567' }
 
     let(:expect_shipment_assigned) do
+      shipment.should_receive(:update!)
+      
       shipment.should_receive(:shipped_at=).with(Date.today)
-      shipment.should_receive(:state?).with('shipped')
+      shipment.should_receive(:state?).with('shipped').and_return(false)
+      shipment.should_receive(:can_ship?).and_return(true)
       shipment.should_receive(:save!)
       shipment.should_receive(:ship!)
       shipment.should_receive(:tracking=).with(tracking) if tracking
+      
     end
 
 
@@ -105,7 +109,7 @@ describe AsnShipmentDetail do
                                                   :asn_shipment => asn_shipment,
                                                   :quantity_shipped => 1) }
 
-        let(:available_shipment_sql) { "order_id = #{order.id} AND shipping_method_id = #{shipping_method.id} AND tracking = '#{tracking}'" }
+        let(:available_shipment_sql) { "order_id = #{order.id} AND shipping_method_id = #{shipping_method.id} AND (tracking IS NOT NULL AND tracking = '#{tracking}')" }
         let(:expect_available_shipments) { Shipment.should_receive(:where).with(available_shipment_sql) { [shipment] } }
 
 
