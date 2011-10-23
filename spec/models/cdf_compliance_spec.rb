@@ -220,6 +220,10 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500010     
         @asn_shipment_details = @asn_file.asn_shipments.first.asn_shipment_details
       end
 
+      it "should have the correct shipping cost" do
+        puts @order.ship_total
+      end
+      
       it "should reference order" do
         @asn_shipment_details.each { |s| s.order.should == @order }
       end
