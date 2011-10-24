@@ -192,7 +192,9 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500010     
       @asn_file = AsnFile.create(:file_name => 'asn-test-multibox.txt')      
       @asn_file.write_data(response)
       @asn_file.data.should == response
+      
       @asn_file.import
+      @order.reload
     end
 
     it "should import the right number of shipments and shipment details" do
@@ -220,7 +222,13 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500010     
         @asn_shipment_details = @asn_file.asn_shipments.first.asn_shipment_details
       end
 
-      it "should have the correct shipping cost" do
+      it "should have the correct shipping cost" do        
+        @order.shipments.each do |s|
+          s.inventory_units.count.should == 10
+          p s.shipping_method.calculator.preferred_first_item.to_s
+          p s.shipping_method.calculator.preferred_additional_item.to_s
+          p s.cost.to_s
+        end
         puts @order.ship_total
       end
       

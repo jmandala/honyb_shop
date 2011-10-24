@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111007202452) do
+ActiveRecord::Schema.define(:version => 20111024141426) do
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -899,6 +899,7 @@ ActiveRecord::Schema.define(:version => 20111007202452) do
     t.datetime "shipped_at"
     t.integer  "address_id"
     t.string   "state"
+    t.integer  "parent_id"
   end
 
   add_index "shipments", ["number"], :name => "index_shipments_on_number"
