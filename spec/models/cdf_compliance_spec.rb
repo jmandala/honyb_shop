@@ -193,8 +193,12 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500010     
       @asn_file.write_data(response)
       @asn_file.data.should == response
       
+      @ship_cost_before = @order.ship_total
+      
       @asn_file.import
       @order.reload
+      
+      @ship_cost_before.should == @order.ship_total
     end
 
     it "should import the right number of shipments and shipment details" do
@@ -223,13 +227,14 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500010     
       end
 
       it "should have the correct shipping cost" do        
-        @order.shipments.each do |s|
+        @order.shipments.each_with_index do |s, i|
           s.inventory_units.count.should == 10
-          p s.shipping_method.calculator.preferred_first_item.to_s
-          p s.shipping_method.calculator.preferred_additional_item.to_s
-          p s.cost.to_s
+          if i == 0
+            s.cost.should == 12.9
+          else
+            s.cost.should == 9.9
+          end
         end
-        puts @order.ship_total
       end
       
       it "should reference order" do
