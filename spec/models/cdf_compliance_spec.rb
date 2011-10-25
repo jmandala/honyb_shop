@@ -7,7 +7,6 @@ describe "CDF Compliance" do
     @builder = Cdf::OrderBuilder
   end
 
-=begin  
   context "should handle single order / single line / single quantity" do
 
     before :all do
@@ -269,7 +268,6 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500010     
 
 
   end
-=end
 
   context "should handle short ship/slash a single line from a multiple line order" do
 
@@ -294,6 +292,10 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500001     
 
       @asn_file.import
       @order.reload
+      
+      @ship_cost_before.should == @order.ship_total
+      
+      @order.shipments.each {|s| puts "Shipment: #{s.state}"} 
     end
 
     context "import first response" do
@@ -358,6 +360,8 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500001     
         end
 
         it "should be shipped" do
+          @order.shipments.all.each {|s| s.reload; puts s.state}
+          @asn_shipment_detail.shipment.reload
           @asn_shipment_detail.shipment.state.should == 'shipped'
           @asn_shipment_detail.inventory_units.each {|u| u.state.should == 'shipped' }
           @asn_shipment_detail.shipment.tracking.should == @asn_shipment_detail.tracking
