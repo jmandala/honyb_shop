@@ -294,8 +294,6 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500001     
 
       @asn_file.import
       @order.reload
-
-      #@ship_cost_before.should == @order.ship_total
     end
 
     context "import first response" do
@@ -369,6 +367,103 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500001     
           @asn_shipment_details.each do |s|
             s.shipment.state.should == 'shipped'
             s.inventory_units.first.state.should == 'shipped'
+            s.shipment.tracking.should_not == nil
+          end
+
+        end
+      end
+    end
+
+
+    context "import second / slashed response" do
+
+      before :all do
+        @line_item = @order.line_items[1]
+
+        response = """
+CR20N2730   000000014.0                                                                                                                                                                                 
+OR#{@order.number.ljust_trim(22)}        280000000000000000000000000000000000000000000000000000000000000000     000   000120111025                                                                               
+OD#{@order.number.ljust_trim(22)}C 02455          039484836503948483650000100001     28                              10             0001999      0#{@line_item.id.to_s.ljust_trim(10)}                            0S1#{@line_item.variant.sku.no_dashes.ljust_trim(15)}
+"""
+        @asn_file = AsnFile.create(:file_name => 'asn-test-multibox-2.txt')
+        @asn_file.write_data(response)
+        @asn_file.data.should == response
+        @ship_cost_before = @order.ship_total
+
+        @asn_file.import
+        @order.reload
+      end
+
+      it "should import the right number of shipments and shipment details" do
+        @asn_file.asn_shipments.count.should == 1
+        @asn_file.asn_shipments.first.asn_shipment_details.count.should == 1
+        @order.shipments.count.should == 2
+      end
+
+      context "asn_shipment" do
+        before :each do
+          @asn_shipment = @asn_file.asn_shipments.first
+        end
+        it "should reference order" do
+          @asn_shipment.order.should == @order
+        end
+
+        it "should have status of shipped" do
+          @asn_shipment.asn_order_status.partial_shipment?.should == true
+        end
+      end
+
+      context "asn_shipment_detail" do
+        before :each do
+          @asn_shipment_details = @asn_file.asn_shipments.first.asn_shipment_details
+        end
+
+        it "should have the correct shipping cost" do
+          @order.shipments.each_with_index do |s, i|
+            s.inventory_units.count.should == 1
+            if i == 0
+              s.cost.should == 3.99
+            else
+              s.cost.should == 0.99
+            end
+          end
+        end
+
+        it "should reference order" do
+          @asn_shipment_details.each { |s| s.order.should == @order }
+        end
+
+        it "should have the correct number of details" do
+          @asn_shipment_details.size.should == 1
+        end
+
+        it "should have correct quantities" do
+          @asn_shipment_details.each do |s|
+            s.quantity_shipped.should == 0
+            s.quantity_predicted.should == 1
+            s.quantity_slashed.should == 1
+            s.inventory_units.count.should == 1
+          end
+        end
+
+        it "should have shipped status" do
+          @asn_shipment_details.each do |s|
+            s.asn_order_status.shipped?.should == false
+            s.asn_order_status.partial_shipment?.should == true
+          end
+        end
+
+        it "should reference the line item from the order" do
+          @asn_shipment_details.each do |s|
+            s.line_item.should_not == nil
+          end
+        end
+
+
+        it "should be shipped" do
+          @asn_shipment_details.each do |s|
+            s.shipment.state.should == 'shipped'
+            s.inventory_units.first.state.should == 'canceled'
             s.shipment.tracking.should_not == nil
           end
 
