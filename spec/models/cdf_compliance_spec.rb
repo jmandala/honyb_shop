@@ -206,7 +206,6 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500010     
       @asn_file.asn_shipments.first.asn_shipment_details.count.should == 3
     end
 
-=begin
     context "asn_shipment" do
       before :each do
         @asn_shipment = @asn_file.asn_shipments.first
@@ -219,7 +218,6 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500010     
         @asn_shipment.asn_order_status.shipped?.should == true
       end
     end
-=end
 
     context "asn_shipment_detail" do
       before :each do
