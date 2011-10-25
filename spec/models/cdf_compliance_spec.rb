@@ -4,15 +4,14 @@ describe "CDF Compliance" do
 
   before :all do
     AsnFile.all.each &:destroy
-    
+
     @builder = Cdf::OrderBuilder
   end
-  
-=begin
+
   context "should handle single order / single line / single quantity" do
 
-    before :each do
-    @asn_file = AsnFile.create(:file_name => 'asn-test.txt')
+    before :all do
+      @asn_file = AsnFile.create(:file_name => 'asn-test.txt')
 
 
       @order = @builder.completed_test_order({:id => 1,
@@ -85,15 +84,12 @@ OD#{@order.number}            C 02367          0373200005037320000500001     000
 
     end
   end
-=end
 
-=begin
   context "should handle single order / single line / multiple quantity" do
 
-    before :each do
-      AsnFile.all.each &:destroy
-
-
+    before :all do
+      @asn_file = AsnFile.create(:file_name => 'asn-test.txt')      
+      
       @order = @builder.completed_test_order({:id => 1,
                                               :name => 'single order/single lines/single quantity',
                                               :line_item_count => 1,
@@ -101,11 +97,11 @@ OD#{@order.number}            C 02367          0373200005037320000500001     000
 
       @line_item = @order.line_items.first
 
-      response = "" "
+      response = """
 CR20N2730   000000014.0                                                                                                                                                                                 
 OR#{@order.number.ljust_trim(22)}        00000019990000000000000000000000000000000000000000000399000000239800000100   000120111015                                                                               
 OD#{@order.number.ljust_trim(22)}C 02367          0373200005037320000500002     00002001ZTESTTRACKCI023670000   SCAC 1              00004990000324#{@line_item.id.to_s.ljust_trim(10)}TESTSSLCI0236700000100000002021#{@line_item.variant.sku.no_dashes.ljust_trim(15)}
-      " ""
+"""
 
       @asn_file.write_data(response)
       @asn_file.data.should == response
@@ -164,11 +160,7 @@ OD#{@order.number.ljust_trim(22)}C 02367          0373200005037320000500002     
       end
 
     end
-
-
   end
-
-=end
 
   context "should handle multiple boxes from single order" do
 
@@ -189,15 +181,15 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500010     
 OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500010     00010001ZTESTTRACKCI024150003   SCAC 1              00004990000289#{@line_item.id.to_s.ljust_trim(10)}TESTSSLCI0241500000400000020021#{@line_item.variant.sku.no_dashes.ljust_trim(15)}
       " ""
 
-      @asn_file = AsnFile.create(:file_name => 'asn-test-multibox.txt')      
+      @asn_file = AsnFile.create(:file_name => 'asn-test-multibox.txt')
       @asn_file.write_data(response)
       @asn_file.data.should == response
-      
+
       @ship_cost_before = @order.ship_total
-      
+
       @asn_file.import
       @order.reload
-      
+
       @ship_cost_before.should == @order.ship_total
     end
 
@@ -224,7 +216,7 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500010     
         @asn_shipment_details = @asn_file.asn_shipments.first.asn_shipment_details
       end
 
-      it "should have the correct shipping cost" do        
+      it "should have the correct shipping cost" do
         @order.shipments.each_with_index do |s, i|
           s.inventory_units.count.should == 10
           if i == 0
@@ -234,7 +226,7 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500010     
           end
         end
       end
-      
+
       it "should reference order" do
         @asn_shipment_details.each { |s| s.order.should == @order }
       end
