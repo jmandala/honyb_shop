@@ -1,4 +1,5 @@
 require_relative '../spec_helper'
+require 'ruby-debug'
 
 describe "CDF Compliance" do
 
@@ -20,17 +21,23 @@ describe "CDF Compliance" do
 
       @line_item = @order.line_items.first
 
-      response = "" "
+      response = """
 CR20N2730   000000014.0                                                                                                                                                                                 
 OR#{@order.number}                    00000019990000000000000000000000000000000000000000000399000000239800000100   000120111015                                                                               
 OD#{@order.number}            C 02367          0373200005037320000500001     00001001ZTESTTRACKCI023670000   SCAC 1              00004990000324#{@line_item.id.to_s.ljust_trim(10)}TESTSSLCI0236700000100000002021#{@line_item.variant.sku.no_dashes.ljust_trim(15)}
-      " ""
-
+"""
       @asn_file.write_data(response)
       @asn_file.data.should == response
       @asn_file.import
+      
+      @order.shipments.reload
     end
 
+    it "should be shipped" do
+      @order.shipments.first.state.should == 'shipped'      
+    end
+    
+=begin    
     it "should import the right number of shipments and shipment details" do
       @asn_file.asn_shipments.count.should == 1
       @asn_file.asn_shipments.first.asn_shipment_details.count.should == 1
@@ -82,13 +89,15 @@ OD#{@order.number}            C 02367          0373200005037320000500001     000
       end
 
     end
+=end    
   end
 
+=begin  
   context "should handle single order / single line / multiple quantity" do
 
     before :all do
-      @asn_file = AsnFile.create(:file_name => 'asn-test.txt')      
-      
+      @asn_file = AsnFile.create(:file_name => 'asn-test.txt')
+
       @order = @builder.completed_test_order({:id => 1,
                                               :name => 'single order/single lines/single quantity',
                                               :line_item_count => 1,
@@ -96,11 +105,11 @@ OD#{@order.number}            C 02367          0373200005037320000500001     000
 
       @line_item = @order.line_items.first
 
-      response = """
+      response = "" "
 CR20N2730   000000014.0                                                                                                                                                                                 
 OR#{@order.number.ljust_trim(22)}        00000019990000000000000000000000000000000000000000000399000000239800000100   000120111015                                                                               
 OD#{@order.number.ljust_trim(22)}C 02367          0373200005037320000500002     00002001ZTESTTRACKCI023670000   SCAC 1              00004990000324#{@line_item.id.to_s.ljust_trim(10)}TESTSSLCI0236700000100000002021#{@line_item.variant.sku.no_dashes.ljust_trim(15)}
-"""
+      " ""
 
       @asn_file.write_data(response)
       @asn_file.data.should == response
@@ -292,10 +301,10 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500001     
 
       @asn_file.import
       @order.reload
-      
+
       @ship_cost_before.should == @order.ship_total
-      
-      @order.shipments.each {|s| puts "Shipment: #{s.state}"} 
+
+      @order.shipments.each { |s| puts "Shipment: #{s.state}" }
     end
 
     context "import first response" do
@@ -341,7 +350,7 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500001     
         end
 
         it "should reference order" do
-          @asn_shipment_detail.order == @order 
+          @asn_shipment_detail.order == @order
         end
 
         it "should have correct quantities" do
@@ -360,10 +369,10 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500001     
         end
 
         it "should be shipped" do
-          @order.shipments.all.each {|s| s.reload; puts s.state}
+          @order.shipments.all.each { |s| s.reload; puts s.state }
           @asn_shipment_detail.shipment.reload
           @asn_shipment_detail.shipment.state.should == 'shipped'
-          @asn_shipment_detail.inventory_units.each {|u| u.state.should == 'shipped' }
+          @asn_shipment_detail.inventory_units.each { |u| u.state.should == 'shipped' }
           @asn_shipment_detail.shipment.tracking.should == @asn_shipment_detail.tracking
         end
       end
@@ -447,6 +456,6 @@ OD#{@order.number.ljust_trim(22)}C 02455          039484836503948483650000100001
 
 
   end
-
+=end
 
 end

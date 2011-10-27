@@ -298,8 +298,9 @@ DEPENDENCIES
   nokogiri
   rails (= 3.0.9)
   rspec-rails
-  ruby-debug19
-  spork (~> 0.9.0.rc)
+  ruby-debug-base19 (>= 0.11.24)
+  ruby-debug19 (>= 0.11.6)
+  spork
   spree (= 0.60.2)
   spree_comments!
   sqlite3

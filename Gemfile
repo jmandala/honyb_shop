@@ -32,8 +32,7 @@ end
 
 
 group :cucumber, :test, :development do
-  gem 'ruby-debug19'
-  gem 'spork', '~> 0.9.0.rc'
+  gem 'spork', '~> 0.9.0.rc'  
   gem 'capybara'
   gem 'cucumber'
   gem 'cucumber-rails'
@@ -43,6 +42,9 @@ group :cucumber, :test, :development do
   gem 'guard-rspec'
   gem 'guard-cucumber'
   gem 'guard-spork'
+  gem 'ruby-debug-base19', ">=0.11.24"
+  gem 'ruby-debug19', ">= 0.11.6"
+
 end
 
 gem "cdf", :path => "cdf", :require => "cdf"

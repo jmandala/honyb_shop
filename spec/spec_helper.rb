@@ -2,15 +2,10 @@ $VERBOSE = nil
 
 require 'rubygems'
 require 'spork'
+require 'spork/ext/ruby-debug'
 
 Spork.prefork do
        
-  # from http://avdi.org/devblog/2011/04/17/rubymine-spork-rspec-cucumber/
-  if ENV["RUBYMINE_HOME"]  
-    $:.unshift(File.expand_path("rb/testing/patch/common", ENV["RUBYMINE_HOME"]))  
-    $:.unshift(File.expand_path("rb/testing/patch/bdd", ENV["RUBYMINE_HOME"]))  
-  end    
-  
   # Loading more in this block will cause your tests to run faster. However,
   # if you change any configuration or code from libraries loaded here, you'll
   # need to restart spork for it take effect.
