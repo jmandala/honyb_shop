@@ -80,6 +80,12 @@ describe Cdf::OrderBuilder do
     shipping_method = ShippingMethod.find_by_name '2nd Day Air'
     order.shipping_method.should == shipping_method
   end
+  
+  it "should specify the invalid shipping method" do
+    order = @builder.completed_test_order({:id => 5, :name => 'Invalid shipping method', :shipping_method => 'Invalid Shipping Method'})
+    shipping_method = ShippingMethod.find_by_name('Invalid Shipping Method')
+    order.shipping_method.should == shipping_method
+  end
 
   context "ean_type" do
     it "should specify the ean" do
