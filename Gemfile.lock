@@ -300,7 +300,7 @@ DEPENDENCIES
   rspec-rails
   ruby-debug-base19 (>= 0.11.24)
   ruby-debug19 (>= 0.11.6)
-  spork
+  spork (~> 0.9.0.rc)
   spree (= 0.60.2)
   spree_comments!
   sqlite3

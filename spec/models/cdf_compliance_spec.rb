@@ -7,7 +7,7 @@ describe "CDF Compliance" do
     AsnFile.all.each &:destroy
     @builder = Cdf::OrderBuilder
   end
-
+=begin
   context "should handle single order / single line / single quantity" do
 
     before :all do
@@ -37,7 +37,7 @@ OD#{@order.number}            C 02367          0373200005037320000500001     000
       @order.shipments.first.state.should == 'shipped'      
     end
     
-=begin    
+
     it "should import the right number of shipments and shipment details" do
       @asn_file.asn_shipments.count.should == 1
       @asn_file.asn_shipments.first.asn_shipment_details.count.should == 1
@@ -89,10 +89,9 @@ OD#{@order.number}            C 02367          0373200005037320000500001     000
       end
 
     end
-=end    
   end
-
-=begin  
+=end
+  
   context "should handle single order / single line / multiple quantity" do
 
     before :all do
@@ -114,9 +113,10 @@ OD#{@order.number.ljust_trim(22)}C 02367          0373200005037320000500002     
       @asn_file.write_data(response)
       @asn_file.data.should == response
       @asn_file.import
+      @order.shipments.reload
     end
 
-    it "should import the right number of shipments and shipment details" do
+    it "should import the right number of shipments and shipment details" do      
       @asn_file.asn_shipments.count.should == 1
       @asn_file.asn_shipments.first.asn_shipment_details.count.should == 1
     end
@@ -164,7 +164,10 @@ OD#{@order.number.ljust_trim(22)}C 02367          0373200005037320000500002     
       it "should be shipped" do
         @asn_shipment_detail.shipment.state.should == 'shipped'
         @asn_shipment_detail.inventory_units.first.state.should == 'shipped'
-        @asn_shipment_detail.shipment.tracking.should_not == nil
+      end
+      
+      it "should have tracking" do
+        @asn_shipment_detail.shipment.reload.tracking.should == @asn_shipment_detail.tracking
       end
 
     end
@@ -196,8 +199,8 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500010     
       @ship_cost_before = @order.ship_total
 
       @asn_file.import
-      @order.reload
-
+      @order.shipments.reload
+      
       @ship_cost_before.should == @order.ship_total
     end
 
@@ -300,8 +303,9 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500001     
       @ship_cost_before = @order.ship_total
 
       @asn_file.import
-      @order.reload
 
+      @order.shipments.reload
+      
       @ship_cost_before.should == @order.ship_total
 
       @order.shipments.each { |s| puts "Shipment: #{s.state}" }
@@ -395,7 +399,8 @@ OD#{@order.number.ljust_trim(22)}C 02455          039484836503948483650000100001
         @ship_cost_before = @order.ship_total
 
         @asn_file.import
-        @order.reload
+        @order.shipments.reload
+        
       end
 
       it "should import the right number of shipments and shipment details" do
@@ -456,6 +461,4 @@ OD#{@order.number.ljust_trim(22)}C 02455          039484836503948483650000100001
 
 
   end
-=end
-
 end
