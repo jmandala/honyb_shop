@@ -75,5 +75,13 @@ describe Order do
       @original.children.include?(@duplicate).should == true
     end
 
+    it "should have email" do
+      @duplicate.email.should == @original.email
+    end
+    
+    it "should have an order name" do
+      @duplicate.order_name.should == "Duplicate of #{@original.number}: #{@original.order_name}"
+    end
+    
   end
 end
