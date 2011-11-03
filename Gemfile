@@ -25,7 +25,7 @@ end
 #
 # Dev/Test gems
 group :development, :test do
-  gem 'sqlite3-ruby', :require => 'sqlite3'
+  gem 'sqlite3-ruby', '1.2.5', :require => 'sqlite3'
   gem 'sqlite3'
   gem 'active_reload'
 
@@ -33,7 +33,7 @@ end
 
 
 group :cucumber, :test, :development do
-  gem 'spork', '~> 0.9.0.rc'  
+  gem 'spork', '~> 0.9.0.rc'
   gem 'capybara'
   gem 'cucumber'
   gem 'cucumber-rails'

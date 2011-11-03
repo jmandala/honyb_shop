@@ -23,7 +23,7 @@ class Cdf::OrderBuilder
       {:id => 20, :name => 'warehouse shopping override: default', :dc_code => :default},
       {:id => 21, :name => 'warehouse shopping override: Chambersburg, PA', :dc_code => 'C'},
       {:id => 22, :name => 'warehouse shopping override: Fort Wayne, IA', :dc_code => 'D'},
-      {:id => 23, :name => 'split shipment: multi shipment', :line_item_qty => 2, :ean_type => :split_ship, :split_shipment_type => :multi_shipment},
+      {:id => 23, :name => 'split shipment: multi shipment', :line_item_count => 2, :line_item_qty => 2, :ean_type => :split_ship, :split_shipment_type => :multi_shipment},
       {:id => 24, :name => 'split shipment: release when full', :ean_type => :split_ship, :split_shipment_type => :release_when_full},
       {:id => 25, :name => 'split shipment: dual shipment', :ean_type => :split_ship, :split_shipment_type => :dual_shipment},
       {:id => 26, :name => 'short ship/zero ship 100% of order', :ean_type => :slash_to_zero_ship},

@@ -11,7 +11,7 @@ class Cdf::ProductBuilder
         :out_of_stock_backorder_ship => ['9780679437222 '],
         :out_of_stock_backorder_nv_ship => ['9781861052346'],
         :out_of_print => ['9780028609249'],
-        :split_ship => ['9780394848389'],
+        :split_ship => ['9780373200108', '9780373200009'],
         :slash_to_zero_ship => ['9780679864349'],
         :slash_by_1 => ['9780394848365'],
         :not_yet_received => ['9782914563383', '9781845843045'],
