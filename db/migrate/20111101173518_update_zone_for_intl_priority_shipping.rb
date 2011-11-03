@@ -1,6 +1,7 @@
 class UpdateZoneForIntlPriorityShipping < ActiveRecord::Migration
   def self.up
     intl_shipping = self.intl_shipping_method
+    return unless intl_shipping
     intl_shipping.zone = Zone.intl
     intl_shipping.save!
   end
@@ -11,6 +12,7 @@ class UpdateZoneForIntlPriorityShipping < ActiveRecord::Migration
 
   def self.down
     shipping = self.intl_shipping_method
+    return unless shipping
     shipping.zone = Zone.all_us
     shipping.save!
   end
