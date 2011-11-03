@@ -1,0 +1,70 @@
+= render :partial => 'admin/shared/configuration_menu'
+
+%h1
+  = t('edit_fulfillment_settings')
+
+= form_tag(admin_fulfillment_settings_path, :method => :put) do
+  %table.index.settings
+    %tr
+      %th{:scope => 'row'}
+        %label
+          = label_tag 'preferences[cdf_run_mode]', t("cdf_run_mode")
+      %td
+        = select_tag('preferences[cdf_run_mode]', options_for_select(Cdf::Config::RUN_MODE, Cdf::Config[:cdf_run_mode]))    
+    %tr
+      %th{:scope => 'row'}
+        %label
+          = label_tag 'preferences[days_to_hold_backorder]', t("days_to_hold_backorder")
+      %td
+        = text_field_tag('preferences[days_to_hold_backorder]', Cdf::Config[:days_to_hold_backorder])
+    %tr
+      %th{:scope => 'row'}
+        %label
+          = label_tag 'preferences[split_shipment_type]', t("split_shipment_type")
+      %td
+        = select_tag('preferences[split_shipment_type]', options_for_select( Order::SPLIT_SHIPMENT_TYPE.keys.collect {|t| [t.to_s.humanize, t] } , Cdf::Config[:split_shipment_type]))
+    
+    %tr
+      %th{:scope => 'row'}
+        %label
+          = label_tag 'preferences[cdf_ship_to_password]', t("cdf_ship_to_password")
+      %td
+        = text_field_tag('preferences[cdf_ship_to_password]', Cdf::Config[:cdf_ship_to_password])
+    %tr
+      %th{:scope => 'row'}
+        = label_tag 'preferences[cdf_ship_to_account]', t("cdf_ship_to_account")
+      %td
+        = text_field_tag('preferences[cdf_ship_to_account]', Cdf::Config[:cdf_ship_to_account])
+
+    %tr
+      %th{:scope => 'row'}
+        = label_tag 'preferences[cdf_bill_to_account]', t("cdf_bill_to_account")
+      %td
+        = text_field_tag('preferences[cdf_bill_to_account]',  Cdf::Config[:cdf_bill_to_account])
+
+
+    %tr
+      %th{:scope => 'row'}
+        = label_tag 'preferences[cdf_ftp_server]', t("cdf_ftp_server")
+      %td
+        =  text_field_tag('preferences[cdf_ftp_server]', Cdf::Config[:cdf_ftp_server])
+
+
+    %tr
+      %th{:scope => 'row'}
+        = label_tag 'preferences[cdf_ftp_user]', t("cdf_ftp_user")
+      %td
+        = text_field_tag('preferences[cdf_ftp_user]',  Cdf::Config[:cdf_ftp_user])
+
+
+    %tr
+      %th{:scope => 'row'}
+        = label_tag 'preferences[cdf_ftp_password]', t("cdf_ftp_password")
+      %td
+        = password_field_tag('preferences[cdf_ftp_password]', Cdf::Config[:cdf_ftp_password])
+
+  %p{:class =>"form-buttons"}
+    = button t('update') 
+    = t("or")
+    = link_to t("cancel"), admin_fulfillment_settings_path
+  

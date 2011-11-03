@@ -1,0 +1,27 @@
+= render 'admin/shared/order_tabs', :current => "Fulfillment"
+
+%h2 #{t("fulfillment")}
+
+%h3 #{t("po_files")}
+%div
+  - if @order.po_file
+    %div
+      %strong #{t 'file_name'}:
+      = link_to @order.po_file.file_name, admin_fulfillment_po_file_path(@order.po_file)
+    %div
+      %strong #{t 'date'}:
+      = @order.po_file.created_at.strftime("%m-%d-%y %H:%M")
+  - else
+    &mdash;
+
+= render 'import_file', :type => "poa"
+
+= render 'import_file', :type => "asn"
+
+%h3 #{t 'asn_shipments'}
+= render 'asn_shipment', :asn_shipments => @order.asn_shipments
+
+- @order.asn_shipment_details.each do |asn_shipment_detail|
+  = asn_shipment_detail.to_yaml
+
+= render 'import_file', :type => 'cdf_invoice'

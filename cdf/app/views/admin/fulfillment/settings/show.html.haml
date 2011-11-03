@@ -1,0 +1,69 @@
+= render :partial => 'admin/shared/configuration_menu'
+
+%h1
+  = t "fulfillment_settings"
+
+%table.index.settings
+  %tr
+    %th{:scope => 'row'}
+      = t "cdf_run_mode"
+    %td
+      = Cdf::Config[:cdf_run_mode]
+      
+  %tr
+    %th{:scope => 'row'}
+      = t 'days_to_hold_backorder'
+    %td
+      = Cdf::Config[:days_to_hold_backorder]
+      
+  %tr
+    %th{:scope => 'row'}
+      = t 'split_shipment_type'
+    %td
+      #{Cdf::Config[:split_shipment_type].humanize} (#{Order::SPLIT_SHIPMENT_TYPE[Cdf::Config[:split_shipment_type].to_sym]})
+      
+  %tr
+    %th{:scope => 'row'}
+      = t "cdf_ship_to_password"
+    %td
+      = Cdf::Config[:cdf_ship_to_password]
+  
+  %tr
+    %th{:scope => 'row'}
+      = t "cdf_ship_to_account"
+    %td
+      =  Cdf::Config[:cdf_ship_to_account]
+
+  %tr
+    %th{:scope => 'row'}
+      = t "cdf_bill_to_account"
+    %td
+      =  Cdf::Config[:cdf_bill_to_account]
+
+
+  %tr
+    %th{:scope => 'row'}
+      = t "cdf_ftp_server"
+    %td
+      =  Cdf::Config[:cdf_ftp_server]
+
+
+  %tr
+    %th{:scope => 'row'}
+      = t "cdf_ftp_user"
+    %td
+      = Cdf::Config[:cdf_ftp_user]
+
+
+  %tr
+    %th{:scope => 'row'}
+      = t "cdf_ftp_password"
+    %td
+      = Cdf::Config[:cdf_ftp_password].empty? ? "[undefined]" : "******"
+
+
+
+%p
+  = link_to_with_icon 'edit', t("edit"), edit_admin_fulfillment_settings_path, :id => 'admin_fulfillment_settings_link'
+
+

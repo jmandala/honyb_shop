@@ -1,0 +1,50 @@
+= render :partial => 'admin/shared/fulfillment_sub_menu'
+
+
+%div.admin_buttons
+  %div #{button_link_to t('back'), admin_fulfillment_po_files_path, :icon => '16x16/8'}
+
+%h1 #{t 'po_files'}
+
+%h2 #{@po_file.file_name}
+
+%p #{t 'created_at'} #{@po_file.created_at.strftime("%m-%d-%y %h:%M")}
+
+- if @po_file.submitted_at
+  %p #{t 'submitted_at'} #{@po_file.submitted_at.strftime("%m-%d-%y %h:%M")}
+- else
+  %div #{button_link_to t('submit_po_file'), submit_admin_fulfillment_po_file_path, :icon => 'send-email', :method => :post}   
+    
+%div.field_pair
+  %legend
+    = t('file_path')
+  = @po_file.path
+
+
+%h2 #{t 'contents'}
+%div.contents
+  - if @data
+    %pre #{@data}
+  - else
+    &mdash;
+
+- content_for :sidebar do
+  .box
+    %h3
+      #{@po_file.poa_files.count} #{t 'poa_files'}
+      
+    %h3
+      #{@po_file.orders.count} #{t 'orders'}
+    %table
+      %thead
+        %tr
+          %th #{t 'id'}
+          %th #{t 'completed_date'}
+      %tbody
+      - for order in @po_file.orders do
+        %tr
+          %td
+            = link_to order.number, admin_order_path(order)
+          %td
+            = order.completed_at.strftime("%m-%d-%y")
+
