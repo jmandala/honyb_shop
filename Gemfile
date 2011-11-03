@@ -8,7 +8,6 @@ gem 'capistrano'
 # Bundle the extra gems:
 gem 'bj'
 gem 'nokogiri'
-gem 'sqlite3-ruby', :require => 'sqlite3', :except => :production
 
 gem 'haml'
 
@@ -26,6 +25,7 @@ end
 #
 # Dev/Test gems
 group :development, :test do
+  gem 'sqlite3-ruby', :require => 'sqlite3'
   gem 'sqlite3'
   gem 'active_reload'
 
