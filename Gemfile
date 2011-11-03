@@ -2,8 +2,8 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.0.9'
 
-gem 'sqlite3'
-
+# Deploy with Capistrano
+gem 'capistrano'
 
 # Deploy with Capistrano
 gem 'capistrano'
@@ -21,6 +21,10 @@ gem 'spree', '0.60.2'
 gem 'faker'
 gem "factory_girl_rails"
 
+
+group :production do
+  gem 'mysql2'
+end
 
 #
 # Dev/Test gems

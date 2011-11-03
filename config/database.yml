@@ -16,10 +16,19 @@ test: &test
   timeout: 5000
 
 production:
-  adapter: sqlite3
-  database: db/production.sqlite3
+  adapter: mysql
+  encoding: utf8
+  reconnect: false
+  database: honyb_shop
+  username: realbee
+  password: 5flJq82qf3jaL
+  host: 192.168.1.137
   pool: 5
   timeout: 5000
 
 cucumber:
   <<: *test
+  
+#db: honyb_shop_dev
+#user: devbee
+#passwd: 8dErfns354lnna
