@@ -20,7 +20,7 @@
     %th{:scope => 'row'}
       = t 'split_shipment_type'
     %td
-      #{Cdf::Config[:split_shipment_type].humanize} (#{Order::SPLIT_SHIPMENT_TYPE[Cdf::Config[:split_shipment_type].to_sym]})
+      #{Cdf::Config[:split_shipment_type].to_s.humanize} (#{Order::SPLIT_SHIPMENT_TYPE[Cdf::Config[:split_shipment_type].to_sym]})
       
   %tr
     %th{:scope => 'row'}
