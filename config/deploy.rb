@@ -43,6 +43,11 @@ namespace :deploy do
   task :seed do
     run "cd #{current_path}; rake db:seed RAILS_ENV=#{rails_env}"
   end
+  
+  desc 'load the cdf seeds'
+  task :cdf_seed do
+    run "cd #{current_path}; rake cdf:db:seed RAILS_ENV=#{rails_env}"
+  end
 end
 
 after 'deploy:update_code', :bundle_install
