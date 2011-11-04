@@ -13,8 +13,7 @@
   ! strings = #{[:no_results, :type_to_search, :searching].inject({}){|memo, item| {item => t(item) }}.to_json}
   
 = stylesheet_link_tag 'admin/admin-reset', 'admin/grids', 'admin/admin-typography', 'admin/admin-forms', 'admin/admin-tables', 'admin/admin', 'admin/autocomplete', 'admin/token-input', :cache => 'admin/admin-all'
-= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'
-= javascript_include_tag 'rails', 'jquery-ui', 'jquery.suggest', 'jquery.tokeninput.js', 'jquery.delayedobserver.js', :cache => 'jquery-admin-plugins' 
+= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js', 'rails', 'jquery-ui', 'jquery.suggest', 'jquery.tokeninput.js', 'jquery.delayedobserver.js', :cache => 'jquery-admin-plugins' 
 = javascript_include_tag('jquery.template') unless controller.controller_name == "overview" 
 = javascript_include_tag 'admin', 'nested-attribute', 'zone', 'calculator', 'gateway' 
 = javascript_tag "$ = jQuery;" 
