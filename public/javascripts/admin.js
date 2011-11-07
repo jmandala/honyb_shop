@@ -57,15 +57,15 @@ jQuery('a[data-remote=true]').live('click', function() {
         }
       }
     }
-    jQuery.ajax({ dataType: 'script', url: this.href, type: 'get',
+
+    jQuery.ajax({ dataType: 'text html', url: this.href, type: 'get',
         success: function(data){
           if (update_target) {
             $("#"+update_target).html(data);
             link_container.hide();
           }
         }
-    });
-    return false;
+    })
   }
 });
 
