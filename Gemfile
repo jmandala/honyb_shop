@@ -50,4 +50,6 @@ end
 
 gem "cdf", :path => "cdf", :require => "cdf"
 gem "spree_comments", :git => 'git://github.com/spree/spree_comments.git', :branch => '0-60-x'
+gem "spree_paypal_express", :git => 'git://github.com/spree/spree_paypal_express.git', :ref => "073f2f814dd8f3ad2e66ddde2c7079d8c76e4d27"
 gem "acts_as_commentable"
+

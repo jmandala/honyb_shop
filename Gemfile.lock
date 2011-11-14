@@ -7,6 +7,14 @@ GIT
       acts_as_commentable (= 3.0.0)
       spree_core (>= 0.60.1)
 
+GIT
+  remote: git://github.com/spree/spree_paypal_express.git
+  revision: 073f2f814dd8f3ad2e66ddde2c7079d8c76e4d27
+  ref: 073f2f814dd8f3ad2e66ddde2c7079d8c76e4d27
+  specs:
+    spree_paypal_express (1.0.1)
+      spree_core (>= 0.40.3)
+
 PATH
   remote: cdf
   specs:
@@ -149,7 +157,7 @@ GEM
       activesupport (~> 3.0.2)
       arel (~> 2.0.2)
     mime-types (1.17.2)
-    mysql2 (0.3.7)
+    mysql2 (0.2.17)
     nested_set (1.6.7)
       activerecord (>= 3.0.0)
       railties (>= 3.0.0)
@@ -261,8 +269,7 @@ GEM
     spree_sample (0.60.2)
       spree_core (= 0.60.2)
     sqlite3 (1.3.4)
-    sqlite3-ruby (1.3.3)
-      sqlite3 (>= 1.3.3)
+    sqlite3-ruby (1.2.5)
     state_machine (0.9.4)
     stringex (1.0.3)
     systemu (2.4.0)
@@ -297,7 +304,7 @@ DEPENDENCIES
   guard-rspec
   guard-spork
   haml
-  mysql2
+  mysql2 (< 0.3)
   nokogiri
   rails (= 3.0.9)
   rspec-rails
@@ -306,5 +313,6 @@ DEPENDENCIES
   spork (~> 0.9.0.rc)
   spree (= 0.60.2)
   spree_comments!
+  spree_paypal_express!
   sqlite3
-  sqlite3-ruby
+  sqlite3-ruby (= 1.2.5)
