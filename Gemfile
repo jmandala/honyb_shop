@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.9'
+gem 'rails'
 
 # Deploy with Capistrano
 gem 'capistrano'
@@ -12,7 +12,7 @@ gem 'nokogiri'
 gem 'haml'
 
 # Followed by spree itself first, all spree-specific extensions second
-gem 'spree', '0.60.2'
+gem 'spree'
 
 gem 'faker'
 gem "factory_girl_rails"
@@ -25,7 +25,7 @@ end
 #
 # Dev/Test gems
 group :development, :test do
-  gem 'sqlite3-ruby', '1.2.5', :require => 'sqlite3'
+  gem 'sqlite3-ruby', :require => 'sqlite3'
   gem 'sqlite3'
   gem 'active_reload'
 
@@ -48,7 +48,7 @@ group :cucumber, :test, :development do
 
 end
 
-gem "spree_comments", :git => 'git://github.com/spree/spree_comments.git', :branch => '0-60-x'
+gem "spree_comments", :git => 'git://github.com/spree/spree_comments.git'
 gem "acts_as_commentable"
 
 gem "cdf", :path => "cdf", :require => "cdf"
