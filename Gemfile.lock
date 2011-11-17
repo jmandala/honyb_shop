@@ -6,15 +6,20 @@ GIT
       acts_as_commentable (= 3.0.1)
       spree_core (>= 0.70.0)
 
+GIT
+  remote: git://github.com/spree/spree_rdr_theme.git
+  revision: 263a0a4ccf7a10b65c21aed2dd885260f40464dc
+  specs:
+    spree_rdr_theme (0.1.0)
+
 PATH
   remote: cdf
   specs:
-    cdf (0.60.1)
+    cdf (0.70.1)
       cucumber-rails
       haml
-      haml
       rspec-rails
-      spree_core (>= 0.60.1)
+      spree_core (>= 0.70.1)
 
 GEM
   remote: http://rubygems.org/
@@ -33,7 +38,6 @@ GEM
       rack-mount (~> 0.8.2)
       rack-test (~> 0.6.1)
       sprockets (~> 2.0.2)
-    active_reload (0.6.1)
     activemerchant (1.17.0)
       activesupport (>= 2.3.11)
       braintree (>= 2.0.0)
@@ -55,15 +59,11 @@ GEM
       multi_json (~> 1.0)
     acts_as_commentable (3.0.1)
     acts_as_list (0.1.4)
+    ansi (1.4.1)
     archive-tar-minitar (0.5.2)
     arel (2.2.1)
-    arrayfields (4.7.4)
     bcrypt-ruby (3.0.1)
-    bj (1.0.1)
-      main (>= 2.6.0)
-      orderedhash (>= 0.0.3)
-      systemu (>= 1.2.0)
-    braintree (2.13.0)
+    braintree (2.13.1)
       builder (>= 2.0.0)
     builder (3.0.0)
     cancan (1.6.5)
@@ -82,8 +82,14 @@ GEM
       xpath (~> 0.1.4)
     childprocess (0.2.2)
       ffi (~> 1.0.6)
-    chronic (0.6.5)
     cocaine (0.2.0)
+    coffee-rails (3.1.1)
+      coffee-script (>= 2.2.0)
+      railties (~> 3.1.0)
+    coffee-script (2.2.0)
+      coffee-script-source
+      execjs
+    coffee-script-source (1.1.3)
     columnize (0.3.4)
     cucumber (1.1.2)
       builder (>= 2.1.2)
@@ -105,6 +111,8 @@ GEM
       warden (~> 1.0.3)
     diff-lcs (1.1.3)
     erubis (2.7.0)
+    execjs (1.2.9)
+      multi_json (~> 1.0)
     factory_girl (2.2.0)
       activesupport
     factory_girl_rails (1.3.0)
@@ -112,20 +120,9 @@ GEM
       railties (>= 3.0.0)
     faker (1.0.0)
       i18n (~> 0.4)
-    fattr (2.2.0)
     ffi (1.0.11)
-    gherkin (2.6.4)
+    gherkin (2.6.5)
       json (>= 1.4.6)
-    guard (0.8.8)
-      thor (~> 0.14.6)
-    guard-cucumber (0.7.4)
-      cucumber (>= 0.10)
-      guard (>= 0.8.3)
-    guard-rspec (0.5.4)
-      guard (>= 0.8.4)
-    guard-spork (0.3.1)
-      guard (>= 0.8.4)
-      spork (>= 0.8.4)
     haml (3.1.3)
     highline (1.5.1)
     hike (1.2.1)
@@ -137,18 +134,13 @@ GEM
     json_pure (1.6.1)
     kaminari (0.12.4)
       rails (>= 3.0.0)
+    libv8 (3.3.10.4)
     linecache19 (0.5.12)
       ruby_core_source (>= 0.1.4)
     mail (2.3.0)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    main (4.8.0)
-      arrayfields (~> 4.7.4)
-      chronic (~> 0.6.2)
-      fattr (~> 2.2.0)
-      map (~> 4.3.0)
-    map (4.3.0)
     meta_search (1.1.1)
       actionpack (~> 3.1.0)
       activerecord (~> 3.1.0)
@@ -156,7 +148,7 @@ GEM
       polyamorous (~> 0.5.0)
     mime-types (1.17.2)
     multi_json (1.0.3)
-    mysql2 (0.2.17)
+    mysql2 (0.3.10)
     nested_set (1.6.8)
       activerecord (>= 3.0.0)
       railties (>= 3.0.0)
@@ -168,7 +160,6 @@ GEM
     net-ssh-gateway (1.1.0)
       net-ssh (>= 1.99.1)
     nokogiri (1.5.0)
-    orderedhash (0.0.6)
     orm_adapter (0.0.5)
     paperclip (2.4.1)
       activerecord (>= 2.3.0)
@@ -233,6 +224,13 @@ GEM
     ruby_core_source (0.1.5)
       archive-tar-minitar (>= 0.5.2)
     rubyzip (0.9.4)
+    sass (3.1.10)
+    sass-rails (3.1.4)
+      actionpack (~> 3.1.0)
+      railties (~> 3.1.0)
+      sass (>= 3.1.4)
+      sprockets (~> 2.0.0)
+      tilt (~> 1.3.2)
     selenium-webdriver (2.12.2)
       childprocess (>= 0.2.1)
       ffi (~> 1.0.9)
@@ -281,18 +279,22 @@ GEM
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
     sqlite3 (1.3.4)
-    sqlite3-ruby (1.3.3)
-      sqlite3 (>= 1.3.3)
     state_machine (1.0.1)
     stringex (1.0.3)
-    systemu (2.4.1)
     term-ansicolor (1.0.7)
+    therubyracer (0.9.9)
+      libv8 (~> 3.3.10)
     thor (0.14.6)
     tilt (1.3.3)
     treetop (1.4.10)
       polyglot
       polyglot (>= 0.3.1)
+    turn (0.8.3)
+      ansi
     tzinfo (0.3.31)
+    uglifier (1.1.0)
+      execjs (>= 0.3.0)
+      multi_json (>= 1.0.2)
     warden (1.0.6)
       rack (>= 1.0)
     xpath (0.1.4)
@@ -302,29 +304,28 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  active_reload
   acts_as_commentable
-  bj
   capistrano
   capybara
   cdf!
+  coffee-rails (~> 3.1.1)
   cucumber
   cucumber-rails
   database_cleaner
   factory_girl_rails
   faker
-  guard-cucumber
-  guard-rspec
-  guard-spork
   haml
-  mysql2 (< 0.3)
-  nokogiri
-  rails
+  jquery-rails
+  mysql2
+  rails (= 3.1.1)
   rspec-rails
-  ruby-debug-base19 (>= 0.11.24)
-  ruby-debug19 (>= 0.11.6)
+  ruby-debug19
+  sass-rails (~> 3.1.4)
   spork (~> 0.9.0.rc)
   spree
   spree_comments!
+  spree_rdr_theme!
   sqlite3
-  sqlite3-ruby
+  therubyracer
+  turn
+  uglifier (>= 1.0.3)

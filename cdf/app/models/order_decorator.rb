@@ -1,5 +1,5 @@
 Order.class_eval do
-
+  
   has_many :children, :class_name => Order.name, :foreign_key => 'parent_id'
   belongs_to :parent, :class_name => Order.name, :foreign_key => 'parent_id'
   

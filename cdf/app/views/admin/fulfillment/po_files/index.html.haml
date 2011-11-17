@@ -26,7 +26,7 @@
     = t('no_files')
 
 
-= will_paginate(@po_files, :previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;")
+= paginate(@po_files, :previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;")
 
 
 - content_for :sidebar do
@@ -41,12 +41,12 @@
 
         .yui-g.date-range-filter
           .yui-u.sub-field.first
-            = f.spree_date_picker :created_at_greater_than
+            = f.text_field :created_at_greater_than, :class => 'datepicker' 
             %label.sub
               = t("start")
 
           .yui-u.sub-field
-            = f.spree_date_picker :created_at_less_than
+            = f.text_field :created_at_less_than, :class => 'datepicker'
             %label
               = t("stop")
         %label

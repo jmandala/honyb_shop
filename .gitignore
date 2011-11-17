@@ -5,6 +5,6 @@ log/*.log
 tmp/
 *~
 .idea
-public/assets/products
+public/assets
 doc
 .yardoc

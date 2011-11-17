@@ -11,7 +11,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111101191737) do
+ActiveRecord::Schema.define(:version => 20111116194733) do
+
+  create_table "activators", :force => true do |t|
+    t.string   "description"
+    t.datetime "expires_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "starts_at"
+    t.string   "name"
+    t.string   "event_name"
+    t.string   "type"
+  end
 
   create_table "address_types", :force => true do |t|
     t.string "code"
@@ -49,6 +60,7 @@ ActiveRecord::Schema.define(:version => 20111101191737) do
     t.boolean  "locked"
     t.integer  "originator_id"
     t.string   "originator_type"
+    t.boolean  "eligible",        :default => true
   end
 
   add_index "adjustments", ["order_id"], :name => "index_adjustments_on_order_id"
