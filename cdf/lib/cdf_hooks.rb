@@ -1,26 +1,5 @@
 class CdfHooks < Spree::ThemeSupport::HookListener
 
-  # BEGIN SHIPPING METHDOS
-  insert_after :admin_shipping_methods_index_headers do
-    %(
-    <th><%= t("environment") %></th>
-    )
-  end
-
-  insert_after :admin_shipping_methods_index_rows do
-    %(
-    <td>
-      <%= shipping_method.environment %>
-      <% if shipping_method.valid_for_environment? %>
-        <span class="valid">[ACTIVE]</span>
-      <% else %>
-        <span class="invalid">[INACTIVE]</span>
-      <% end %>
-    </td>    
-    )
-  end
-  # END SHIPPING METHODS
-
   insert_after :admin_order_tabs do
     %(
     <li<%== ' class="active"' if current == "Fulfillment" %>>
