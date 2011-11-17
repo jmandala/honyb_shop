@@ -1,0 +1,66 @@
+<%= render 'admin/shared/fulfillment_sub_menu' %>
+
+<% if @downloadable.size > 0 %>
+  <div class="admin_buttons">
+    <%= form_tag(send("admin_fulfillment_#{type}_files_path")) do |f| %>
+      <div class="download">
+        <% count = @downloadable.size %>
+        <% human_type = count > 1 ? t(type).pluralize : t(type) %>
+        <%= button t("download_files", :count => count, :file_type => human_type), 'add' %>
+      </div>
+      </div>
+    <% end %>
+<% end %>
+
+<h1><%= t "#{type}_files" %></h1>
+
+<div>
+  <table class="index">
+    <thead>
+    <tr>
+      <th> <%= sort_link @search, :file_name, t(:file_name) %> </th>
+      <th> <%= t('imported_at') %> </th>
+      <th> <%= sort_link @search, :created_at, t(:created_at) %> </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% for import_file in @collection do %>
+      <%= render 'admin/shared/import_file', :import_file => import_file, :type => type %>
+    <% end %>
+    </tbody>
+  </table>
+
+  <% if @collection.size == 0 %>
+    <%= t :no_files %>
+  <% end %>
+
+  <%= paginate(@collection, :previous_label => "&#171; #{t(:previous)}", :next_label => "#{t(:next)} &#187;") %>
+</div>
+
+<% content_for :sidebar do %>
+  <div class="box">
+    <h3><%= t(:search) %></h3>
+    <%= form_for [:admin_fulfillment, @search] do |f| %>
+      <% locals = {:f => f} %>
+      <%= hook "admin_fulfillment_#{type}_files_index_search".to_sym, locals do %>
+        <label> <%= t :date_range %> </label>
+
+        <div class="yui-g date-range-filter">
+          <div class="yui-u.sub-field first">
+            <label class="sub"> <%= t :start %> </label>
+            <%= f.text_field :created_at_greater_than, :class => 'datepicker' %>
+          </div>
+          <div class="yui-u sub-field">
+            <label><%= t :stop %></label>
+            <%= f.text_field :created_at_less_than, :class => 'datepicker' %>
+          </div>
+        </div>
+
+        <% hook "admin_fulfillment_#{type}_files_index_search_buttons".to_sym, locals do %>
+          <p><%= button t(:search) %></p>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

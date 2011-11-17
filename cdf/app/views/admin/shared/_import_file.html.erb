@@ -5,14 +5,12 @@
 
   <td>
     <% if import_file.imported_at %>
-      <%= time_ago_in_words import_file.imported_at %>
-      <%= t :ago %>
+      <%= time_ago_in_words import_file.imported_at %> <%= t :ago %>
     <% else %>
       <%= link_to_with_icon 'add', t('import_now'), send("import_admin_fulfillment_#{type}_file_path".to_sym, import_file), :method => :post %>
      <% end %>
   </td>
   <td>
-    <%= time_ago_in_words import_file.created_at %>
-    <%= t :ago %>
+    <%= time_ago_in_words import_file.created_at %> <%= t :ago %>
   </td>
 </tr>
