@@ -1,12 +1,7 @@
 class Admin::Fulfillment::SettingsController < Admin::BaseController
 
   def update
-    begin
-      Cdf::Config.set(params[:preferences]) if Cdf::Config.instance
-    rescue => e
-      logger.error e.message
-      raise e
-    end
+    Cdf::Config.set(params[:preferences]) if Cdf::Config.instance
 
     respond_to do |format|
       format.html {

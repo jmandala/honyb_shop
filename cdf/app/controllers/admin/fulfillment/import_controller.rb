@@ -29,9 +29,11 @@ class Admin::Fulfillment::ImportController < Admin::ResourceController
       params[:search][:created_at_less_than] = Time.zone.parse(params[:search][:created_at_less_than]).end_of_day rescue ""
     end
 
-    @collection = model_class.metasearch(params[:search]).order('created_at desc').group("#{object_name}s.file_name").paginate(
-        :per_page => Cdf::Config["#{object_name}s_per_page"],
-        :page => params[:page])
+    @collection = model_class.metasearch(params[:search]).
+        order('created_at desc').
+        group("#{object_name}s.file_name").
+        page(params[:page]).
+        per(Cdf::Config["#{object_name}s_per_page"])
 
     respond_with @collection
   end
