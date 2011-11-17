@@ -1,0 +1,72 @@
+<%= render :partial => 'admin/shared/fulfillment_sub_menu' %>
+
+<div class="admin_buttons">
+  <div><%= button_link_to t(:back), send("admin_fulfillment_#{type}_files_path".to_sym), :icon => '16x16/8' %> </div>
+</div>
+
+<div id="import_file">
+  <h1> <%= t "#{type}_files" %></h1>
+  
+  <div class="header data_group">
+    <h2><%= import_file.file_name %> </h2>
+    <div class="collapseable">
+      <%= raw(data_pair(:file_path) { import_file.path} )%>    
+      <%= raw(data_pair(:created_at) { import_file.created_at.strftime("%m-%d-%y %H:%M")}) %>
+      <% if import_file.imported_at %>
+        <%= raw(data_pair(:imported_at) { import_file.imported_at.strftime("%m-%d-%y %H:%M")}) %>
+      <% else %>
+        <%= form_tag(send("import_admin_fulfillment_#{type}_file_path".to_sym, import_file)) do |f| %>
+          <div> <%= button t('import_now'), 'add' %></div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  
+  <% if defined? file_details %>
+    <div id="#file_details" class='data_group'>
+      <%= render file_details, :import_file => import_file %>
+    </div>
+  <% end %>
+  
+  <div id='#parsed' class='data_group'>
+    <h2><%= t :parsed %></h2>
+    <div class='collapseable'>    
+      <pre><%= import_file.parsed.to_yaml %></pre>
+    </div>
+  </div>
+
+  <div id='contents' class='data_group'>    
+    <h2><%= t :contents %></h2> 
+    <div class='collapseable'>
+      <div class='contents'>
+        <% if import_file.data %>
+          <pre><%= import_file.data %></pre>
+        <% else %>
+          &mdash;
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :sidebar do %>
+  <div class='box'>
+   <h3><%= import_file.orders.count %><%= t :orders %></h3>
+    <table>
+      <thead>
+        <tr>
+          <th><%= t :id %></th> 
+          <th><%= t :completed_date %></th>
+      </tr>
+        </thead>
+      <tbody>
+        <% for order in import_file.orders do %>
+        <tr>
+          <td> <%= link_to order.number, admin_order_path(order) %> </td>
+          <td> <%= order.completed_at.strftime("%m-%d-%y") if order.completed_at %> </td>
+        </tr>
+        <% end %>
+      </tbody>
+      </table>
+  </div>
+<% end %>
