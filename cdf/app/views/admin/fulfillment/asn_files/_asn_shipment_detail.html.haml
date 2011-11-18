@@ -23,21 +23,15 @@
         %th #{t 'quantity_predicted'}
         %th #{t 'quantity_shipped'}
         %th #{t 'quantity_slashed'}
+        %th #{t 'ssl'}
+        %th #{t 'scac'}
+        %th #{t 'weight'}
     %tbody
       %tr
         %td #{asn_shipment_detail.quantity_canceled}
         %td #{asn_shipment_detail.quantity_predicted}
         %td #{asn_shipment_detail.quantity_shipped}
         %td #{asn_shipment_detail.quantity_slashed}
-  
-  %table 
-    %thead
-      %tr
-        %th #{t 'ssl'}
-        %th #{t 'scac'}
-        %th #{t 'weight'}
-    %tbody
-      %tr
         %td #{asn_shipment_detail.ssl}
         %td #{asn_shipment_detail.standard_carrier_address_code}
         %td #{asn_shipment_detail.weight}

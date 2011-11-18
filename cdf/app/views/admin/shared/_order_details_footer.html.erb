@@ -1,0 +1,180 @@
+<div id='order_status'>
+  <% if @order.po_file %>
+    <div id='po_files' class='data_group'>
+      <h2><%= t :po_files %></h2>
+
+      <div class='collapseable'>
+        <div class='col 1'>
+          <%= raw(data_pair(:file_name) { link_to @order.po_file.file_name, admin_fulfillment_po_file_path(@order.po_file) }) %>
+        </div>
+        <div class='col 2'>
+          <%= raw(data_pair(:submitted_at) { @order.po_file.submitted_at.strftime("%m/%d/%y %H:%M") }) if @order.po_file.submitted_at %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if !@order.poa_order_headers.empty? %>
+    <div id='poa_files' class='data_group'>
+      <h2><%= t :poa_files %></h2>
+
+      <div class='collapseable'>
+        <% @order.poa_order_headers.each do |h| %>
+          <% poa_file = h.poa_file %>
+          <div class='col 1'>
+            <div class='poa_file'>
+              <%= raw(data_pair(:file_name) { link_to poa_file.file_name, admin_fulfillment_poa_file_path(poa_file) }) %>
+              <%= raw(data_pair(:vendor_message) { h.vendor_message }) %>
+            </div>
+          </div>
+
+          <div class='col 2'>
+            <div class='poa_file'>
+              <%= raw(data_pair(:imported_at) { poa_file.imported_at.strftime("%m/%d/%y %H:%M") }) %>
+              <%= raw(data_pair(:po_status) { "#{h.po_status.name} ( #{h.po_status.code} )" }) %>
+              <%= raw(data_pair(:po_date) { h.po_date.strftime("%m/%d/%y %H:%M") }) %>
+              <div class='poa_order_control_totals'>
+                <%= raw(data_pair(:total_line_items_in_file) { h.poa_order_control_total.total_line_items_in_file }) %>
+                <%= raw(data_pair(:total_units_acknowledged) { h.poa_order_control_total.total_units_acknowledged }) %>
+              </div>
+              <% if h.poa_ship_to_name || h.poa_city_state_zip %>
+                <div class='address_verification'>
+                  <h3><%= t :address_verification %></h3>
+
+                  <div class='poa_ship_to_name'>
+                    <% if h.poa_ship_to_name %>
+                      <%= h.poa_ship_to_name.recipient_name %>
+                    <% else %>
+                      no ship_to_name
+                    <% end %>
+                  </div>
+
+                  <div class='poa_city_state_zip'>
+                    <% if h.poa_city_state_zip %>
+                      <%= h.poa_city_state_zip.state.name %>
+                      <%= h.poa_city_state_zip.country.name %>
+                      <%= h.poa_city_state_zip.zip_postal_code %>
+                    <% else %>
+                      no city/state/zip
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if !@order.asn_shipments.empty? %>
+    <% @order.asn_shipments.each do |asn_shipment| %>
+      <div id='asn_files' class='data_group'>
+        <h2><%= t :asn_files %></h2>
+
+        <div class='collapseable'>
+          <% asn_file = asn_shipment.asn_file %>
+          <div class='col 1'>
+            <%= raw(data_pair(:file_name) { link_to asn_file.file_name, admin_fulfillment_asn_file_path(asn_file) }) %>
+          </div>
+          <div class='col 2'>
+            <%= raw(data_pair(:imported_at) { asn_file.imported_at.strftime("%m/%d/%y %H:%M") }) if asn_file.imported_at %>
+          </div>
+          <div class='asn_shipments data_group'>
+            <h3><%= t :asn_shipment %></h3>
+
+            <div class='asn_shipment'>
+              <div class='col 1'>
+                <%= raw(data_pair(:asn_order_status, :label => t(:shipment_status)) { "#{asn_shipment.asn_order_status.description} (#{asn_shipment.asn_order_status.code}) [id: <div id='#{asn_shipment.id}']" }) %>
+                <%= raw(data_pair(:shipment_date) { asn_shipment.shipment_date.strftime("%m/%d/%y %H:%M") }) %>
+                <%= raw(data_pair(:freight_charge) { number_to_currency asn_shipment.freight_charge }) %>
+                <%= raw(data_pair(:shipping_and_handling) { number_to_currency asn_shipment.shipping_and_handling }) %>
+              </div>
+              <div class='col 2'>
+                <%= raw(data_pair(:sales_tax) { number_to_currency asn_shipment.sales_tax }) %>
+                <%= raw(data_pair(:order_discount_amount) { number_to_currency asn_shipment.order_discount_amount }) %>
+                <%= raw(data_pair(:order_subtotal) { number_to_currency asn_shipment.order_subtotal }) %>
+                <%= raw(data_pair(:order_total) { number_to_currency asn_shipment.order_total }) %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if !@order.cdf_invoice_detail_totals.empty? %>
+    <div id='cdf_invoice_files' class='data_group'>
+      <h2> <%= t :cdf_invoice_total %> <%= number_to_currency @order.cdf_invoice_total %> </h2>
+
+      <div class='collapseable'>
+        <h4><%= t :invoice_details %></h4>
+        <table class="index cdf_invoice_details">
+          <thead>
+          <tr>
+            <th><%= t 'title' %></th>
+            <th><%= t 'product_shipped' %></th>
+            <th><%= t 'metered_date' %></th>
+            <th><%= t 'quantity_shipped' %></th>
+            <th><%= t 'ingram_list_price' %></th>
+            <th><%= t 'discount' %></th>
+            <th><%= t 'net_price' %>                  </th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @order.cdf_invoice_detail_totals.each do |t| %>
+            <% isbn = t.cdf_invoice_isbn_detail %>
+            <tr>
+              <td><%= t.title %></td>
+              <td><%= t.cdf_invoice_ean_detail.ean_shipped %> / <%= isbn.isbn_10_shipped %></td>
+              <td><%= isbn.metered_date.strftime("%D") %></td>
+              <td><%= isbn.quantity_shipped %></td>
+              <td><%= number_to_currency isbn.ingram_list_price %></td>
+              <td><%= number_to_currency isbn.discount %></td>
+              <td>{:class => 'active'} <%= number_to_currency isbn.net_price %></td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+
+        <h4><%= t :freight_and_fees %>    </h4>
+        <table class="index cdf_invoice_freight_and_fees invoice_group">
+          <thead>
+          <tr>
+            <th><%= t 'tracking_number' %></th>
+            <th><%= t 'gift_wrap' %></th>
+            <th><%= t 'handling' %></th>
+            <th><%= t 'net_price' %></th>
+            <th><%= t 'shipping' %></th>
+            <th><%= t 'amount_due' %></th>
+          </tr>
+          <tbody>
+          <% @order.cdf_invoice_freight_and_fees.each do |f| %>
+            <tr>
+              <td>{:class => 'inactive'} <%= f.tracking_number %></td>
+              <td>{:class => 'inactive'} <%= number_to_currency f.gift_wrap %></td>
+              <td>{:class => 'inactive'} <%= number_to_currency f.handling %></td>
+              <td>{:class => 'inactive'} <%= number_to_currency f.net_price %></td>
+              <td>{:class => 'inactive'} <%= number_to_currency f.shipping %></td>
+              <td>{:class => 'active'} <%= number_to_currency f.amount_due %></td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+
+
+        <% @order.cdf_invoice_files.each do |cdf_invoice_file| %>
+          <div class='col 1'>
+            <%= raw(data_pair(:file_name) { link_to cdf_invoice_file.file_name, admin_fulfillment_cdf_invoice_file_path(cdf_invoice_file) }) %>
+            <%= raw(data_pair(:ingram_file_name) { cdf_invoice_file.ingram_file_name }) %>
+            <%= raw(data_pair(:ingram_san) { cdf_invoice_file.ingram_san }) %>
+          </div>
+          <div class='col 2'>
+            <%= raw(data_pair(:imported_at) { cdf_invoice_file.imported_at.strftime("%m/%d/%y %H:%M") }) %>
+            <%= raw(data_pair(:file_source) { cdf_invoice_file.file_source }) %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

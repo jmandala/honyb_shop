@@ -1,0 +1,33 @@
+<% item.asn_shipment_details.each do |asn_shipment_detail| %>
+  <div class='asn_shipment_details data_group'>
+    <h2><%= t :asn_shipment_detail %></h2>
+
+    <div class='asn_shipment_detail main'>
+      <table>
+        <thead>
+        <tr>
+          <th><%= t :asn_order_status %> </th>
+          <th><%= t :shipping %> </th>
+          <th><%= t :tracking %> </th>
+          <th><%= t :dc_code %> </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td><%= asn_shipment_detail.asn_order_status.description %> </td>
+          <td>
+            <%= "#{asn_shipment_detail.asn_shipping_method_code.big_bisac_code_sent_in} /  #{asn_shipment_detail.asn_shipping_method_code.shipping_method.name}" if asn_shipment_detail.asn_shipping_method_code %>
+            <%= "#{asn_shipment_detail.asn_slash_code.description} (#{asn_shipment_detail.asn_slash_code.code})" if asn_shipment_detail.asn_slash_code %>
+          </td>
+          <td><%= asn_shipment_detail.tracking %> </td>
+          <td><%= asn_shipment_detail.dc_code.dc_name %></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class='collapseable'>
+      <%= render 'admin/fulfillment/asn_files/asn_shipment_detail', :asn_shipment_detail => asn_shipment_detail %>
+    </div>
+  </div>
+  <div class='clear'></div>
+<% end %>
