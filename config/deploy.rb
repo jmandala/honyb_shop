@@ -7,7 +7,7 @@ set :host, 'ruby.mandaladesigns.com'
 # adjust if you are using RVM, remove if you are not
 $:.unshift(File.expand_path('./lib', ENV['rvm_path']))
 require 'rvm/capistrano'
-set :rvm_ruby_string, '1.9.2'
+set :rvm_ruby_string, 'ruby-1.9.2-p290@rails-3.1.1'
 
 # file paths
 set :repository,  "#{user}@#{git_server}:/repos/honyb/honyb_shop.git"
@@ -59,7 +59,7 @@ task :bundle_install, :roles => :app do
 end
 
 desc "tail production log files" 
-task :tail_logs, :roles => :app do
+task :tail, :roles => :app do
   run "tail -f #{shared_path}/log/production.log" do |channel, stream, data|
     puts  # for an extra line break before the host name
     puts "#{channel[:host]}: #{data}" 
