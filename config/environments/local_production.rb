@@ -44,13 +44,12 @@ HonybShop::Application.configure do
   # Compress JavaScripts and CSS
   config.assets.compress = true
 
-  # Choose the compressors to use
+# Choose the compressors to use
   config.assets.js_compressor = :uglifier
   config.assets.css_compressor = :yui
 
-  # Fallback to assets pipeline if a precompiled asset is missed
-  # Needed to do this because compiling checkout.js was failing -- not sure why?
-  config.assets.compile = true
+# Don't fallback to assets pipeline if a precompiled asset is missed
+  config.assets.compile = false
 
 # Generate digests for assets URLs.
   config.assets.digest = true
@@ -58,4 +57,6 @@ HonybShop::Application.configure do
 # Defaults to Rails.root.join("public/assets")
 # config.assets.manifest = YOUR_PATH
 
+# Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
+  config.assets.precompile += %w( store/checkout.js )
 end

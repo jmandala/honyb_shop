@@ -14,4 +14,5 @@
 //= require_tree .
 //= require jquery.fancybox-1.3.4
 //= require store/rdr_wishlist
+//= require store/checkout
 //= require store/cdf
