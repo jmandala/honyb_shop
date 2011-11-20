@@ -6,6 +6,12 @@ GIT
       acts_as_commentable (= 3.0.1)
       spree_core (>= 0.70.0)
 
+GIT
+  remote: git://github.com/spree/spree_rdr_theme.git
+  revision: 263a0a4ccf7a10b65c21aed2dd885260f40464dc
+  specs:
+    spree_rdr_theme (0.1.0)
+
 PATH
   remote: cdf
   specs:
@@ -14,11 +20,6 @@ PATH
       haml
       rspec-rails
       spree_core (>= 0.70.1)
-
-PATH
-  remote: theme/honyb_default
-  specs:
-    spree_rdr_theme (0.1.0)
 
 GEM
   remote: http://rubygems.org/
