@@ -54,8 +54,8 @@ after 'deploy:update_code', :bundle_install
 
 desc 'install the necessary prerequisites'
 task :bundle_install, :roles => :app do
-  run "cd #{current_path} && gem install sqlite3 -- --with-sqlite3-dir=/opt/local/sqlite-3.7.0.9"
-  run "cd #{current_path} && bundle install"
+  run "cd #{release_path} && gem install sqlite3 -- --with-sqlite3-dir=/opt/local/sqlite-3.7.0.9"
+  run "cd #{release_path} && bundle install"
 end
 
 desc "tail production log files"
