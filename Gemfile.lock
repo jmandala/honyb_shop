@@ -8,10 +8,11 @@ GIT
 
 GIT
   remote: git://github.com/spree/spree_paypal_express.git
-  revision: b597130b5ef3a2db7d43f52b1e90ad2448384f9b
+  revision: bea1aa48e0089083546bec4b19565a40e9a50a20
+  ref: bea1aa48e0089083546bec4b19565a40e9a50a20
   specs:
     spree_paypal_express (1.0.1)
-      spree_core (>= 0.70.1)
+      spree_core (>= 0.40.3)
 
 GIT
   remote: git://github.com/spree/spree_rdr_theme.git

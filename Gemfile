@@ -59,6 +59,6 @@ gem 'spree'
 gem "spree_comments", :git => 'git://github.com/spree/spree_comments.git'
 gem "acts_as_commentable"
 gem 'spree_rdr_theme', :git => 'git://github.com/spree/spree_rdr_theme.git'
-gem "spree_paypal_express", :git => 'git://github.com/spree/spree_paypal_express.git', :branch => "master"
+gem "spree_paypal_express", :git => 'git://github.com/spree/spree_paypal_express.git', :ref => "bea1aa48e0089083546bec4b19565a40e9a50a20"
 
 gem "cdf", :path => "cdf", :require => "cdf"
