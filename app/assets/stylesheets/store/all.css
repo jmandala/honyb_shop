@@ -11,6 +11,6 @@
 
  *= require_self
  *= require_tree .
- *= require store/rdr
  *= require store/cdf
+ *= require store/honyb
 */

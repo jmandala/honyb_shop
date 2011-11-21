@@ -14,11 +14,10 @@ GIT
     spree_paypal_express (1.0.1)
       spree_core (>= 0.40.3)
 
-GIT
-  remote: git://github.com/spree/spree_rdr_theme.git
-  revision: 263a0a4ccf7a10b65c21aed2dd885260f40464dc
+PATH
+  remote: ../honyb_theme
   specs:
-    spree_rdr_theme (0.1.0)
+    honyb_theme (0.1.0)
 
 PATH
   remote: cdf
@@ -323,6 +322,7 @@ DEPENDENCIES
   factory_girl_rails
   faker
   haml
+  honyb_theme!
   jquery-rails
   mysql2
   rails (= 3.1.1)
@@ -333,7 +333,6 @@ DEPENDENCIES
   spree
   spree_comments!
   spree_paypal_express!
-  spree_rdr_theme!
   sqlite3
   therubyracer
   turn
