@@ -7,6 +7,14 @@ GIT
       spree_core (>= 0.70.0)
 
 GIT
+  remote: git://github.com/spree/spree_paypal_express.git
+  revision: bea1aa48e0089083546bec4b19565a40e9a50a20
+  ref: bea1aa48e0089083546bec4b19565a40e9a50a20
+  specs:
+    spree_paypal_express (1.0.1)
+      spree_core (>= 0.40.3)
+
+GIT
   remote: git://github.com/spree/spree_rdr_theme.git
   revision: 263a0a4ccf7a10b65c21aed2dd885260f40464dc
   specs:
@@ -324,6 +332,7 @@ DEPENDENCIES
   spork (~> 0.9.0.rc)
   spree
   spree_comments!
+  spree_paypal_express!
   spree_rdr_theme!
   sqlite3
   therubyracer
