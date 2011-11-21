@@ -54,8 +54,8 @@ after 'deploy:update_code', :bundle_install
 
 desc 'install the necessary prerequisites'
 task :bundle_install, :roles => :app do
-  run "cd #{release_path} && gem install sqlite3 -- --with-sqlite3-dir=/opt/local/sqlite-3.7.0.9"
-  run "cd #{release_path} && bundle install"
+  run "cd #{current_path} && gem install sqlite3 -- --with-sqlite3-dir=/opt/local/sqlite-3.7.0.9"
+  run "cd #{current_path} && bundle install"
 end
 
 desc "tail production log files"
@@ -80,7 +80,7 @@ namespace :assets do
   task :symlink, :roles => :app do
     assets.create_dirs
 
-    release_image_dir = "#{release_path}/public/spree/products/"
+    release_image_dir = "#{current_path}/public/spree/products/"
     shared_image_dir = "#{shared_path}/uploaded-files/spree/products/"
 
     run "rm -rf #{release_image_dir}"
