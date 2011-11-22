@@ -63,5 +63,5 @@ gem "spree_paypal_express", :git => 'git://github.com/spree/spree_paypal_express
 
 gem "cdf", :path => "cdf", :require => "cdf"
 
-#gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git'
-gem 'honyb_theme', :path => '../honyb_theme'
+gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git'
+#gem 'honyb_theme', :path => '../honyb_theme'
