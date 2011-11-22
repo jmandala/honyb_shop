@@ -9,7 +9,10 @@ module SpreeSite
         Rails.env.production? ? require(c) : load(c)
       end
 
+      Spree::Config.set(:checkout_zone => 'ALL US')
+      
     end
+    
 
     config.to_prepare &method(:activate).to_proc
   end
