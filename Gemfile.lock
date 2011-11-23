@@ -1,9 +1,29 @@
 GIT
+  remote: code.mandaladesigns.com:/repos/honyb/honyb_theme.git
+  revision: baf991ebb241d542b61c19b2cf16320712507e09
+  specs:
+    honyb_theme (0.1.0)
+
+GIT
+  remote: git://github.com/BDQ/spree_pages.git
+  revision: a45c907abe05f97066041ecc343b8f8c68cedbee
+  specs:
+    spree_pages (0.60.0)
+      spree_core (>= 0.60)
+
+GIT
   remote: git://github.com/spree/spree_comments.git
   revision: 8c4bcc22e21ecaf80364c2c2c969be63f0495e39
   specs:
     spree_comments (1.0.1)
       acts_as_commentable (= 3.0.1)
+      spree_core (>= 0.70.0)
+
+GIT
+  remote: git://github.com/spree/spree_editor.git
+  revision: 7ec3db65c2c6b28cd5e8047e316fdee1a6ec04f7
+  specs:
+    spree_editor (0.50.1)
       spree_core (>= 0.70.0)
 
 GIT
@@ -13,11 +33,6 @@ GIT
   specs:
     spree_paypal_express (1.0.1)
       spree_core (>= 0.40.3)
-
-PATH
-  remote: ../honyb_theme
-  specs:
-    honyb_theme (0.1.0)
 
 PATH
   remote: cdf
@@ -332,6 +347,8 @@ DEPENDENCIES
   spork (~> 0.9.0.rc)
   spree
   spree_comments!
+  spree_editor!
+  spree_pages!
   spree_paypal_express!
   sqlite3
   therubyracer

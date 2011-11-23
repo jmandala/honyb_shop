@@ -502,6 +502,17 @@ ActiveRecord::Schema.define(:version => 20111116194733) do
 
   add_index "orders", ["number"], :name => "index_orders_on_number"
 
+  create_table "pages", :force => true do |t|
+    t.string   "title"
+    t.text     "body"
+    t.string   "permalink"
+    t.boolean  "published"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "meta_keywords"
+    t.string   "meta_description"
+  end
+
   create_table "payment_methods", :force => true do |t|
     t.string   "type"
     t.string   "name"
