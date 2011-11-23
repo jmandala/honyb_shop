@@ -61,7 +61,6 @@ gem "acts_as_commentable"
 
 gem "spree_paypal_express", :git => 'git://github.com/spree/spree_paypal_express.git', :ref => "bea1aa48e0089083546bec4b19565a40e9a50a20"
 
-gem "spree_editor", :git => 'git://github.com/spree/spree_editor.git'
 gem "spree_pages", :git => 'git://github.com/BDQ/spree_pages.git'
 
 
