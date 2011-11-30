@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.1.1'
+gem 'rails', '3.1.2'
 
 gem 'sqlite3'
 
@@ -54,7 +54,7 @@ end
 
 
 # Followed by spree itself first, all spree-specific extensions second
-gem 'spree'
+gem 'spree', '0.70.2'
 
 gem "spree_comments", :git => 'git://github.com/spree/spree_comments.git'
 gem "acts_as_commentable"
