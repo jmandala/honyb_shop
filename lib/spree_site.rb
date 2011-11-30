@@ -10,6 +10,7 @@ module SpreeSite
       end
 
       Spree::Config.set(:checkout_zone => 'ALL US')
+      Spree::Config.set(:site_name => 'honyb ~ the ultimate indie bookstore')
       
     end
     
