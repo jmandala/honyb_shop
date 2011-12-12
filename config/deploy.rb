@@ -68,22 +68,15 @@ task :tail, :roles => :app do
 end
 
 namespace :assets do
-
-  release_image_dir = "#{release_path}/public/spree/products/"
-  shared_image_dir = "#{shared_path}/uploaded-files/spree/products/"
-  
-  desc "create the shared directories"
-  task :create_dirs, :roles => :app do
-    run "mkdir -p #{release_image_dir}"
-    run "mkdir -p #{shared_image_dir}"
-  end
-
   desc "create symlinks from shared resources to the release path"
   task :symlink, :roles => :app do
-    assets.create_dirs
+    release_image_dir = "#{release_path}/public/spree/"
+    shared_image_dir = "#{shared_path}/uploaded-files/spree/products/"
 
-    run "rm -rf #{release_image_dir}"
-    run "ln -nfs #{shared_image_dir} #{release_path}/public/spree/"
+    run "mkdir -p #{release_image_dir}"
+    run "mkdir -p #{shared_image_dir}"
+
+    run "ln -nfs #{shared_image_dir} #{release_image_dir}"
   end
 
 end
