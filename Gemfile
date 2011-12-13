@@ -72,6 +72,6 @@ gem "cdf", :path => "cdf", :require => "cdf"
 gem 'routing-filter'
 
 
-#gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git'
-gem 'honyb_theme', :path => '../honyb_theme'
+gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git'
+#gem 'honyb_theme', :path => '../honyb_theme'
 
