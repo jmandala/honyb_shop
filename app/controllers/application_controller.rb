@@ -3,4 +3,8 @@ class ApplicationController < ActionController::Base
 
   helper :all
 
+  def default_url_options(options={})
+    logger.debug "Embed: #{params[:embed]}"
+    { :embed => 'embed'} if params[:embed]
+  end
 end
