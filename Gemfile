@@ -65,12 +65,9 @@ gem "spree_paypal_express", :git => 'git://github.com/spree/spree_paypal_express
 
 gem "spree_pages", :git => 'git://github.com/BDQ/spree_pages.git'
 
-
-
 gem "cdf", :path => "cdf", :require => "cdf"
 
 gem 'routing-filter'
-
 
 gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git'
 #gem 'honyb_theme', :path => '../honyb_theme'
