@@ -56,17 +56,15 @@ end
 # Followed by spree itself first, all spree-specific extensions second
 gem 'spree', '0.70.3'
 
-gem "spree_comments", :git => 'git://github.com/spree/spree_comments.git'
-gem "acts_as_commentable"
+#gem "spree_comments", :git => 'git://github.com/spree/spree_comments.git'
+#gem "acts_as_commentable"
 
 gem "spree_paypal_express", :git => 'git://github.com/spree/spree_paypal_express.git', :ref => "bea1aa48e0089083546bec4b19565a40e9a50a20"
-
-#gem "spree_payflow", :git => 'git://github.com/phy5ics/Spree-Payflow-Pro.git'
 
 gem "spree_pages", :git => 'git://github.com/BDQ/spree_pages.git'
 
 gem "cdf", :path => "cdf", :require => "cdf"
 
-gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "a6b123a91dc3ff0bd1f25b72c9ab75645742d9f9"
-#gem 'honyb_theme', :path => '../honyb_theme'
-
+gem 'routing-filter'
+#gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "a6b123a91dc3ff0bd1f25b72c9ab75645742d9f9"
+gem 'honyb_theme', :path => '../honyb_theme'
