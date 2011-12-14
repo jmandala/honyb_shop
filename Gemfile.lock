@@ -6,6 +6,15 @@ GIT
       spree_core (>= 0.60)
 
 GIT
+  remote: git://github.com/spree/spree_comments.git
+  revision: a33693ffaeb60fc8bcde6c805c9659ff4b7e2bd6
+  ref: a33693ffaeb60fc8bcde6c805c9659ff4b7e2bd6
+  specs:
+    spree_comments (1.0.1)
+      acts_as_commentable (= 3.0.1)
+      spree_core (>= 0.70.0)
+
+GIT
   remote: git://github.com/spree/spree_paypal_express.git
   revision: bea1aa48e0089083546bec4b19565a40e9a50a20
   ref: bea1aa48e0089083546bec4b19565a40e9a50a20
@@ -63,6 +72,7 @@ GEM
       activesupport (= 3.1.3)
     activesupport (3.1.3)
       multi_json (~> 1.0)
+    acts_as_commentable (3.0.1)
     acts_as_list (0.1.4)
     ansi (1.4.1)
     archive-tar-minitar (0.5.2)
@@ -309,6 +319,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  acts_as_commentable
   capistrano
   capybara
   cdf!
@@ -329,6 +340,7 @@ DEPENDENCIES
   sass-rails (~> 3.1.4)
   spork (~> 0.9.0.rc)
   spree (= 0.70.3)
+  spree_comments!
   spree_pages!
   spree_paypal_express!
   sqlite3

@@ -56,8 +56,8 @@ end
 # Followed by spree itself first, all spree-specific extensions second
 gem 'spree', '0.70.3'
 
-#gem "spree_comments", :git => 'git://github.com/spree/spree_comments.git'
-#gem "acts_as_commentable"
+gem "spree_comments", :git => 'git://github.com/spree/spree_comments.git', :ref => "a33693ffaeb60fc8bcde6c805c9659ff4b7e2bd6"
+gem "acts_as_commentable"
 
 gem "spree_paypal_express", :git => 'git://github.com/spree/spree_paypal_express.git', :ref => "bea1aa48e0089083546bec4b19565a40e9a50a20"
 
