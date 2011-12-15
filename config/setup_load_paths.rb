@@ -1,4 +1,3 @@
-=begin
 if ENV['MY_RUBY_HOME'] && ENV['MY_RUBY_HOME'].include?('rvm')
   begin
     rvm_path     = File.dirname(File.dirname(ENV['MY_RUBY_HOME']))
@@ -13,5 +12,4 @@ if ENV['MY_RUBY_HOME'] && ENV['MY_RUBY_HOME'].include?('rvm')
 end
 
 ENV['BUNDLE_GEMFILE'] = File.expand_path('../Gemfile', File.dirname(__FILE__))
-=end
 require 'bundler/setup'
