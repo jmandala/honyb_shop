@@ -1,9 +1,9 @@
 GIT
   remote: code.mandaladesigns.com:/repos/honyb/honyb_theme.git
-  revision: 48fe190cd162947339df555b5fc93fe1322eadac
-  ref: 48fe190cd162947339df555b5fc93fe1322eadac
+  revision: 816eb5609057ffcc5c71aba05c9be21d9b22ec0c
+  ref: 816eb5609057ffcc5c71aba05c9be21d9b22ec0c
   specs:
-    honyb_theme (0.1.4)
+    honyb_theme (0.1.5)
 
 GIT
   remote: git://github.com/BDQ/spree_pages.git
