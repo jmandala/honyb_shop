@@ -1,10 +1,9 @@
 GIT
   remote: code.mandaladesigns.com:/repos/honyb/honyb_theme.git
-  revision: a6b123a91dc3ff0bd1f25b72c9ab75645742d9f9
-  ref: a6b123a91dc3ff0bd1f25b72c9ab75645742d9f9
+  revision: 6ee7e7253a6f87847588148a22a0a965e387637e
+  ref: 6ee7e7253a6f87847588148a22a0a965e387637e
   specs:
-    honyb_theme (0.1.3)
-      routing-filter
+    honyb_theme (0.1.4)
 
 GIT
   remote: git://github.com/BDQ/spree_pages.git
