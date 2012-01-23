@@ -109,3 +109,5 @@ en:
   asn_order_status: "Status"
   shipping: "Shipping"
   order_duplicated: "Order :number has been duplicated."
+  qualifies_for_free_shipping: Qualifies for <strong>FREE</strong> shipping!
+  isbn13: ISBN13
