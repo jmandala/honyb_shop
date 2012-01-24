@@ -1,7 +1,7 @@
 GIT
   remote: code.mandaladesigns.com:/repos/honyb/honyb_theme.git
-  revision: 35879c0dc29fc9162d2a72607cf0f62799091dcf
-  ref: 35879c0dc29fc9162d2a72607cf0f62799091dcf
+  revision: e7432df815610a71f493b2c50c4994cccafad7ce
+  ref: e7432df815610a71f493b2c50c4994cccafad7ce
   specs:
     honyb_theme (0.1.5)
 
