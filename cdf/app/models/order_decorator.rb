@@ -227,6 +227,11 @@ Order.class_eval do
     dup
   end
 
+  def use_my_billing_address?
+    !(self.bill_address.empty? && self.ship_address.empty?) && self.bill_address == self.ship_address
+  end
+  
+  
   private
   # Sets the order type if not already set 
   def init_order
