@@ -85,4 +85,3 @@ end
 
 after "deploy:update_code", "assets:symlink"
 
-load 'deploy/assets'
