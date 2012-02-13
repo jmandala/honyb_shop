@@ -13,7 +13,7 @@
 
 //= require_tree .
 //= require jquery.fancybox-1.3.4
-//= require store/checkout
 //= require store/cdf
 //= require store/honyb_wishlist
 //= require store/honyb_embed
+//= require store/checkout
