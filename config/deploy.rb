@@ -5,6 +5,7 @@ set :application, "honyb_shop"
 set :git_server, 'code.mandaladesigns.com'
 set :domain, 'www.honyb.com'
 set :host, 'ruby.mandaladesigns.com'
+set :asset_env, '--trace'
 
 # adjust if you are using RVM, remove if you are not
 $:.unshift(File.expand_path('./lib', ENV['rvm_path']))
@@ -84,4 +85,3 @@ namespace :assets do
 end
 
 after "deploy:update_code", "assets:symlink"
-

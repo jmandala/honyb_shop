@@ -16,4 +16,3 @@
 //= require store/cdf
 //= require store/honyb_wishlist
 //= require store/honyb_embed
-//= require store/checkout
