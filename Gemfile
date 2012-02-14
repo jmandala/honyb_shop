@@ -66,5 +66,5 @@ gem "spree_pages", :git => 'git://github.com/BDQ/spree_pages.git'
 gem "cdf", :path => "cdf", :require => "cdf"
 
 gem 'routing-filter'
-gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "e3a2772a7ab6344f20ef7d4d5badbcaad70bf189"
+gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "975ab7c2c60a7aee53fd80a95447fbe0d53b1f79"
 #gem 'honyb_theme', :path => '../honyb_theme'
