@@ -34,10 +34,10 @@ group :production do
   gem 'mysql2'
 end
 
-gem 'ruby-debug19', :require => 'ruby-debug'
-
 # Dev/Test gems
 group :cucumber, :test, :development do
+  gem 'ruby-debug19'
+  
   #gem 'rails-dev-boost'
   gem 'spork', '~> 0.9.0.rc'
   gem 'capybara'
@@ -53,7 +53,7 @@ group :cucumber, :test, :development do
 end
 
 
-# Followed by spree itself first, all spree-specific extensions second
+# Followed by spreeitself first, all spree-specific extensions second
 gem 'spree', '0.70.3'
 
 gem "spree_comments", :git => 'git://github.com/spree/spree_comments.git', :ref => "a33693ffaeb60fc8bcde6c805c9659ff4b7e2bd6"
