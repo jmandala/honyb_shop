@@ -171,7 +171,7 @@ describe PoFile do
             l.template :default
             l.ingram_ship_to_account_number 7
             l.po_type 1
-            l.order_type 2
+            l.split_shipment_type 2
             l.dc_code 1
             l.spacer 1
             l.green_light 1
@@ -428,7 +428,8 @@ describe PoFile do
         
         puts record.first.to_yaml
         
-        should_match(record.first,  split_shipment_type => Order::SPLIT_SHIPMENT_TYPE[:release_when_full])
+        
+        should_match(record.first,  :split_shipment_type => Order::SPLIT_SHIPMENT_TYPE[:release_when_full])
       end
 
       it "should format po_40 correctly" do
