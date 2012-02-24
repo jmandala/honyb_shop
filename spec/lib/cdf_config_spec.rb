@@ -27,4 +27,13 @@ describe Cdf::Config do
   it "should have run modes" do
     Cdf::Config::RUN_MODE.should == [:live, :test, :mock]
   end
+  
+  it "should have a run mode set" do
+    puts Cdf::Config[:cdf_run_mode]
+    puts Cdf::Config[].to_yaml
+  end
+  
+  it "should be false when the preference is not set" do
+     Cdf::Config[:unspecified].should == nil
+  end
 end

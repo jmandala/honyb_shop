@@ -87,6 +87,10 @@ describe PoFile do
       @po_file.poa_files.count.should == 0
     end
 
+    it "should be a test purchase order" do
+      @po_file.po_type.should == PoFile::PO_TYPE[:test_purchase_order]
+    end
+    
     it "should read the purchase order" do
       @po_file.read.should_not == nil
     end
@@ -415,14 +419,17 @@ describe PoFile do
                                     :ingram_ship_to_account_number => Cdf::Config.get(:cdf_ship_to_account),
                                     :sequence_number => '00004',
                                     :po_number => @order.number.ljust_trim(22),
-                                    :po_type => Records::Po::Po21::PO_TYPE[:purchase_order],
-                                    :shplit_shipment_type => Order::SPLIT_SHIPMENT_TYPE[:release_when_full],
+                                    :po_type => PoFile::PO_TYPE[:test_purchase_order],
                                     :dc_code => '',
                                     :green_light => 'Y',
                                     :poa_type => Records::Po::Po21::POA_TYPE[:full_acknowledgement],
                                     :ship_to_password => Cdf::Config.get(:cdf_ship_to_password),
                                     :carrier_shipping_method => '### USA ECONOMY',
                                     :split_order_allowed => 'Y'})
+        
+        puts record.first.to_yaml
+        
+        should_match(record.first,  split_shipment_type => Order::SPLIT_SHIPMENT_TYPE[:release_when_full])
       end
 
       it "should format po_40 correctly" do
@@ -437,5 +444,7 @@ describe PoFile do
 end
 
 def should_match(record, hash)
-  hash.each_key { |key| record[key].should == hash[key] }
+  hash.each_key do |key|
+    record[key].should == hash[key]
+  end
 end

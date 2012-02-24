@@ -14,6 +14,31 @@ class PoFile < ActiveRecord::Base
 
   attr_reader :count
 
+  PO_TYPE = {
+      :purchase_order => '0',
+      :request_confirmation => '1',
+      :reserved_2 => '2',
+      :stock_status_request => '3',
+      :reserved_4 => '4',
+      :specific_confirmation => '5',
+      :request_confirmation_web_service => '7',
+      :test_purchase_order => '8'
+  }
+
+  # todo: make a way to pass in the PO_TYPE
+  def po_type
+    if Cdf::Config[:cdf_run_mode].nil?
+      Cdf::Config.set(:cdf_run_mode => :test)
+    end
+
+    if Cdf::Config[:cdf_run_mode].to_s == 'test'
+      return PO_TYPE[:test_purchase_order].ljust_trim(1)
+    end
+
+    PO_TYPE[:purchase_order].ljust_trim 1
+  end
+
+
   def read
     raise ArgumentError, "File not found: #{path}" unless has_file?
 
@@ -82,7 +107,7 @@ class PoFile < ActiveRecord::Base
   end
 
   def po90
-    Records::Po::Po90.new(@count[:total_records], :name=>'Po90', :count => @count)
+    Records::Po::Po90.new(@count[:total_records], :name => 'Po90', :count => @count)
   end
 
 
@@ -117,19 +142,19 @@ class PoFile < ActiveRecord::Base
       ftp.put File.new(path)
       list = ftp.list
     end
-    
+
     puts list.to_yaml
 
     self.submitted_at = Time.now
     self.save!
     self.submitted_at
   end
-  
+
   # Returns true if already submitted
   def submitted?
     !self.submitted_at.nil?
   end
-  
+
   # Returns PoFiles that have not been submitted
   def self.not_submitted
     where(:submitted_at => nil)
