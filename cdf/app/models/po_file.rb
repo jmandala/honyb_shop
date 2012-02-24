@@ -24,7 +24,7 @@ class PoFile < ActiveRecord::Base
     self.persisted? ? File.exists?(path) : false
   end
 
-  def initialize(attributes={})
+  def initialize(attributes = nil, options = {})
     @count = init_counters
     super
   end
