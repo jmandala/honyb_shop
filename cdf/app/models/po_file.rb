@@ -127,12 +127,13 @@ class PoFile < ActiveRecord::Base
     "#{CdfConfig::data_lib_out_root(self.created_at.strftime("%Y"))}/#{file_name}"
   end
 
-  def put
+  # Uploads this PoFile to the fulfillment server
+  # @param client [CdfFtpClient] the client to use for submission. By default creates a new client.
+  # @return [DateTime] time the file was submitted
+  def put(client=CdfFtpClient.new)
     raise ArgumentError, "File not found: #{path}" unless File.exists?(path)
 
     return self.submitted_at if self.submitted?
-
-    client = CdfFtpClient.new
 
     puts client.to_yaml
 

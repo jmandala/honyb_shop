@@ -16,10 +16,8 @@ module Cdf
       def init_cdf_run_mode
         if Rails.env.production?
           self.set(:cdf_run_mode => :live)
-        elsif Rails.env.development?
-          self.set(:cdf_run_mode => :mock)
         else
-          self.set(:cdf_run_mode => :test)
+          self.set(:cdf_run_mode => :mock)
         end
       end
     end
