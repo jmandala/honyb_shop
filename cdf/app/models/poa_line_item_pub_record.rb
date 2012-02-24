@@ -20,8 +20,8 @@ class PoaLineItemPubRecord < ActiveRecord::Base
 
   def before_populate(data)
     import_date = data[:publication_release_date]
-    if !import_date.empty? && import_date.match(/^\d4/)
-      self.publication_release_date = Time.strptime(import_date, "%m%y")
+    if !import_date.empty? && import_date.match(/^\d{4}/)
+      self.publication_release_date = Date.strptime(import_date, "%m%y")
     end
     data.delete :publication_release_date
 

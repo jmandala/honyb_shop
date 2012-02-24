@@ -21,6 +21,7 @@ class Calculator::AdvancedFlexiRate < Calculator
   # Returns the shipping cost based on the number of line_items
   # associated with *object*
   def compute_for_line_items(object)
+    return 0 if object.nil?
     sum = 0
     max = self.preferred_max_items
     items_count = object.line_items.map(&:quantity).sum
@@ -36,6 +37,8 @@ class Calculator::AdvancedFlexiRate < Calculator
   end
 
   def compute_for_inventory_units(object)
+    return 0 if object.nil?
+    
     sum = 0
     max = self.preferred_max_items
     object.inventory_units.each_with_index do |inventory_unit, i|
@@ -52,12 +55,14 @@ class Calculator::AdvancedFlexiRate < Calculator
   # Returns the shipping cost per inventory_units if there are some
   # Otherwise returns the shipping cost per line_items
   def compute(object)
-    return compute_for_inventory_units(object) unless object.nil? || object.inventory_units.empty?
+    return 0 if object.nil?
+    return compute_for_inventory_units(object) unless object.inventory_units.empty?
     compute_for_line_items(object)
   end
 
   # It's a child if it has a parent
   def is_a_child?(object)
+    return false if object.nil?
     object.respond_to?(:parent) && object.parent
   end
 
