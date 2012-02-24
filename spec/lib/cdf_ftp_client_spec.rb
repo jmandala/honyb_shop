@@ -7,7 +7,6 @@ describe CdfFtpClient do
     Cdf::Config.set(:cdf_ftp_server => 'test_ftp_server')
     Cdf::Config.set(:cdf_ftp_user => 'test_ftp_user')
     Cdf::Config.set(:cdf_ftp_password => 'test_ftp_password')
-    Cdf::Config.set(:cdf_run_mode => :test)
     @default_client = CdfFtpClient.new
   end
 
