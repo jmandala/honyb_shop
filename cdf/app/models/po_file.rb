@@ -31,11 +31,12 @@ class PoFile < ActiveRecord::Base
       Cdf::Config.set(:cdf_run_mode => :test)
     end
 
-    if Cdf::Config[:cdf_run_mode].to_s == 'test'
-      return PO_TYPE[:test_purchase_order].ljust_trim(1)
+    if Cdf::Config[:cdf_run_mode].to_s == 'live'
+      return PO_TYPE[:purchase_order].ljust_trim 1
     end
+    
+    PO_TYPE[:test_purchase_order].ljust_trim(1)
 
-    PO_TYPE[:purchase_order].ljust_trim 1
   end
 
 
