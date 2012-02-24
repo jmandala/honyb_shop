@@ -11,8 +11,7 @@ describe Cdf::OrderBuilder do
 
   it "should create a new test order" do
     order = @builder.completed_test_order
-    #noinspection RubyResolve
-    order.errors.should == {}
+    order.errors.messages.should == {}
     order.id.should_not == nil
     order.id.should > 0
     order.line_items.count.should == 1
@@ -105,16 +104,6 @@ describe Cdf::OrderBuilder do
   end
 
   context "#create_address" do
-    it "requires a state argument" do
-      e = nil
-      begin
-        @builder.create_address
-      rescue => e
-        error = e
-      end
-
-      e.class.should == ArgumentError
-    end
 
     it "should error when state is invalid" do
       error = nil

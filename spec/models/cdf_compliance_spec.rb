@@ -1,5 +1,4 @@
 require_relative '../spec_helper'
-require 'ruby-debug'
 
 describe "CDF Compliance" do
 

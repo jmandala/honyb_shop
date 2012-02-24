@@ -119,7 +119,7 @@ class Cdf::OrderBuilder
     ShippingMethod.find_by_name!(opts[:shipping_method])
   end
 
-  def self.create_address(opts)
+  def self.create_address(opts={})
     opts[:state_abbr] ||= :ME
     opts[:address1] ||= "10 Lovely Street"
     my_addr = address

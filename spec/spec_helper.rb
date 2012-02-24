@@ -2,7 +2,7 @@ $VERBOSE = nil
 
 require 'rubygems'
 require 'spork'
-require 'spork/ext/ruby-debug'
+#require 'spork/ext/ruby-debug'
 
 Spork.prefork do
        

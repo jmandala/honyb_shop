@@ -36,6 +36,9 @@ module CdfInvoiceDetailRecord
       find_nearest cdf_invoice_header, line_number, :after
     end
 
+    # Returns the instance of the including class having the same CdfInvoiceHeader
+    # but with a lower line_number value when <tt>where</tt> is <tt>:before</tt>, or a higher
+    # line_number when <tt>where</tt> is <tt>:after</tt>.
     def find_nearest(cdf_invoice_header, line_number, where=:before)
       if where == :before
         relative_to = '<'

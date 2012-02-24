@@ -52,7 +52,7 @@ class Calculator::AdvancedFlexiRate < Calculator
   # Returns the shipping cost per inventory_units if there are some
   # Otherwise returns the shipping cost per line_items
   def compute(object)
-    return compute_for_inventory_units(object) unless object.inventory_units.empty?
+    return compute_for_inventory_units(object) unless object.nil? || object.inventory_units.empty?
     compute_for_line_items(object)
   end
 

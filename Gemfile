@@ -36,7 +36,12 @@ end
 
 # Dev/Test gems
 group :cucumber, :test, :development do
-  gem 'ruby-debug19'
+  if RUBY_VERSION < "1.9"
+    gem "ruby-debug"
+  else
+    gem "ruby-debug19"
+  end
+  
   
   #gem 'rails-dev-boost'
   gem 'spork', '~> 0.9.0.rc'

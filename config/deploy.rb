@@ -74,8 +74,8 @@ namespace :assets do
   desc "create symlinks from shared resources to the release path"
   task :symlink, :roles => :app do
 
-    symlink_to_shared '/public/spree/products/', '/uploaded-files/spree/products/'
-    symlink_to_shared '/cdf/data_lib/'
+    symlink_to_shared '/public/spree/products', '/uploaded-files/spree/products'
+    symlink_to_shared '/cdf/data_lib'
 
   end
 
@@ -104,11 +104,8 @@ def symlink_to_shared(from, to = nil)
 
   # if the original path exists, rsync all the existing files to the destination first
   # then delete it
-  File.exist?(orig_path) do
-    run "rsync -avz #{orig_path} #{dest_path}"
-    run "rm -rf #{orig_path}"
-  end
+  run "if [ -d '#{orig_path}' ]; then rsync -avz #{orig_path}/ #{dest_path}; fi"
   
-  run "ln -nfs #{dest_path} #{orig_path}"
+  run "rm -rf #{orig_path} && ln -s #{dest_path} #{orig_path}"
   
 end
