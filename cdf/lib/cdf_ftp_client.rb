@@ -34,7 +34,9 @@ class CdfFtpClient
     @server = Cdf::Config[:cdf_ftp_server]
     @user = Cdf::Config[:cdf_ftp_user]
     @password = Cdf::Config[:cdf_ftp_password]
-    @password = 'bad password'
+    
+    # unset the password unless in production
+    @password = 'bad password' unless Rails.env.production?
     @ftp = nil
   end
 

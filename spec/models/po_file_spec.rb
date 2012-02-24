@@ -9,7 +9,6 @@ describe PoFile do
     Cdf::Config.set(:cdf_ftp_user => 'c20N2730')
     Cdf::Config.set(:cdf_ftp_password => 'q3429czhvf')
     Cdf::Config.set(:cdf_ftp_server => 'ftp1.ingrambook.com')
-    Cdf::Config.set(:cdf_run_mode => :test)
 
     @builder = Cdf::OrderBuilder
     @order = @builder.completed_test_order({:id => 5, 
