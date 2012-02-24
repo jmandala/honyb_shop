@@ -26,6 +26,10 @@ describe Cdf::Config do
     end
 
   end
+  
+  it "should have default values only" do
+    puts Cdf::Config.instance.preferences.to_yaml
+  end
 
   it "should have run modes" do
     Cdf::Config::RUN_MODE.should == [:live, :test, :mock]

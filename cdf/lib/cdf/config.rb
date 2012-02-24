@@ -25,7 +25,7 @@ module Cdf
       # default values for all required properties
       def init_from_config
         yaml = YAML::load_file(File.join(Rails.root, 'cdf/config/config.yml'))
-        yaml.keys.each { |key| self.set(key.to_sym => yaml[key])}
+        yaml.keys.each { |key| self.set(key.to_sym => yaml[key]) unless self[key.to_sym] || self[key.to_sym].empty? }
       end
     end
 
