@@ -20,8 +20,16 @@ module Cdf
           self.set(:cdf_run_mode => :mock)
         end
       end
+      
+      # Initializes from config.yml in order to set
+      # default values for all required properties
+      def init_from_config
+        yaml = YAML::load_file(File.join(Rails.root, 'cdf/config/config.yml'))
+        yaml.keys.each { |key| self.set(key.to_sym => yaml[key])}
+      end
     end
 
+    self.init_from_config
     self.init_cdf_run_mode
 
   end

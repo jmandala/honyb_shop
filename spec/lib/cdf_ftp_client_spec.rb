@@ -35,9 +35,7 @@ describe CdfFtpClient do
       context "when credentials are valid" do
 
         before(:each) do
-          Cdf::Config.set(:cdf_ftp_user => 'c20N2730')
-          Cdf::Config.set(:cdf_ftp_password => 'q3429czhvf')
-          Cdf::Config.set(:cdf_ftp_server => 'ftp1.ingrambook.com')
+          
           @client = CdfFtpClient.new
         end
 
