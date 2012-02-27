@@ -136,16 +136,12 @@ class PoFile < ActiveRecord::Base
 
     return self.submitted_at if self.submitted?
 
-    puts client.to_yaml
-
     list = []
     client.connect do |ftp|
       ftp.chdir 'incoming'
       ftp.put File.new(path)
       list = ftp.list
     end
-
-    puts list.to_yaml
 
     self.submitted_at = Time.now
     self.save!

@@ -3,18 +3,12 @@ require_relative '../spec_helper'
 describe PoFile do
 
   before(:all) do
-    Cdf::Config.set(:cdf_bill_to_account => '20N1031')
-    Cdf::Config.set(:cdf_ship_to_account => '20N2730')
-    Cdf::Config.set(:cdf_ship_to_password => 'MANDAFB4')
-    Cdf::Config.set(:cdf_ftp_user => 'c20N2730')
-    Cdf::Config.set(:cdf_ftp_password => 'q3429czhvf')
-    Cdf::Config.set(:cdf_ftp_server => 'ftp1.ingrambook.com')
 
     @builder = Cdf::OrderBuilder
-    @order = @builder.completed_test_order({:id => 5, 
-                                            :name => 'single order/multiple lines/multiple quantity: Hawaii', 
+    @order = @builder.completed_test_order({:id => 5,
+                                            :name => 'single order/multiple lines/multiple quantity: Hawaii',
                                             :line_item_count => 2,
-                                            :line_item_qty => 2, 
+                                            :line_item_qty => 2,
                                             :ship_location => :HI})
   end
 
@@ -77,7 +71,7 @@ describe PoFile do
     after(:all) do
       @po_file.delete_file if @po_file
     end
-    
+
     it "should have orders" do
       @po_file.orders.count.should == 1
     end
@@ -89,7 +83,7 @@ describe PoFile do
     it "should be a test purchase order" do
       @po_file.po_type.should == PoFile::PO_TYPE[:test_purchase_order]
     end
-    
+
     it "should read the purchase order" do
       @po_file.read.should_not == nil
     end
@@ -99,15 +93,14 @@ describe PoFile do
 
       @po_file.put.should == @po_file.submitted_at
       @po_file.submitted_at.should_not == nil
-      puts @po_file.submitted_at
       @po_file.submitted?.should == true
-      
+
       @client = CdfFtpClient.new
-      
-      puts @client.incoming_files.to_yaml
-      puts @client.archive_files.to_yaml
-      puts @client.outgoing_files.to_yaml
-      puts @client.test_files.to_yaml
+
+      @client.incoming_files.should == []
+      @client.archive_files.should == []
+      @client.outgoing_files.should == []
+      @client.test_files.should == []
     end
 
     it "should return the previous submitted at data if submitted twice" do
@@ -425,11 +418,8 @@ describe PoFile do
                                     :ship_to_password => Cdf::Config.get(:cdf_ship_to_password),
                                     :carrier_shipping_method => '### USA ECONOMY',
                                     :split_order_allowed => 'Y'})
-        
-        puts record.first.to_yaml
-        
-        
-        should_match(record.first,  :split_shipment_type => Order::SPLIT_SHIPMENT_TYPE[:release_when_full])
+
+        should_match(record.first, :split_shipment_type => Order::SPLIT_SHIPMENT_TYPE[:release_when_full])
       end
 
       it "should format po_40 correctly" do

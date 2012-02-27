@@ -4,7 +4,7 @@ describe CdfInvoiceFile do
 
   before(:all) do
     LineItem.all.each &:destroy
-    #Order.all.each &:destroy
+    Order.all.each &:destroy
   end
   
   it_should_behave_like "an importable file", CdfInvoiceFile, 80, 'BIN' do

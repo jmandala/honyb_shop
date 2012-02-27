@@ -79,9 +79,7 @@ module CdfInvoiceDetailRecord
       object = self.find_self(cdf_invoice_file, line_number)
       return object unless object.nil?
 
-      cdf_invoice_header = CdfInvoiceHeader.
-          where(:cdf_invoice_file_id => cdf_invoice_file.id).
-          where("line_number < ?", line_number).
+      cdf_invoice_header = CdfInvoiceHeader.where(:cdf_invoice_file_id => cdf_invoice_file.id).where("line_number < ?", line_number).
           order('line_number DESC').
           limit(1).
           first
