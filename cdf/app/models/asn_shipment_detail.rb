@@ -64,7 +64,7 @@ class AsnShipmentDetail < ActiveRecord::Base
     data.delete :status
 
     self.asn_slash_code = AsnSlashCode.find_by_code(data[:shipping_method_or_slash_reason_code])
-    if !self.asn_slash_code
+    unless self.asn_slash_code
       self.asn_shipping_method_code = AsnShippingMethodCode.find_by_code(data[:shipping_method_or_slash_reason_code])
     end
     data.delete :shipping_method_or_slash_reason_code
@@ -247,9 +247,7 @@ class AsnShipmentDetail < ActiveRecord::Base
   end
 
   def assign_inventory_by_type(type)
-    inventory_unit = self.shipment.inventory_units.sold(self.variant).limit(1).first if shipment
-
-    inventory_unit ||= self.order.inventory_units.sold(self.variant).limit(1).first
+    inventory_unit = first_sold_inventory_unit
 
     raise Cdf::IllegalStateError, "Must have inventory units to assign!: #{order.shipments.count}" if inventory_unit.nil?
 
@@ -267,6 +265,11 @@ class AsnShipmentDetail < ActiveRecord::Base
 
     self.save!
 
+  end
+
+  def first_sold_inventory_unit
+    inventory_unit = self.shipment.inventory_units.sold(self.variant).limit(1).first if self.shipment
+    inventory_unit ||= self.order.inventory_units.sold(self.variant).limit(1).first
   end
 
 
@@ -294,7 +297,7 @@ class AsnShipmentDetail < ActiveRecord::Base
     if state
       shipment.state=state
     end
-    
+
     shipment
   end
 

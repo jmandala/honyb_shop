@@ -9,8 +9,6 @@ describe AsnFile do
 
     let(:outgoing_contents) do
       "CR20N2730   000000024.0                                                                                                                                                                                 
-ORR374103387                    00000019990000000000000000000000000000000000000000001000000000299900000100   000120110812                                                                               
-ODR374103387            C 01705          0373200005037320000500001     00001001ZTESTTRACKCI017050000   SCAC 1              000049900003241         TESTSSLCI01705000001000000020129780373200009         
 ORR674657678                    00000039980000000000000000000000000000000000000000001000000000499800000200   000120110812                                                                               
 ODR674657678            C 01706          0373200005037320000500001     00001001ZTESTTRACKCI017060000   SCAC 2              000049900003242         TESTSSLCI01706000001000000020129780373200009         
 "
@@ -20,8 +18,6 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
       "CR20N2730   000000024.0                                                                                                                                                                                 
 ORR374103387                    00000019990000000000000000000000000000000000000000001000000000299900000100   000120110812                                                                               
 ODR374103387            C 01705          0373200005037320000500001     00001001ZTESTTRACKCI017050000   SCAC 1              000049900003241         TESTSSLCI01705000001000000020129780373200009         
-ORR674657678                    00000039980000000000000000000000000000000000000000001000000000499800000200   000120110812                                                                               
-ODR674657678            C 01706          0373200005037320000500001     00001001ZTESTTRACKCI017060000   SCAC 2              000049900003242         TESTSSLCI01706000001000000020129780373200009         
 "
     end
 
@@ -31,13 +27,11 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
     let(:product_1) { @product_1 = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product') }
     let(:product_2) { @product_2 = Factory(:product, :sku => '978-0-37320-800-5', :price => 10, :name => 'test product 2') }
 
-    
     let(:line_item_1) { @line_item_1 = Factory(:line_item, :quantity => 2, :variant => @product_1.master, :price => 10, :order => @order_1) }
     let(:line_item_2) { @line_item_2 = Factory(:line_item, :quantity => 2, :variant => @product_2.master, :price => 10, :order => @order_1) }
 
     let(:line_item_3) { @line_item_3 = Factory(:line_item, :quantity => 2, :variant => @product_1.master, :price => 10, :order => @order_2) }
     let(:line_item_4) { @line_item_4 = Factory(:line_item, :quantity => 2, :variant => @product_2.master, :price => 10, :order => @order_2) }
-
 
     let(:validations) do
       [:should_import_asn_shipment_detail_record,

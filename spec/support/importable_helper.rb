@@ -161,17 +161,12 @@ shared_examples "an importable file" do |klass, record_length, ext|
 
         context "and there are files to import" do
           
-          let(:order_1) { Cdf::OrderBuilder.completed_test_order(:ean => product_1.sku, :order_number => order_number_1) }
-          let(:order_2) { Cdf::OrderBuilder.completed_test_order(:ean => product_2.sku, :order_number => order_number_2) }
-          
-          
           before(:each) do
-            @order_1 = order_1
-            @order_2 = order_2
-
+            @order_1 = Cdf::OrderBuilder.completed_test_order(:ean => product_1.sku, :order_number => order_number_1)
+            @order_2 = Cdf::OrderBuilder.completed_test_order(:ean => product_1.sku, :order_number => order_number_2)
+            
             @product_1 = product_1
             @product_2 = product_2
-
 
             @line_item_1 = line_item_1
             @line_item_2 = line_item_2

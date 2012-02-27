@@ -4,10 +4,7 @@ module AsnRecord
   # Returns the [AsnShipment] from the same [AsnFile] with the sequence that is
   # closest to this record's sequence, without being greater
   def nearest_asn_shipment(line_number)
-    AsnShipment.
-        where(:asn_file_id => self.asn_file_id).
-        where("line_number < :line_number", {:line_number => line_number}).
-        order("line_number DESC").
+    AsnShipment.where(:asn_file_id => self.asn_file_id).where("line_number < :line_number", {:line_number => line_number}).order("line_number DESC").
         limit(1).first
   end
 
