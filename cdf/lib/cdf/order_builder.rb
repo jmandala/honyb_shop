@@ -32,7 +32,7 @@ class Cdf::OrderBuilder
       {:id => 29, :name => 'backorder cancel reported in asn', :ean_type => :out_of_stock_backorder_cancel},
       {:id => 30, :name => 'backorder shipped on product receipt', :ean_type => :out_of_stock_backorder_ship},
       {:id => 31, :name => 'shipping 1 item in multiple boxes from the same DC: in stock', :line_item_qty => 30, :ean_type => :in_stock},
-      {:id => 32, :name => 'shipping 1 item in multiple boxes from the same DC', :line_item_qty => 30, :ean_type => :multiple_boxes},      
+      {:id => 32, :name => 'shipping 1 item in multiple boxes from the same DC', :line_item_qty => 30, :ean_type => :multiple_boxes},
 
   ]
 
@@ -68,6 +68,19 @@ class Cdf::OrderBuilder
     raise ArgumentError, "No scenario found with name: '#{name}'"
   end
 
+  # Creates a new completed order setting default values, or values from the options passed
+  # @param opts [Hash] hash of valid options including
+  # - state_abbr
+  # - line_item_count
+  # - line_item_qty
+  # - backordered_line_item_count
+  # - backordered_line_item_qty
+  # - dc_code
+  # - split_shipment_type
+  # - name
+  # - ean_type
+  # - ean
+  # - order_number
   def self.completed_test_order(opts={})
     opts[:state_abbr] ||= :ME
     opts[:line_item_count] ||= 1
@@ -79,6 +92,7 @@ class Cdf::OrderBuilder
 
     order = Order.new_test
     order.order_name = opts[:name]
+    order.number = opts[:order_number] if opts[:order_number]
 
     init_dc_code order, opts[:dc_code]
     init_split_shipment_type order, opts[:split_shipment_type]
@@ -93,12 +107,16 @@ class Cdf::OrderBuilder
     product_builder = Cdf::ProductBuilder.new
 
     opts[:line_item_count].times do
-      if opts[:ean_type].respond_to?(:each)
-        opts[:ean_type].each { |ean_type| order.add_variant product_builder.next_product!(ean_type).master, opts[:line_item_qty] }
+      if opts[:ean]
+        order.add_variant Cdf::ProductBuilder.create!(:sku => opts[:ean], :name => 'Custom Product').master, opts[:line_item_qty]
       else
-        order.add_variant product_builder.next_product!(opts[:ean_type]).master, opts[:line_item_qty]
-      end
 
+        if opts[:ean_type].respond_to?(:each)
+          opts[:ean_type].each { |ean_type| order.add_variant product_builder.next_product!(ean_type).master, opts[:line_item_qty] }
+        else
+          order.add_variant product_builder.next_product!(opts[:ean_type]).master, opts[:line_item_qty]
+        end
+      end
     end
 
     order.payments.create(

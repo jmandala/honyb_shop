@@ -10,7 +10,7 @@ describe Cdf::OrderBuilder do
   end
 
   it "should create a new test order" do
-    order = @builder.completed_test_order
+    order = @builder.completed_test_order(:ean_type => :in_stock)
     order.errors.messages.should == {}
     order.id.should_not == nil
     order.id.should > 0
@@ -99,6 +99,12 @@ describe Cdf::OrderBuilder do
       order.line_items.count.should == 2
       order.line_items[0].variant.sku.no_dashes.should == "978-0-3732-0000-9".no_dashes
       order.line_items[1].variant.sku.no_dashes.should == "9782914563383".no_dashes
+    end
+    
+    it "should create a new order with a custom ean" do
+      order = @builder.completed_test_order({:ean => '123abc'})
+      order.line_items.count.should == 1
+      order.line_items.first.variant.sku.should == '123abc'
     end
 
   end
