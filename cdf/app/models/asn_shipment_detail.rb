@@ -15,7 +15,7 @@ class AsnShipmentDetail < ActiveRecord::Base
 
   def initialize(attributes = nil, options = {})
     super(attributes, options)
-    
+
     init_to_zero([:quantity_shipped, :quantity_slashed, :quantity_canceled, :quantity_predicted])
   end
 
@@ -24,7 +24,7 @@ class AsnShipmentDetail < ActiveRecord::Base
       self.assign_attributes(attr => 0) unless self.read_attribute(attr).respond_to?(:times)
     end
   end
-  
+
   def self.spec(d)
     d.asn_shipment_detail do |l|
       l.trap { |line| line[0, 2] == 'OD' }
@@ -83,8 +83,8 @@ class AsnShipmentDetail < ActiveRecord::Base
     end
     data.delete :shipping_warehouse_code
 
-    line_items = LineItem.find_by_id(data[:line_item_id_number])
-    self.line_item = line_items
+    line_item = LineItem.find_by_id(data[:line_item_id_number])
+    self.line_item = line_item
     data.delete :line_item_id_number
 
     [:quantity_canceled,
@@ -130,7 +130,7 @@ class AsnShipmentDetail < ActiveRecord::Base
   # The constraints are:
   # * the shipping method matches
   # * AND the order matches
-  # * AND there is NO tracking number on the shipment and no tracking number on this object
+  # * AND the tracking number matches, or there is NO tracking number on the shipment and no tracking number on this object
   def available_shipment
 
     sql = available_shipment_query
@@ -168,6 +168,8 @@ class AsnShipmentDetail < ActiveRecord::Base
     # if there are no inventory_units, delete the shipment
     if self.shipment.inventory_units.count == 0
       self.shipment.delete
+      self.shipment = nil
+      self.save!
       return
     end
 
@@ -178,6 +180,14 @@ class AsnShipmentDetail < ActiveRecord::Base
 
     self.save!
     self.shipment
+  end
+
+  def canceled?
+    if self.asn_order_status
+      self.asn_order_status && self.asn_order_status.canceled?
+    end
+
+    false
   end
 
   def shipped?
@@ -197,6 +207,7 @@ class AsnShipmentDetail < ActiveRecord::Base
   # * the tracking number will be set
   # * the inventory will be allocated
   def assign_shipment
+    raise Cdf::IllegalStateError, "Error attempting to assign_shipment: Shipment is null" if self.shipment.nil?
     raise Cdf::IllegalStateError, "Error attempting to ship shipment #{shipment.number}. Current state: #{shipment.state}" unless self.shipment.can_ship?
 
     # save the shipment status
@@ -220,8 +231,6 @@ class AsnShipmentDetail < ActiveRecord::Base
   def assign_inventory
     self.shipment = self.available_shipment
 
-    puts self.to_yaml
-    
     # assign the inventory from the [Shipment] or if not available from the []Order]   
     self.quantity_shipped.times do
       assign_inventory_by_type(:shipped)
@@ -229,6 +238,10 @@ class AsnShipmentDetail < ActiveRecord::Base
 
     self.quantity_slashed.times do
       assign_inventory_by_type(:slashed)
+    end
+
+    self.quantity_canceled.times do
+      assign_inventory_by_type(:canceled)
     end
 
   end

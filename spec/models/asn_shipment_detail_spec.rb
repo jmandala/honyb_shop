@@ -2,7 +2,7 @@
 # See cdf_compliance_spec.rb instead
 describe AsnShipmentDetail do
 
-  let(:shipping_method) { mock_model(ShippingMethod, :id => 1) }
+  let(:shipping_method) { ShippingMethod.new }
   let(:shipped_status) { mock_model(AsnOrderStatus, :shipped? => true) }
   let(:asn_shipping_method_code_shipped) { mock_model(AsnShippingMethodCode, :shipping_method => shipping_method) }
   let(:asn_shipment) { mock_model(AsnShipment, :shipment_date => Date.today) }
@@ -61,12 +61,22 @@ describe AsnShipmentDetail do
   end
 
   context "items shipped" do
-    let(:variant_1) { mock_model(Variant, :sku => '999', :id => 1) }
-    let(:line_item_1) { mock_model(LineItem, :variant => variant_1, :quantity => 1) }
+    let(:product) { Product.new(:price => 10) }
+    let(:variant_1) { Variant.new(:sku => '999', :product => product) }
+    let(:line_item_1) { LineItem.new(:variant => variant_1, :quantity => 1) }
     let(:order) { mock_model(Order, :id => 1, :completed? => true, :canceled? => false, :line_items => [line_item_1]) }
+    let(:order) { Order.new(:completed => true, :canceled => false, :line_items => [line_item_1]) }
     let(:inventory_unit_1) { InventoryUnit.new(:variant => variant_1, :order => order, :state => 'sold') }
     let(:inventory_unit_2) { InventoryUnit.new(:variant => variant_1, :order => order, :state => 'sold') }
     let(:inventory_units_arel) { [inventory_unit_1] }
+
+    let(:shipment) do
+      inventory_unit_1.stub(:cancel!) { true }
+      inventory_unit_2.stub(:cancel!) { true }
+      Shipment.new(:order => order, :shipping_method => shipping_method, :inventory_units => inventory_units_arel)
+    end
+
+
     let(:shipment) {
       inventory_unit_1.stub(:cancel!) { true }
       inventory_unit_2.stub(:cancel!) { true }
@@ -75,7 +85,8 @@ describe AsnShipmentDetail do
                  :tracking => '',
                  :inventory_units => inventory_units_arel,
                  :ship => true,
-                 :ship! => true)
+                 :ship! => true,
+                 :transfer_sold_to_child => self)
     }
 
 
@@ -105,97 +116,81 @@ describe AsnShipmentDetail do
 
     context "single line / single quantity" do
 
+
       before :each do
-        order.stub(:inventory_units) { mock(Object, :sold => [inventory_unit_1]) }
-        Shipment.stub(:count)
+        @order = Cdf::OrderBuilder.create_for_scenario('single order/single line/single quantity')
       end
+
+      let(:order) { @order }
+      let(:shipment) { order.shipments.first }
+      let(:line_item) { order.line_items.first }
+      let(:shipping_method) { order.shipping_method }
+      let(:inventory_unit_1) { shipment.inventory_units.first }
+      let(:shipment) { order.shipments.first }
 
       context "all shipped" do
 
-        let(:asd_shipped) { AsnShipmentDetail.new(:order => order,
-                                                  :line_item => line_item_1,
-                                                  :tracking => tracking,
-                                                  :asn_order_status => shipped_status,
-                                                  :asn_shipping_method_code => asn_shipped,
-                                                  :asn_shipment => asn_shipment,
-                                                  :quantity_shipped => 1) }
+        let(:asn_shipped) { mock_model(AsnShippingMethodCode, :shipping_method => shipping_method, :code => '00', :description => 'Shipped') }
 
-        let(:available_shipment_sql) { "order_id = :order_id AND shipped_at IS NULL AND shipping_method_id = :shipping_method_id AND (tracking IS NULL OR tracking = :tracking)" }
-        let(:expect_available_shipments) do
-          Shipment.stub(:where).with(available_shipment_sql, {:order_id=>1, :shipping_method_id=>1, :tracking=>"1234567"}).any_number_of_times { shipment }
-          shipment.stub(:order) { shipment }
-          shipment.stub(:first) { shipment }
-          shipment.stub(:count) { 1 }
-          shipment.stub(:state)
-          shipment.stub(:adjustment)
-          shipment.stub(:update!)
+        let(:asd_shipped) {
+          AsnShipmentDetail.new(:order => order,
+                                :line_item => line_item,
+                                :tracking => tracking,
+                                :asn_order_status => shipped_status,
+                                :asn_shipping_method_code => asn_shipped,
+                                :asn_shipment => asn_shipment,
+                                :quantity_shipped => 1) }
+
+        let(:expect_inventory_assigned) { asd_shipped.init_shipment }
+
+        it "should have a shipment" do
+          order.shipments.first.should == shipment
         end
 
-
         it "should have available shipments" do
-          expect_available_shipments
           asd_shipped.available_shipment.should == shipment
         end
 
         it "#init_shipment" do
-          expect_available_shipments
-          expect_shipment_assigned
+          expect_inventory_assigned
 
-          asd_shipped.init_shipment.should == shipment
           asd_shipped.inventory_units.should == [inventory_unit_1]
         end
 
         it "#assign_shipment" do
-          expect_available_shipments
-          expect_shipment_assigned
+          expect_inventory_assigned
 
-          asd_shipped.assign_shipment
           asd_shipped.shipment.should == shipment
         end
 
         it "#assign_inventory" do
-          expect_available_shipments
-          expect_shipment_assigned
           expect_inventory_assigned
 
-          asd_shipped.assign_inventory
           asd_shipped.inventory_units.should == [inventory_unit_1]
         end
 
       end
 
-      context "none shipped" do
+      context "all canceled" do
         let(:canceled) { AsnOrderStatus.find_by_code('26') }
         let(:asn_slash_code) { AsnSlashCode.find_by_code('I1') }
 
         let(:asd_canceled) { AsnShipmentDetail.new(:order => order,
-                                                   :line_item => line_item_1,
+                                                   :line_item => line_item,
                                                    :asn_order_status => canceled,
                                                    :asn_slash_code => asn_slash_code,
                                                    :asn_shipment => asn_shipment,
-                                                   :quantity_shipped => 1) }
+                                                   :quantity_canceled => 1) }
 
-        let(:available_shipment_sql) { "order_id = #{order.id} AND shipping_method_id = #{shipping_method.id}" }
-        let(:expect_available_shipments) do
-          Shipment.stub(:where).with(available_shipment_sql) { shipment }
-          shipment.stub(:order) { shipment }
-          shipment.stub(:first) { shipment }
-          shipment.stub(:count) { 1 }
-          shipment.stub(:state)
-          shipment.stub(:adjustment)
-          shipment.stub(:update!)
-        end
+        let(:expect_inventory_assigned) { asd_canceled.init_shipment }
 
         let(:tracking) { nil }
 
-        it "#init_shipment" do
-          expect_available_shipments
-          expect_shipment_assigned
+        it "should cancel all the inventory units" do
           expect_inventory_assigned
 
-          Shipment.stub(:where).with("order_id = #{order.id}") { shipment }
-          inventory_unit_1.should_receive(:cancel!)
-          asd_canceled.init_shipment
+          shipment.inventory_units.count.should == 0
+          asd_canceled.shipment.should == nil
         end
 
       end
@@ -205,52 +200,48 @@ describe AsnShipmentDetail do
     context "single line / multiple quantity" do
 
       before :each do
-        order.stub(:inventory_units) { mock(Object, :sold => [inventory_unit_1, inventory_unit_2]) }
+        @order = Cdf::OrderBuilder.create_for_scenario('single order/single line/multiple quantity')
       end
 
+      let(:order) { @order }
+      let(:shipment) { order.shipments.first }
+      let(:line_item) { order.line_items.first }
+      let(:shipping_method) { order.shipping_method }
+      let(:inventory_unit_1) { shipment.inventory_units.first }
+      let(:inventory_unit_2) { shipment.inventory_units[1] }
+      let(:shipment) { order.shipments.first }
+      
+      
       context "all shipped" do
         let(:asd_shipped) { AsnShipmentDetail.new(:order => order,
-                                                  :line_item => line_item_1,
+                                                  :line_item => line_item,
                                                   :tracking => tracking,
                                                   :asn_order_status => shipped_status,
                                                   :asn_shipping_method_code => asn_shipped,
                                                   :asn_shipment => asn_shipment,
                                                   :quantity_shipped => 2) }
 
-        let(:available_shipment_sql) { "order_id = #{order.id} AND shipping_method_id = #{shipping_method.id} AND (tracking IS NULL OR tracking = '#{tracking}')" }
-        let(:expect_available_shipments) {
-          Shipment.stub(:where).with(available_shipment_sql) { shipment }
-          shipment.should_receive(:count) { 1 }
-          shipment.should_receive(:order) { shipment }
-          shipment.should_receive(:first) { shipment }
-        }
-
-
+        let(:expect_inventory_assigned) { asd_shipped.init_shipment }
+        
+        
         it "should have available shipments" do
-          expect_available_shipments
           asd_shipped.available_shipment.should == shipment
         end
 
         it "#init_shipment" do
-          expect_available_shipments
-          expect_shipment_assigned
           expect_inventory_assigned
-
-          asd_shipped.init_shipment.should == shipment
           asd_shipped.inventory_units.should == [inventory_unit_1, inventory_unit_2]
         end
 
         it "#assign_shipment" do
-          expect_shipment_assigned
+          expect_inventory_assigned
 
-          asd_shipped.assign_shipment
           asd_shipped.shipment.should == shipment
         end
 
         it "#assign_inventory" do
           expect_inventory_assigned
 
-          asd_shipped.assign_inventory
           asd_shipped.inventory_units.should == [inventory_unit_1, inventory_unit_2]
         end
       end

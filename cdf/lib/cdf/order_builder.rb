@@ -48,11 +48,24 @@ class Cdf::OrderBuilder
     orders
   end
 
+  def self.create_for_scenario(name)
+    raise ArgumentError, "No scenarios given" if name.nil?
+    scenario = find_scenario_by_name name
+    completed_test_order scenario
+  end
+
   def self.find_scenario(id)
     SCENARIOS.each do |scenario|
       return scenario if scenario[:id] == id.to_i
     end
     raise ArgumentError, "No scenario found with id: '#{id}'"
+  end
+
+  def self.find_scenario_by_name(name)
+    SCENARIOS.each do |scenario|
+      return scenario if scenario[:name] == name
+    end
+    raise ArgumentError, "No scenario found with name: '#{name}'"
   end
 
   def self.completed_test_order(opts={})
