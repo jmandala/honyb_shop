@@ -120,9 +120,9 @@ describe AsnShipmentDetail do
                                                   :asn_shipment => asn_shipment,
                                                   :quantity_shipped => 1) }
 
-        let(:available_shipment_sql) { "order_id = #{order.id} AND shipping_method_id = #{shipping_method.id} AND (tracking IS NULL OR tracking = '#{tracking}')" }
+        let(:available_shipment_sql) { "order_id = :order_id AND shipped_at IS NULL AND shipping_method_id = :shipping_method_id AND (tracking IS NULL OR tracking = :tracking)" }
         let(:expect_available_shipments) do
-          Shipment.stub(:where).with(available_shipment_sql).any_number_of_times { shipment }
+          Shipment.stub(:where).with(available_shipment_sql, {:order_id=>1, :shipping_method_id=>1, :tracking=>"1234567"}).any_number_of_times { shipment }
           shipment.stub(:order) { shipment }
           shipment.stub(:first) { shipment }
           shipment.stub(:count) { 1 }

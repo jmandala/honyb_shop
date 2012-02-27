@@ -13,7 +13,18 @@ class AsnShipmentDetail < ActiveRecord::Base
   belongs_to :asn_shipping_method_code
   belongs_to :dc_code
 
+  def initialize(attributes = nil, options = {})
+    super(attributes, options)
+    
+    init_to_zero([:quantity_shipped, :quantity_slashed, :quantity_canceled, :quantity_predicted])
+  end
 
+  def init_to_zero(attrs = [])
+    attrs.each do |attr|
+      self.assign_attributes(attr => 0) unless self.read_attribute(attr).respond_to?(:times)
+    end
+  end
+  
   def self.spec(d)
     d.asn_shipment_detail do |l|
       l.trap { |line| line[0, 2] == 'OD' }
@@ -209,6 +220,8 @@ class AsnShipmentDetail < ActiveRecord::Base
   def assign_inventory
     self.shipment = self.available_shipment
 
+    puts self.to_yaml
+    
     # assign the inventory from the [Shipment] or if not available from the []Order]   
     self.quantity_shipped.times do
       assign_inventory_by_type(:shipped)
