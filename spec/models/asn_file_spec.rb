@@ -31,6 +31,7 @@ ODR674657678            C 01706          0373200005037320000500001     00001001Z
     let(:product_1) { @product_1 = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product') }
     let(:product_2) { @product_2 = Factory(:product, :sku => '978-0-37320-800-5', :price => 10, :name => 'test product 2') }
 
+    
     let(:line_item_1) { @line_item_1 = Factory(:line_item, :quantity => 2, :variant => @product_1.master, :price => 10, :order => @order_1) }
     let(:line_item_2) { @line_item_2 = Factory(:line_item, :quantity => 2, :variant => @product_2.master, :price => 10, :order => @order_1) }
 

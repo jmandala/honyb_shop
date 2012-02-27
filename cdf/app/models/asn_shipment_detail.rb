@@ -243,12 +243,12 @@ class AsnShipmentDetail < ActiveRecord::Base
     self.quantity_canceled.times do
       assign_inventory_by_type(:canceled)
     end
-
+    
   end
 
   def assign_inventory_by_type(type)
     inventory_unit = self.shipment.inventory_units.sold(self.variant).limit(1).first if shipment
-
+    
     inventory_unit ||= self.order.inventory_units.sold(self.variant).limit(1).first
 
     raise Cdf::IllegalStateError, "Must have inventory units to assign!: #{order.shipments.count}" if inventory_unit.nil?
@@ -256,6 +256,7 @@ class AsnShipmentDetail < ActiveRecord::Base
     if type == :shipped
       self.inventory_units << inventory_unit
       self.shipment ||= new_shipment_for_order(inventory_unit)
+      self.shipment.state = 'ready'
       self.shipment.inventory_units << inventory_unit unless self.shipment.inventory_units.include?(inventory_unit)
       inventory_unit.ship!
 
@@ -289,7 +290,7 @@ class AsnShipmentDetail < ActiveRecord::Base
     parent = find_parent_shipment
     return parent.create_child([inventory_unit]) if parent
 
-    Shipment.create(:address => self.order.ship_address, :order => self.order, :shipping_method => self.shipping_method, :inventory_units => [inventory_unit])
+    Shipment.create!(:address => self.order.ship_address, :order => self.order, :shipping_method => self.shipping_method, :inventory_units => [inventory_unit])    
   end
 
 end

@@ -160,11 +160,19 @@ shared_examples "an importable file" do |klass, record_length, ext|
         end
 
         context "and there are files to import" do
+          
+          let(:order_1) { Cdf::OrderBuilder.completed_test_order(:ean => product_1.sku, :order_number => order_number_1) }
+          let(:order_2) { Cdf::OrderBuilder.completed_test_order(:ean => product_2.sku, :order_number => order_number_2) }
+          
+          
           before(:each) do
-            @order_1 = Factory(:order, :number => order_number_1)
-            @order_2 = Factory(:order, :number => order_number_2)
+            @order_1 = order_1
+            @order_2 = order_2
+
             @product_1 = product_1
             @product_2 = product_2
+
+
             @line_item_1 = line_item_1
             @line_item_2 = line_item_2
             @line_item_3 = line_item_3
@@ -176,13 +184,13 @@ shared_examples "an importable file" do |klass, record_length, ext|
             LineItem.should_receive(:find_by_id!).any_number_of_times.with("6").and_return(@line_item_2)
           end
 
-
           before(:each) do
             @import_class.download
             @import_class.needs_import.count.should > 0
             @import_file = @import_class.needs_import.first
             @parsed = @import_file.parsed
           end
+
 
           it "should import files one by one" do
             @import_file.import.should_not == nil

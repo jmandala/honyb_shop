@@ -196,6 +196,10 @@ describe Cdf::OrderBuilder do
     order.comments.first.comment_type.name.should == 'Order Name'
     order.order_name.should == 'set test order'
   end
-  
+
+  it "should have a shipment state of pending" do
+    order = @builder.completed_test_order(:sku => '123')
+    order.shipment.state.should == 'ready'
+  end
 
 end
