@@ -24,9 +24,10 @@ describe Cdf::ProductBuilder do
     end
   end
   
-  it "should create new products with customer skus" do
-    product = Cdf::ProductBuilder.create!(:sku => '123abc', :name => 'test123')
+  it "should create new products with custom skus" do
+    product = Cdf::ProductBuilder.create!(:sku => '123abc', :name => 'test123', :on_hand => 1000)
     product.sku.should == '123abc'
+    product.on_hand.should_not == 0
   end
 
 end

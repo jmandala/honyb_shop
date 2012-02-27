@@ -106,6 +106,14 @@ describe Cdf::OrderBuilder do
       order.line_items.count.should == 1
       order.line_items.first.variant.sku.should == '123abc'
     end
+    
+    it "should create a new order with a custom ean & order number" do
+      order = @builder.completed_test_order({:ean => '123abc', :order_number => '1000'})
+      order.line_items.count.should == 1
+      order.line_items.first.variant.sku.should == '123abc'
+      order.number.should == '1000'
+      order.shipment.inventory_units.each { |iu| iu.state.should == 'sold'}
+    end
 
   end
 
@@ -177,7 +185,8 @@ describe Cdf::OrderBuilder do
   end
 
   it "should specify an order number" do
-    order = @builder.completed_test_order({:id => 23, :name => 'split shipment: default'})
+    order = @builder.completed_test_order({:id => 23, :name => 'split shipment: default', :order_number => 'abc123'})
+    order.number.should == 'abc123'
   end
 
   it "should set an order comment" do
@@ -187,5 +196,6 @@ describe Cdf::OrderBuilder do
     order.comments.first.comment_type.name.should == 'Order Name'
     order.order_name.should == 'set test order'
   end
+  
 
 end

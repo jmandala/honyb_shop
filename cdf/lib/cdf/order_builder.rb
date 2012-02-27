@@ -81,6 +81,7 @@ class Cdf::OrderBuilder
   # - ean_type
   # - ean
   # - order_number
+  # @return [Order] a new order created with the options provided
   def self.completed_test_order(opts={})
     opts[:state_abbr] ||= :ME
     opts[:line_item_count] ||= 1

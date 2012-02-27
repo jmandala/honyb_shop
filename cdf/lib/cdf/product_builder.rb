@@ -47,24 +47,33 @@ class Cdf::ProductBuilder
     skus[next_index]
   end
 
-  def self.create!(options = {})
-    sku = options[:sku]
+  # @param opts [Object]
+  def self.create!(opts = {})
+    sku = opts[:sku]
     variant = Variant.find_by_sku sku
     if variant
       product = variant.product
 
     else
-      product = Product.new
+      product = Product.new(:name => opts[:name] || 'test product', :sku => sku)
     end
 
+    
+    product.price = opts[:price] || 10
+    product.cost_price = opts[:cost_price] || 8
+    
     product.available_on = 1.year.ago
     product.shipping_category = shipping_category
     product.tax_category = tax_category
-    product.price = 19.99
-    product.cost_price = 17.00
 
-    options.each_key { |k| product.send("#{k}=", options[k]) }
+    opts.each_key { |k| product.send("#{k}=", opts[k]) }
     product.save!
+
+    # have to save #on_hand after product has been created
+    product.on_hand = opts[:on_hand] || 1000
+
+    product.save!
+    
     product
   end
 
