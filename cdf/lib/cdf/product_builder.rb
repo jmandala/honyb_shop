@@ -1,24 +1,25 @@
 class Cdf::ProductBuilder
 
   attr_reader :sku, :index
+  
+  SKU = {
+          :in_stock => ["978-0-3732-0000-9", "978-0-3732-0001-6", "978-0-3732-0002-3", "978-0-3732-0008-5"],
+          :out_of_stock_backorder_cancel => ["9780679854388"],
+          :out_of_stock_backorder_nv_cancel => ['9780815605430'],
+          :out_of_stock_backorder_ship => ['9780679437222 '],
+          :out_of_stock_backorder_nv_ship => ['9781861052346'],
+          :out_of_print => ['9780028609249'],
+          :split_ship => ['9780373200108', '9780373200009'],
+          :slash_to_zero_ship => ['9780679864349'],
+          :slash_by_1 => ['9780394848365'],
+          :not_yet_received => ['9782914563383', '9781845843045'],
+          :invalid_ean => ['9781111111119'],
+          :valid_not_stocked => ['9781111111113'],        
+          :multiple_boxes => ['9780735625723', '9780735623613']
+      }
 
 
   def initialize
-    @sku = {
-        :in_stock => ["978-0-3732-0000-9", "978-0-3732-0001-6", "978-0-3732-0002-3", "978-0-3732-0008-5"],
-        :out_of_stock_backorder_cancel => ["9780679854388"],
-        :out_of_stock_backorder_nv_cancel => ['9780815605430'],
-        :out_of_stock_backorder_ship => ['9780679437222 '],
-        :out_of_stock_backorder_nv_ship => ['9781861052346'],
-        :out_of_print => ['9780028609249'],
-        :split_ship => ['9780373200108', '9780373200009'],
-        :slash_to_zero_ship => ['9780679864349'],
-        :slash_by_1 => ['9780394848365'],
-        :not_yet_received => ['9782914563383', '9781845843045'],
-        :invalid_ean => ['9781111111119'],
-        :valid_not_stocked => ['9781111111113'],        
-        :multiple_boxes => ['9780735625723', '9780735623613']
-    }
     @index = {}
   end
 
@@ -34,7 +35,7 @@ class Cdf::ProductBuilder
   def next_sku(sku_type)
     @index[sku_type] ||= -1
     index = @index[sku_type]
-    skus = @sku[sku_type]
+    skus = SKU[sku_type]
 
     next_index = index + 1
 
@@ -45,8 +46,6 @@ class Cdf::ProductBuilder
     @index[sku_type] = next_index
     skus[next_index]
   end
-
-  private
 
   def self.create!(options = {})
     sku = options[:sku]
