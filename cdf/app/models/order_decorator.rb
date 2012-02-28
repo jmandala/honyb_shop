@@ -1,11 +1,10 @@
+#noinspection RubyArgCount
 Order.class_eval do
   
   has_many :children, :class_name => Order.name, :foreign_key => 'parent_id'
   belongs_to :parent, :class_name => Order.name, :foreign_key => 'parent_id'
   
-  
   before_create :init_order
-
 
   ORDER_NAME = 'Order Name'
 
@@ -46,6 +45,18 @@ Order.class_eval do
 
   register_update_hook :update_auth_before_ship
 
+  # Deletes this object along with all dependent associations
+  def destroy!
+    self.poa_order_headers.all.each &:destroy
+    self.asn_shipment_details.all.each &:destroy
+    self.asn_shipments.all.each &:destroy
+    self.cdf_invoice_headers.all.each &:destroy
+    self.cdf_invoice_detail_totals.all.each &:destroy
+    self.cdf_invoice_freight_and_fees.all.each &:destroy
+    self.destroy
+  end
+  
+  
   def cdf_invoice_files
     result = []
     self.cdf_invoice_headers.each do |h|
@@ -230,6 +241,8 @@ Order.class_eval do
   def use_my_billing_address?
     !(self.bill_address.empty? && self.ship_address.empty?) && self.bill_address == self.ship_address
   end
+
+  
   
   
   private
