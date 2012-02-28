@@ -25,26 +25,30 @@ class CdfInvoiceDetailTotal < ActiveRecord::Base
   end
 
   def before_populate(data)
-    init_order
-    init_line_item
+    init_order(data)
+    init_line_item(data)
     self.cdf_invoice_isbn_detail = CdfInvoiceIsbnDetail.find_nearest_before!(self.cdf_invoice_header, data[:__LINE_NUMBER__])
     self.cdf_invoice_ean_detail = CdfInvoiceEanDetail.find_nearest_before!(self.cdf_invoice_header, data[:__LINE_NUMBER__])
   end
 
   # Sets the line_item value using the line_item_id_number on this record
-  # or in the case that that value is nil, uses the line_item from the previous
+  # If blank, does nothing
   # CdfInvoiceDetailTotal
-  def init_line_item
-    self.line_item = LineItem.find_by_id(data[:line_item_id_number].strip)
+  # @param data [Hash] parsed data. Keys match definition in self#spec
+  def init_line_item(data)
+
+    line_item_id = data[:line_item_id_number].strip
     data.delete :line_item_id_number
     
-    if self.line_item.nil?
-      nearest_record = CdfInvoiceDetailTotal.find_nearest_before!(self.cdf_invoice_header, data[:__LINE_NUMBER__])
-      self.line_item = nearest_record.line_item
-    end
+    return if line_item_id.blank?
+    
+    self.line_item = LineItem.find_by_id!(line_item_id)
   end
 
-  def init_order
+  # Sets the order for this instance
+  #
+  # @param data [Hash] parsed data. Keys match definition in self#spec  
+  def init_order(data)
     self.order = Order.find_by_number!(data[:client_order_id].strip)
     data.delete :client_order_id
   end

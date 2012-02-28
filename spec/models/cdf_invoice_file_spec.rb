@@ -5,81 +5,82 @@ describe CdfInvoiceFile do
   before :all do
     Order.all.each &:destroy!
   end
-  
-  
+
+
   it_should_behave_like "an importable file", CdfInvoiceFile, 80, 'BIN' do
 
     let(:outgoing_file) { '05536017.BIN' }
     let(:incoming_file) { 'T5536017.BIN' }
 
+    let(:order_number_1) { 'R483688864' }
+    let(:order_number_2) { 'R746668282' }
+
     let(:outgoing_contents) do
-      "0100001169797800000INGRAM BK CO 110822INVOICE COMMUNICATIONS                    
+      %Q{0100001169797800000INGRAM BK CO 110822INVOICE COMMUNICATIONS                    
 150000210003868                   20N2730     254410500020110822                
 450000310003868                   0373200005 000010000499 0035 0000032420110822 
 460000410003868                                              9780373200009      
-48000051000386820110822HQPB FAMOUS FIRS00000R483688864             1        0000
+48000051000386820110822HQPB FAMOUS FIRS00000#{order_number_1.ljust_trim(22)}#{@order_1.line_items[0].id.ljust_trim(10)}0000
 4900006100038681ZTESTTRACKCI018370000   0000032400000000000000000000000000000324
 450000710003868                   0373200005 000010000499 0035 0000032420110822 
 460000810003868                                              9780373200009      
-48000091000386820110822HQPB FAMOUS FIRS00000R746668282             3        0000
+48000091000386820110822HQPB FAMOUS FIRS00000#{order_number_2.ljust_trim(22)}#{@order_2.line_items[0].id.ljust_trim(10)}0000
 4900010100038681ZTESTTRACKCI018360000   0000032400000000000000000000000000000324
 550001110003868     0000900002000002TESTCI0001       0000000                    
 570001210003868     000000648      00000000000000000000000000          000000648
 150000110003869                   20N2730            00020110822                
 450000210003869                   555887564X 000010000000 0000 0000000020110822 
 460000310003869                                              9785558875645      
-48000041000386920110822 ORDER CHARGE   00000R483688864             1        0000
+48000041000386920110822 ORDER CHARGE   00000#{order_number_1.ljust_trim(22)}          0000
 450000510003869                   5558875666 000010000065 0000 0000006520110822 
 460000610003869                                              9785558875669      
-48000071000386920110822 PER PIECE CHARG00000R483688864             1        0000
+48000071000386920110822 PER PIECE CHARG00000#{order_number_1.ljust_trim(22)}          0000
 4900008100038691ZTESTTRACKCI018370000   0000000000000100000650000000000000000066
 450000910003869                   555887564X 000010000000 0000 0000000020110822 
 460001010003869                                              9785558875645      
-48000111000386920110822 ORDER CHARGE   00000R746668282             3        0000
+48000111000386920110822 ORDER CHARGE   00000#{order_number_2.ljust_trim(22)}          0000
 450001210003869                   5558875666 000010000065 0000 0000006520110822 
 460001310003869                                              9785558875669      
-48000141000386920110822 PER PIECE CHARG00000R746668282             3        0000
+48000141000386920110822 PER PIECE CHARG00000#{order_number_2.ljust_trim(22)}          0000
 4900015100038691ZTESTTRACKCI018370000   0000000000000200000650000000000000000067
 550001610003869     0001500004000004TESTCI0001       0000000                    
 570001710003869     000000000      00000030000130000000000000          000000133
-95000180000000000006000020000000006                                             "
+95000180000000000006000020000000006                                             }
     end
 
     let(:test_contents) do
-      "0100001169797800000INGRAM BK CO 110822INVOICE COMMUNICATIONS                    
+      %Q{0100001169797800000INGRAM BK CO 110822INVOICE COMMUNICATIONS                    
 150000210003868                   20N2730     254410500020110822                
 450000310003868                   0373200005 000010000499 0035 0000032420110822 
 460000410003868                                              9780373200009      
-48000051000386820110822HQPB FAMOUS FIRS00000R483688864             1        0000
+48000051000386820110822HQPB FAMOUS FIRS00000#{order_number_1.ljust_trim(22)}#{@order_1.line_items[0].id.ljust_trim(10)}0000
 4900006100038681ZTESTTRACKCI018370000   0000032400000000000000000000000000000324
 450000710003868                   0373200005 000010000499 0035 0000032420110822 
 460000810003868                                              9780373200009      
-48000091000386820110822HQPB FAMOUS FIRS00000R746668282             3        0000
+48000091000386820110822HQPB FAMOUS FIRS00000#{order_number_2.ljust_trim(22)}#{@order_2.line_items[0].id.ljust_trim(10)}0000
 4900010100038681ZTESTTRACKCI018360000   0000032400000000000000000000000000000324
 550001110003868     0000900002000002TESTCI0001       0000000                    
 570001210003868     000000648      00000000000000000000000000          000000648
 150000110003869                   20N2730            00020110822                
 450000210003869                   555887564X 000010000000 0000 0000000020110822 
 460000310003869                                              9785558875645      
-48000041000386920110822 ORDER CHARGE   00000R483688864             1        0000
+48000041000386920110822 ORDER CHARGE   00000#{order_number_1.ljust_trim(22)}          0000
 450000510003869                   5558875666 000010000065 0000 0000006520110822 
 460000610003869                                              9785558875669      
-48000071000386920110822 PER PIECE CHARG00000R483688864             1        0000
+48000071000386920110822 PER PIECE CHARG00000#{order_number_1.ljust_trim(22)}          0000
 4900008100038691ZTESTTRACKCI018370000   0000000000000100000650000000000000000066
 450000910003869                   555887564X 000010000000 0000 0000000020110822 
 460001010003869                                              9785558875645      
-48000111000386920110822 ORDER CHARGE   00000R746668282             3        0000
+48000111000386920110822 ORDER CHARGE   00000#{order_number_2.ljust_trim(22)}          0000
 450001210003869                   5558875666 000010000065 0000 0000006520110822 
 460001310003869                                              9785558875669      
-48000141000386920110822 PER PIECE CHARG00000R746668282             3        0000
+48000141000386920110822 PER PIECE CHARG00000#{order_number_2.ljust_trim(22)}          0000
 4900015100038691ZTESTTRACKCI018370000   0000000000000200000650000000000000000067
 550001610003869     0001500004000004TESTCI0001       0000000                    
 570001710003869     000000000      00000030000130000000000000          000000133
-95000180000000000006000020000000006                                             "
+95000180000000000006000020000000006                                             }
     end
 
-    let(:order_number_1) { 'R483688864' }
-    let(:order_number_2) { 'R746668282' }
 
     let(:product_1) { @product_1 = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product') }
     let(:product_2) { @product_2 = Factory(:product, :sku => '978-0-37320-000-2', :price => 10, :name => 'test product 2') }
@@ -118,7 +119,7 @@ end
 
 def should_import_cdf_invoice_trailers(parsed, cdf_invoice_file)
   ImportFileHelper.should_match_count(CdfInvoiceTrailer, 2)
-  
+
   parsed[:cdf_invoice_trailer].each do |record|
     db_record = CdfInvoiceTrailer.find_self cdf_invoice_file, record[:__LINE_NUMBER__]
     db_record.should_not == nil
@@ -139,7 +140,7 @@ end
 
 def should_import_cdf_invoice_file_trailers(parsed, cdf_invoice_file)
   ImportFileHelper.should_match_count(CdfInvoiceFileTrailer, 1)
-  
+
   parsed[:cdf_invoice_file_trailer].each do |record|
     db_record = CdfInvoiceFileTrailer.find_self! cdf_invoice_file, record[:__LINE_NUMBER__]
     db_record.should_not == nil
@@ -156,7 +157,7 @@ end
 
 def should_import_cdf_invoice_totals(parsed, cdf_invoice_file)
   ImportFileHelper.should_match_count(CdfInvoiceTotal, 2)
-  
+
   parsed[:cdf_invoice_total].each do |record|
     db_record = CdfInvoiceTotal.find_self cdf_invoice_file, record[:__LINE_NUMBER__]
     db_record.should_not == nil
@@ -176,9 +177,9 @@ end
 
 def should_import_cdf_invoice_detail_totals(parsed, cdf_invoice_file)
   LineItem.all.each { |li| li.cdf_invoice_detail_totals.count > 0 }
-  
+
   Order.all.each { |i| i.cdf_invoice_detail_totals.count.should > 0 }
-  
+
   ImportFileHelper.should_match_count(CdfInvoiceDetailTotal, 6)
   parsed[:cdf_invoice_detail_total].each do |record|
     db_record = CdfInvoiceDetailTotal.find_self cdf_invoice_file, record[:__LINE_NUMBER__]
@@ -188,7 +189,8 @@ def should_import_cdf_invoice_detail_totals(parsed, cdf_invoice_file)
 
     db_record.order.should_not == nil
     db_record.order.should == Order.find_by_number!(record[:client_order_id].strip)
-    db_record.line_item_id.should_not == nil
+        
+    db_record.line_item_id.should_not == nil unless record[:line_item_id_number].blank?
 
     db_record.cdf_invoice_isbn_detail.should_not == nil
     db_record.cdf_invoice_ean_detail.should_not == nil
@@ -198,7 +200,7 @@ end
 
 def should_import_cdf_invoice_freight_and_fees(parsed, cdf_invoice_file)
   Order.all.each { |i| i.cdf_invoice_freight_and_fees.count.should > 0 }
-  
+
   ImportFileHelper.should_match_count(CdfInvoiceFreightAndFee, 4)
 
   parsed[:cdf_invoice_freight_and_fee].each do |record|
@@ -303,7 +305,7 @@ def should_import_cdf_invoice_file_data(parsed, cdf_invoice_file)
   db_record.file_name.should == outgoing_file
   db_record.versions.should == []
   db_record.parent.should == nil
-  
+
   db_record.orders.should_not == nil
   db_record.orders.count.should == 2
   db_record.orders.each { |o| o.class.should == Order }

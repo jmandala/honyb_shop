@@ -13,6 +13,20 @@ shared_examples "an importable file" do |klass, record_length, ext|
     @import_class.all.each &:destroy
   end
 
+  
+  before(:all) do
+    @order_1 = Cdf::OrderBuilder.completed_test_order(:ean => product_1.sku, :order_number => order_number_1)
+    @order_2 = Cdf::OrderBuilder.completed_test_order(:ean => product_1.sku, :order_number => order_number_2)
+    
+    @product_1 = product_1
+    @product_2 = product_2
+
+    @line_item_1 = line_item_1
+    @line_item_2 = line_item_2
+    @line_item_3 = line_item_3
+    @line_item_4 = line_item_4
+  end
+  
 
   context "when defining the import class" do
     it "should have the correct record length" do
@@ -34,13 +48,13 @@ shared_examples "an importable file" do |klass, record_length, ext|
       @file_names = {
           :outgoing => outgoing_file,
           :test => incoming_file
-      }
-
+      }      
+      
       @sample_file = {
           :outgoing => outgoing_contents,
           :test => test_contents
       }
-
+      
       @remote_dir = {
           :outgoing => ["-rw-rw-rw-   1 user     group         128 Aug  3 13:30 #{@file_names[:outgoing]}"],
           :test => ["-rw-rw-rw-   1 user     group         128 Aug  3 13:30 #{@file_names[:test]}"]
@@ -65,6 +79,7 @@ shared_examples "an importable file" do |klass, record_length, ext|
 
     end
 
+    
     context "and there are no files on the server" do
       it "should count 0 files" do
         ImportFileHelper.should_have_remote_file_count(@client, @import_class, 0) do |client|
@@ -161,23 +176,7 @@ shared_examples "an importable file" do |klass, record_length, ext|
 
         context "and there are files to import" do
           
-          before(:each) do
-            @order_1 = Cdf::OrderBuilder.completed_test_order(:ean => product_1.sku, :order_number => order_number_1)
-            @order_2 = Cdf::OrderBuilder.completed_test_order(:ean => product_1.sku, :order_number => order_number_2)
-            
-            @product_1 = product_1
-            @product_2 = product_2
 
-            @line_item_1 = line_item_1
-            @line_item_2 = line_item_2
-            @line_item_3 = line_item_3
-            @line_item_4 = line_item_4
-            LineItem.should_receive(:find_by_id!).any_number_of_times.with("1").and_return(@line_item_1)
-            LineItem.should_receive(:find_by_id!).any_number_of_times.with("2").and_return(@line_item_1)
-            LineItem.should_receive(:find_by_id!).any_number_of_times.with("5").and_return(@line_item_1)
-            LineItem.should_receive(:find_by_id!).any_number_of_times.with("3").and_return(@line_item_2)
-            LineItem.should_receive(:find_by_id!).any_number_of_times.with("6").and_return(@line_item_2)
-          end
 
           before(:each) do
             @import_class.download
