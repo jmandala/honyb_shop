@@ -2,9 +2,9 @@ require_relative '../spec_helper'
 
 describe PoaLineItemTitleRecord do
 
-  after(:all) do
-    PoaFile.all.each { |p| p.destroy }
-    LineItem.all.each { |l| l.destroy }
+  after :all  do
+    PoaFile.all.each &:destroy
+    Order.all.each &:destroy!
   end
 
   context "when creating a new instance" do

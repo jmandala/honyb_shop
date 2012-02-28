@@ -5,8 +5,12 @@ describe CdfInvoiceFile do
   before :all do
     Order.all.each &:destroy!
   end
-
-
+  
+  after :all do
+    Order.all.each &:destroy!    
+  end
+  
+  
   it_should_behave_like "an importable file", CdfInvoiceFile, 80, 'BIN' do
     
     let(:order_1) { Cdf::OrderBuilder.completed_test_order(:ean => product_1.sku, :order_number => 'R483688864') }

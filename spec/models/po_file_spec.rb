@@ -4,6 +4,8 @@ describe PoFile do
 
   before(:all) do
 
+    Order.all.each &:destroy!
+    
     @builder = Cdf::OrderBuilder
     @order = @builder.completed_test_order({:id => 5,
                                             :name => 'single order/multiple lines/multiple quantity: Hawaii',

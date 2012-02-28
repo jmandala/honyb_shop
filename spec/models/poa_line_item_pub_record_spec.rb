@@ -3,8 +3,7 @@ require_relative '../spec_helper'
 describe PoaLineItemPubRecord do
 
   after(:all) do
-    PoaFile.all.each { |p| p.destroy }
-    LineItem.all.each { |l| l.destroy }
+    Order.all.each &:destroy!
   end
 
   context "when creating a new instance" do

@@ -46,13 +46,14 @@ Order.class_eval do
   register_update_hook :update_auth_before_ship
 
   # Deletes this object along with all dependent associations
-  def destroy!
+  def destroy!    
     self.poa_order_headers.all.each &:destroy
     self.asn_shipment_details.all.each &:destroy
     self.asn_shipments.all.each &:destroy
     self.cdf_invoice_headers.all.each &:destroy
     self.cdf_invoice_detail_totals.all.each &:destroy
     self.cdf_invoice_freight_and_fees.all.each &:destroy
+    self.inventory_units.all.each &:destroy
     self.destroy
   end
 
