@@ -1,9 +1,9 @@
 #noinspection RubyArgCount
 Order.class_eval do
-  
+
   has_many :children, :class_name => Order.name, :foreign_key => 'parent_id'
   belongs_to :parent, :class_name => Order.name, :foreign_key => 'parent_id'
-  
+
   before_create :init_order
 
   ORDER_NAME = 'Order Name'
@@ -55,8 +55,8 @@ Order.class_eval do
     self.cdf_invoice_freight_and_fees.all.each &:destroy
     self.destroy
   end
-  
-  
+
+
   def cdf_invoice_files
     result = []
     self.cdf_invoice_headers.each do |h|
@@ -242,7 +242,7 @@ Order.class_eval do
     !(self.bill_address.empty? && self.ship_address.empty?) && self.bill_address == self.ship_address
   end
 
-  
+
   
   
   private

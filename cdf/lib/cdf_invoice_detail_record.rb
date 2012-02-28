@@ -47,14 +47,14 @@ module CdfInvoiceDetailRecord
       else
         raise ArgumentError, "illegal argument specified for where: #{where}"
       end
-      
+
       raise ArgumentError, "line_number must not be nil!" if line_number.nil?
       raise ArgumentError, "cdf_invoice_header must not be nil!" if cdf_invoice_header.nil?
 
+      #noinspection RubyArgCount
       where(:cdf_invoice_header_id => cdf_invoice_header.id).
           where("line_number #{relative_to} :line_number", {:line_number => line_number}).
-          order("line_number DESC").
-          limit(1).first
+          order("line_number DESC").limit(1).first
     end
 
     def find_nearest_after!(cdf_invoice_header, line_number)

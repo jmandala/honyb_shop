@@ -15,8 +15,8 @@ shared_examples "an importable file" do |klass, record_length, ext|
 
   
   before(:all) do
-    @order_1 = Cdf::OrderBuilder.completed_test_order(:ean => product_1.sku, :order_number => order_number_1)
-    @order_2 = Cdf::OrderBuilder.completed_test_order(:ean => product_1.sku, :order_number => order_number_2)
+    @order_1 = order_1
+    @order_2 = order_2
     
     @product_1 = product_1
     @product_2 = product_2

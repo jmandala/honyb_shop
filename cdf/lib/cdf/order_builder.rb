@@ -109,7 +109,11 @@ class Cdf::OrderBuilder
 
     opts[:line_item_count].times do
       if opts[:ean]
-        order.add_variant Cdf::ProductBuilder.create!(:sku => opts[:ean], :name => 'Custom Product').master, opts[:line_item_qty]
+        if opts[:ean].respond_to?(:each)
+          opts[:ean].each { |ean| order.add_variant Cdf::ProductBuilder.create!(:sku => ean, :name => 'Custom Product').master, opts[:line_item_qty] }
+        else
+          order.add_variant Cdf::ProductBuilder.create!(:sku => opts[:ean], :name => 'Custom Product').master, opts[:line_item_qty]
+        end
       else
 
         if opts[:ean_type].respond_to?(:each)

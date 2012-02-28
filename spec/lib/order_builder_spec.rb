@@ -115,6 +115,13 @@ describe Cdf::OrderBuilder do
       order.shipment.inventory_units.each { |iu| iu.state.should == 'sold'}
     end
 
+    it "should create a new order with multiple custom ean's'" do
+      order = @builder.completed_test_order(:ean => ['123abc', '456def'])
+      order.line_items.count.should == 2
+      order.line_items[0].variant.sku.should == '123abc'
+      order.line_items[1].variant.sku.should == '456def'
+    end
+    
   end
 
   context "#create_address" do

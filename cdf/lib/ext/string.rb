@@ -12,4 +12,5 @@ class String
   def no_dashes
     self.gsub(/\-/, '')
   end
+  
 end
