@@ -7,6 +7,11 @@ describe AsnFile do
     let(:outgoing_file) { '05503677.PBS' }
     let(:incoming_file) { 'T5503677.PBS' }
 
+    
+    let(:order_1) { Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R374103387') }
+    let(:order_2) { Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R674657678') }
+
+
     let(:outgoing_contents) do
       "CR20N2730   000000024.0                                                                                                                                                                                 
 ORR674657678                    00000039980000000000000000000000000000000000000000001000000000499800000200   000120110812                                                                               
@@ -20,9 +25,6 @@ ORR374103387                    000000199900000000000000000000000000000000000000
 ODR374103387            C 01705          0373200005037320000500001     00001001ZTESTTRACKCI017050000   SCAC 1              000049900003241         TESTSSLCI01705000001000000020129780373200009         
 "
     end
-
-    let(:order_number_1) { 'R374103387' }
-    let(:order_number_2) { 'R674657678' }
 
     let(:product_1) { @product_1 = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product') }
     let(:product_2) { @product_2 = Factory(:product, :sku => '978-0-37320-800-5', :price => 10, :name => 'test product 2') }
@@ -46,7 +48,7 @@ end
 def should_reference_shipment(parsed, asn_file)
   parsed[:asn_shipment_detail].each do |record|
     db_record = AsnShipmentDetail.find_self asn_file, record[:__LINE_NUMBER__]
-    
+
     db_record.shipment.should_not == nil
   end
 end
@@ -62,7 +64,7 @@ def should_import_asn_shipment_detail_record(parsed, asn_file)
     db_record.order.should == Order.find_by_number(record[:client_order_id].strip)
 
     db_record.asn_shipment.should_not == nil
-    
+
     [:ingram_order_entry_number,
      :isbn_10_ordered,
      :isbn_10_shipped,
@@ -93,8 +95,8 @@ def should_import_asn_shipment_detail_record(parsed, asn_file)
     DcCode.find_by_asn_dc_code(record[:shipping_warehouse_code]).to_yaml
 
     db_record.line_item = LineItem.find_by_id(record[:line_item_id_number])
-    
-    
+
+
     db_record.shipment.state.should == 'shipped'
   end
 end
