@@ -2,8 +2,13 @@ require 'spec_helper'
 
 describe Shipment do
 
+  before :all do
+    Order.all.each &:destroy!
+  end
+  
+  
   let(:order) { mock_model(Order, :completed? => true, :canceled? => false, :payment_state => 'complete', :update! => true) }
-  let(:inventory_unit) { mock_model(InventoryUnit, :ship! => true, :[]= => true, :save => true, :state => 'sold', :state? => true) }
+  let(:inventory_unit) { mock_model(InventoryUnit, :ship! => true, :[]= => true, :save => true, :state => 'sold', :state? => true, :can_ship? => true) }
   let(:shipping_method) { mock_model(ShippingMethod, :create_adjustment => true) }
   let(:shipment) { Shipment.new(:order => order, :shipping_method => shipping_method, :inventory_units => [inventory_unit]) }
 
