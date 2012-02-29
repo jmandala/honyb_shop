@@ -1,6 +1,8 @@
 require_relative '../spec_helper'
 
 describe Cdf::Config do
+  
+
   before(:each) do
     @key = :test_config_key
   end

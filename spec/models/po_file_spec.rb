@@ -391,7 +391,7 @@ describe PoFile do
         record.length.should == 1
         should_match(record.first, {:record_code => '10',
                                     :sequence_number => '00002',
-                                    :ingram_bill_to_account_number => Cdf::Config.get(:cdf_bill_to_account),
+                                    :ingram_bill_to_account_number => Cdf::Config[:cdf_bill_to_account],
                                     :vendor_san => '1697978',
                                     :order_date => @order.completed_at.strftime("%y%m%d"),
                                     :backorder_cancel_date => (@order.completed_at + 3.months).strftime("%y%m%d"),
@@ -410,14 +410,14 @@ describe PoFile do
         record = @parsed[:po_21]
         record.length.should == 1
         should_match(record.first, {:record_code => '21',
-                                    :ingram_ship_to_account_number => Cdf::Config.get(:cdf_ship_to_account),
+                                    :ingram_ship_to_account_number => Cdf::Config[:cdf_ship_to_account],
                                     :sequence_number => '00004',
                                     :po_number => @order.number.ljust_trim(22),
                                     :po_type => PoFile::PO_TYPE[:test_purchase_order],
                                     :dc_code => '',
                                     :green_light => 'Y',
                                     :poa_type => Records::Po::Po21::POA_TYPE[:full_acknowledgement],
-                                    :ship_to_password => Cdf::Config.get(:cdf_ship_to_password),
+                                    :ship_to_password => Cdf::Config[:cdf_ship_to_password],
                                     :carrier_shipping_method => '### USA ECONOMY',
                                     :split_order_allowed => 'Y'})
 

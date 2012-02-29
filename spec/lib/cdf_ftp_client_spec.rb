@@ -2,13 +2,20 @@ require_relative '../spec_helper'
 require 'net/ftp'
 
 describe CdfFtpClient do
+  
+  before :all do
+    Cdf::Config.set(:cdf_run_mode => :test)
 
-  before(:all) do
-    Cdf::Config.set(:cdf_ftp_server => 'test_ftp_server')
-    Cdf::Config.set(:cdf_ftp_user => 'test_ftp_user')
-    Cdf::Config.set(:cdf_ftp_password => 'test_ftp_password')
+    Cdf::Config.init_from_config(true)
+    
     @default_client = CdfFtpClient.new
   end
+
+
+  after :all do
+    Cdf::Config.set(:cdf_run_mode => :mock)
+  end
+
 
   context "when using default initialization" do
 
@@ -23,9 +30,9 @@ describe CdfFtpClient do
       @default_client.password.should == Cdf::Config[:cdf_ftp_password]
     end
 
-    it "should be in mock mode" do
-      @default_client.test?.should == false
-      @default_client.mock?.should == true
+    it "should be in test mode" do
+      @default_client.test?.should == true
+      @default_client.mock?.should == false
       @default_client.live?.should == false
     end
   end
@@ -41,11 +48,11 @@ describe CdfFtpClient do
       context "when credentials are valid" do
 
         before(:each) do
-          
           @client = CdfFtpClient.new
         end
 
         it "should have valid server" do
+          puts @client.to_yaml
           @client.valid_server?.should == true
         end
 
