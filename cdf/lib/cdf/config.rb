@@ -23,9 +23,9 @@ module Cdf
       
       # Initializes from config.yml in order to set
       # default values for all required properties
-      def init_from_config(overwrite=false)
+      def init_from_config(flag=nil)
         yaml = YAML::load_file(File.join(Rails.root, 'cdf/config/config.yml'))
-        yaml.keys.each { |key| self.set(key.to_sym => yaml[key]) unless !overwrite && (self[key.to_sym] || self[key.to_sym].empty?) }
+        yaml.keys.each { |key| self.set(key.to_sym => yaml[key]) unless flag == :overwrite && (self[key.to_sym] || self[key.to_sym].empty?) }
       end
     end
 

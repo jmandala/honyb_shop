@@ -1,7 +1,10 @@
 require_relative '../spec_helper'
 
 describe Cdf::Config do
-  
+
+  before :all do
+    Cdf::Config.init_from_config(:overwrite)
+  end
 
   before(:each) do
     @key = :test_config_key

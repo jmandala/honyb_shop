@@ -4,6 +4,8 @@ describe PoFile do
 
   before(:all) do
 
+    Cdf::Config.init_from_config unless Cdf::Config.instance    
+    
     Order.all.each &:destroy!
     
     @builder = Cdf::OrderBuilder

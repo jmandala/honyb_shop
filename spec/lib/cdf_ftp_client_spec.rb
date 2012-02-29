@@ -6,7 +6,7 @@ describe CdfFtpClient do
   before :all do
     Cdf::Config.set(:cdf_run_mode => :test)
 
-    Cdf::Config.init_from_config(true)
+    Cdf::Config.init_from_config(:overwrite)
     
     @default_client = CdfFtpClient.new
   end
@@ -93,16 +93,16 @@ describe CdfFtpClient do
           
           alive.put('~/archive', file_name)
           
-          files = alive.get_all('~/archive', '.*\.txt', 'download_dir')
+          files = alive.get_all('~/archive', '.*\.txt', 'tmp/download_dir')
           files.should == [file_name]
           
-          new_file = File.join('download_dir', file_name)
+          new_file = File.join('tmp/download_dir', file_name)
           
           content.should == File.read(new_file)
           
           File.delete file_name
           File.delete new_file
-          FileUtils.rm_f 'download_dir'
+          FileUtils.rm_f 'tmp/download_dir'
           
           alive.delete('~/archive', file_name)
           alive.close
