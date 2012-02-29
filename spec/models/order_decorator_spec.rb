@@ -106,6 +106,13 @@ describe 'order_decorator' do
       order.test?.should == true
       order.live?.should == false
     end
+    
+    it "should create a test order" do
+      test_order = Order.create_test_order
+      test_order.live?.should == false
+      test_order.test?.should == true
+      test_order.email.should == User::COMPLIANCE_EMAIL
+    end
   end
 
 
@@ -134,6 +141,8 @@ describe 'order_decorator' do
       order.order_name.should == 'test order'
     end
   end
+  
+  
 
 end
 
