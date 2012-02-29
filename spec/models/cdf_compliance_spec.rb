@@ -307,7 +307,7 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500001     
       
       @ship_cost_before.should == @order.ship_total
 
-      @order.shipments.each { |s| puts "Shipment: #{s.state}" }
+      #@order.shipments.each { |s| puts "Shipment: #{s.state}" }
     end
 
     context "import first response" do
@@ -372,7 +372,7 @@ OD#{@order.number.ljust_trim(22)}C 02415          0373200005037320000500001     
         end
 
         it "should be shipped" do
-          @order.shipments.all.each { |s| s.reload; puts s.state }
+          @order.shipments.all.each { |s| s.reload }
           @asn_shipment_detail.shipment.reload
           @asn_shipment_detail.shipment.state.should == 'shipped'
           @asn_shipment_detail.inventory_units.each { |u| u.state.should == 'shipped' }

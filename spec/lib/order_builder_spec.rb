@@ -4,6 +4,10 @@ describe Cdf::OrderBuilder do
   before(:all) do
     @builder = Cdf::OrderBuilder
   end
+  
+  it "should recognize the inherited order class" do
+    Order.respond_to?(:create_test_order).should == true
+  end
 
   it "should have a list of scenarios" do
     @builder::SCENARIOS.should_not == nil

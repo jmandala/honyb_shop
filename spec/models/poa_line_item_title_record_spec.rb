@@ -75,7 +75,6 @@ describe PoaLineItemTitleRecord do
         poa_line_item = instance_variable_get "@poa_line_item_#{i}"
         poa_line_item.should_not == nil
         poa_line_item_title_record.poa_line_item.should == nil
-        puts "my sequence: #{poa_line_item_title_record.sequence_number}"
         poa_line_item_title_record.nearest_poa_line_item.should == poa_line_item
       end
 

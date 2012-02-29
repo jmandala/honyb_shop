@@ -52,7 +52,6 @@ describe CdfFtpClient do
         end
 
         it "should have valid server" do
-          puts @client.to_yaml
           @client.valid_server?.should == true
         end
 

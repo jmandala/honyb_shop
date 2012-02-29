@@ -12,7 +12,6 @@ describe Cdf::Config do
     after(:each) do
       Cdf::Config.set({@key => @value})
       Cdf::Config[@key].should == @value
-      puts "#{@key} = #{Cdf::Config[@key]}"
     end
 
     it "should set values once" do
@@ -29,10 +28,6 @@ describe Cdf::Config do
 
   end
   
-  it "should have default values only" do
-    puts Cdf::Config.instance.preferences.to_yaml
-  end
-
   it "should have run modes" do
     Cdf::Config::RUN_MODE.should == [:live, :test, :mock]
   end

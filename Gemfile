@@ -35,7 +35,7 @@ group :production do
 end
 
 # Dev/Test gems
-group :cucumber, :test, :development do
+group :test, :development do
   if RUBY_VERSION < "1.9"
     gem "ruby-debug"
   else
@@ -51,9 +51,10 @@ group :cucumber, :test, :development do
   gem 'database_cleaner'
   gem 'rspec-rails'
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
-  #gem 'guard-rspec'
+  gem 'guard-rspec'
+  gem 'minitest-reporters', '>= 0.5.0'
   #gem 'guard-cucumber'
-  #gem 'guard-spork'
+  gem 'guard-spork'
   gem 'turn', :require => false
 end
 

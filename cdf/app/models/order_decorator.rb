@@ -1,14 +1,14 @@
+Order.instance_eval do
+
+end
+
 #noinspection RubyArgCount
 Order.class_eval do
 
-  has_many :children, :class_name => Order.name, :foreign_key => 'parent_id'
-  belongs_to :parent, :class_name => Order.name, :foreign_key => 'parent_id'
+  Order.const_set(:ORDER_NAME,  'Order Name')
 
-  before_create :init_order
+  Order.const_set(:TYPES, [:live, :test])
 
-  ORDER_NAME = 'Order Name'
-
-  TYPES = [:live, :test]
 
   # EL = Multi-shipment: Allow immediate shipment of all in-stockt itles
   # for every warehouse shopped. Backorders will allocate AND SHIP as stock
@@ -26,11 +26,16 @@ Order.class_eval do
   # every warehouse shopped. Backorders will allocate as stock becomes available. When there are no
   # more backorders the order will ship. On the cancel date the unallocated lines will be cancelled, all
   # allocated product will ship. This order type will result in up to two shipments per warehouse
-  SPLIT_SHIPMENT_TYPE = {
+  Order.const_set(:SPLIT_SHIPMENT_TYPE, {
       :multi_shipment => 'EL',
       :release_when_full => 'RF',
       :dual_shipment => 'LS'
-  }
+  })
+
+  has_many :children, :class_name => Order.name, :foreign_key => 'parent_id'
+  belongs_to :parent, :class_name => Order.name, :foreign_key => 'parent_id'
+
+  before_create :init_order
 
   belongs_to :po_file
   belongs_to :dc_code
@@ -46,7 +51,7 @@ Order.class_eval do
   register_update_hook :update_auth_before_ship
 
   # Deletes this object along with all dependent associations
-  def destroy!    
+  def destroy!
     self.poa_order_headers.all.each &:destroy
     self.asn_shipment_details.all.each &:destroy
     self.asn_shipments.all.each &:destroy
@@ -56,7 +61,6 @@ Order.class_eval do
     self.inventory_units.all.each &:destroy
     self.destroy
   end
-
 
   def cdf_invoice_files
     result = []
@@ -102,6 +106,7 @@ Order.class_eval do
     line_items.inject(0) { |sum, l| sum + l.quantity }
   end
 
+
   def self.needs_po
     where("orders.completed_at IS NOT NULL").
         where("orders.po_file_id IS NULL").
@@ -133,9 +138,8 @@ Order.class_eval do
     where(:order_type => :test)
   end
 
-
   # Creates a new test order
-  def self.new_test
+  def self.create_test_order
     order = Order.new
     order.order_type = :test
     order.user = User.compliance_tester!
@@ -244,8 +248,6 @@ Order.class_eval do
   end
 
 
-  
-  
   private
   # Sets the order type if not already set 
   def init_order

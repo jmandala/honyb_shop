@@ -12,8 +12,6 @@ describe "admin fulfillment dashboard" do
 
     # login
     visit '/login'
-    puts page.html
-    puts current_path
     fill_in 'user_email', :with => @email
     fill_in 'user_password', :with => @password
     click_button 'Log In'
@@ -23,8 +21,8 @@ describe "admin fulfillment dashboard" do
   it 'welcomes the user' do
 
     visit '/admin/fulfillment/dashboard'
-    puts current_path
-    puts page.html
+    #puts current_path
+    #puts page.html
   end
 end
 

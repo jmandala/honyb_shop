@@ -1,6 +1,6 @@
 module Cdf
   class Config < Spree::Config
-    RUN_MODE = [:live, :test, :mock]
+    RUN_MODE = [:live, :test, :mock] unless Config.const_defined? :RUN_MODE
 
     class << self
 

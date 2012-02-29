@@ -91,7 +91,7 @@ describe PoFile do
     end
 
     it "should put the file to the FTP server" do
-      puts @po_file.read
+      #puts @po_file.read
 
       @po_file.put.should == @po_file.submitted_at
       @po_file.submitted_at.should_not == nil
