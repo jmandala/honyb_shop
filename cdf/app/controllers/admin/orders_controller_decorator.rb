@@ -24,7 +24,7 @@ Admin::OrdersController.class_eval do
     params['orders_per_page'] ||= Spree::Config[:orders_per_page]
     
     if params['orders_per_page'] != Spree::Config[:orders_per_page]
-      Spree::Config.set({:orders_per_page => params['orders_per_page']})
+      Spree::Config.set({:orders_per_page => params['orders_per_page']}) if Spree::Config.instance
     end
     
   end

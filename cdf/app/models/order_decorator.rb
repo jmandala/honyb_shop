@@ -5,9 +5,9 @@ end
 #noinspection RubyArgCount
 Order.class_eval do
 
-  Order.const_set(:ORDER_NAME,  'Order Name')
+  Order.const_set(:ORDER_NAME,  'Order Name') unless Order.const_defined? :ORDER_NAME
 
-  Order.const_set(:TYPES, [:live, :test])
+  Order.const_set(:TYPES, [:live, :test]) unless Order.const_defined? :TYPES
 
 
   # EL = Multi-shipment: Allow immediate shipment of all in-stockt itles
@@ -30,7 +30,7 @@ Order.class_eval do
       :multi_shipment => 'EL',
       :release_when_full => 'RF',
       :dual_shipment => 'LS'
-  })
+  }) unless Order.const_defined? :SPLIT_SHIPMENT_TYPE
 
   has_many :children, :class_name => Order.name, :foreign_key => 'parent_id'
   belongs_to :parent, :class_name => Order.name, :foreign_key => 'parent_id'
