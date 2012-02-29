@@ -64,7 +64,7 @@ Spork.each_run do
     Rails.configuration.cache_classes ? require(f) : load(f)
   end  
 
-  DatabaseCleaner.strategy = :truncation, {:except => %w[users asn_slash_codes asn_order_statuses cdf_binding_codes dc_codes po_statuses po_types poa_statuses poa_types]}
+  DatabaseCleaner.strategy = :truncation, {:except => %w[users asn_slash_codes asn_order_statuses cdf_binding_codes dc_codes po_statuses po_types poa_statuses poa_types comment_types]}
   
   
   require 'spree_core/testing_support/factories'

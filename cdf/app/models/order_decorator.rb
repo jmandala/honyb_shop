@@ -126,7 +126,7 @@ Order.class_eval do
     return [] if ready_for_po?
     requires = []
     requires << 'not complete!' if !self.complete?
-    requires << "shipment state is, '#{self.shipment_state}', should be 'ready'." if self.shipment_state != 'ready'
+    requires << "shipment state is '#{self.shipment_state}', should be 'ready'." if self.shipment_state != 'ready'
     requires
   end
 
@@ -165,18 +165,11 @@ Order.class_eval do
     self
   end
 
-  # Transitions order to the next state and throws exception if it fails
-  #def next!
-  #  if !self.next
-  #    raise Cdf::IllegalStateError, "Cannot transition order because: #{self.errors.to_yaml}"
-  #  end
-  #end
-
   # Transitions the order to the completed state or raise exception if error occurs while trying  
   def complete!
     self.update!
     return self if self.complete?
-    while !self.complete?
+    until self.complete?
       self.next!
     end
     self.update!
@@ -197,6 +190,7 @@ Order.class_eval do
   # Creates a new comment with type 'Order Name'
   def order_name=(name)
     order_name_type = CommentType.find_by_name!(ORDER_NAME)
+    save! if new_record?
     self.comments.create(:comment => name, :comment_type => order_name_type, :commentable => self, :commentable_type => self.class.name, :user => User.current)
   end
 
