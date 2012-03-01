@@ -4,6 +4,10 @@ describe 'order_decorator' do
 
   let(:order) { Order.new }
 
+  it "should say hello" do
+    order.hello.should == 'hello'
+  end
+  
   context "with regard to constants" do
     it "should have an ORDER_NAME" do
       Order::ORDER_NAME.should == 'Order Name'

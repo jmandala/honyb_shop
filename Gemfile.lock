@@ -1,11 +1,4 @@
 GIT
-  remote: code.mandaladesigns.com:/repos/honyb/honyb_theme.git
-  revision: 975ab7c2c60a7aee53fd80a95447fbe0d53b1f79
-  ref: 975ab7c2c60a7aee53fd80a95447fbe0d53b1f79
-  specs:
-    honyb_theme (0.2.0)
-
-GIT
   remote: git://github.com/BDQ/spree_pages.git
   revision: a45c907abe05f97066041ecc343b8f8c68cedbee
   specs:
@@ -28,6 +21,11 @@ GIT
   specs:
     spree_paypal_express (1.0.1)
       spree_core (>= 0.40.3)
+
+PATH
+  remote: ../honyb_theme
+  specs:
+    honyb_theme (0.2.0)
 
 PATH
   remote: cdf
@@ -76,6 +74,7 @@ GEM
       multi_json (~> 1.0)
     acts_as_commentable (3.0.1)
     acts_as_list (0.1.4)
+    addressable (2.2.6)
     ansi (1.4.1)
     archive-tar-minitar (0.5.2)
     arel (2.2.1)
@@ -157,6 +156,8 @@ GEM
     json (1.6.5)
     kaminari (0.12.4)
       rails (>= 3.0.0)
+    launchy (2.0.5)
+      addressable (~> 2.2.6)
     libv8 (3.3.10.4)
     linecache19 (0.5.12)
       ruby_core_source (>= 0.1.4)
@@ -339,8 +340,6 @@ DEPENDENCIES
   capybara
   cdf!
   coffee-rails (~> 3.1.1)
-  cucumber
-  cucumber-rails
   database_cleaner
   factory_girl_rails
   faker
@@ -349,6 +348,7 @@ DEPENDENCIES
   haml
   honyb_theme!
   jquery-rails
+  launchy
   minitest-reporters (>= 0.5.0)
   mysql2
   rails (= 3.1.3)

@@ -42,18 +42,16 @@ group :test, :development do
     gem "ruby-debug19"
   end
   
+  gem 'launchy'
   
   #gem 'rails-dev-boost'
   gem 'spork', '~> 0.9.0.rc'
   gem 'capybara'
-  gem 'cucumber'
-  gem 'cucumber-rails'
   gem 'database_cleaner'
   gem 'rspec-rails'
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
   gem 'guard-rspec'
   gem 'minitest-reporters', '>= 0.5.0'
-  #gem 'guard-cucumber'
   gem 'guard-spork'
   gem 'turn', :require => false
 end
@@ -72,5 +70,5 @@ gem "spree_pages", :git => 'git://github.com/BDQ/spree_pages.git'
 gem "cdf", :path => "cdf", :require => "cdf"
 
 gem 'routing-filter'
-gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "975ab7c2c60a7aee53fd80a95447fbe0d53b1f79"
-#gem 'honyb_theme', :path => '../honyb_theme'
+#gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "975ab7c2c60a7aee53fd80a95447fbe0d53b1f79"
+gem 'honyb_theme', :path => '../honyb_theme'

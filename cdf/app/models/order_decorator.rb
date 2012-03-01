@@ -1,14 +1,9 @@
-Order.instance_eval do
-
-end
-
 #noinspection RubyArgCount
 Order.class_eval do
 
   Order.const_set(:ORDER_NAME,  'Order Name') unless Order.const_defined? :ORDER_NAME
 
   Order.const_set(:TYPES, [:live, :test]) unless Order.const_defined? :TYPES
-
 
   # EL = Multi-shipment: Allow immediate shipment of all in-stockt itles
   # for every warehouse shopped. Backorders will allocate AND SHIP as stock
@@ -241,6 +236,10 @@ Order.class_eval do
     !(self.bill_address.empty? && self.ship_address.empty?) && self.bill_address == self.ship_address
   end
 
+  def hello
+    "hello"
+  end
+  
 
   private
   # Sets the order type if not already set 
