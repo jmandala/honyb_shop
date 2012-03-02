@@ -1,3 +1,4 @@
+#noinspection RubyArgCount
 Shipment.class_eval do
 
   has_many :children, :class_name => Shipment.name, :foreign_key => 'parent_id'
@@ -68,4 +69,5 @@ Shipment.class_eval do
   def self.debug_shipment_state(shipment, message)
     shipment.debug_shipment_state message if shipment
   end
+  
 end

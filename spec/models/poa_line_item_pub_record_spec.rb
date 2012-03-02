@@ -39,7 +39,7 @@ describe PoaLineItemPubRecord do
 
   context "when created during an import" do
 
-    before :all do
+    before :each do
       @order_1 = FactoryGirl.create :order
 
       # variants, line items

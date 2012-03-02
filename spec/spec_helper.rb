@@ -68,6 +68,7 @@ Spork.prefork do
       po_types 
       poa_statuses 
       poa_types 
+      preferences
       roles
       roles_users 
       shipping_methods

@@ -6,13 +6,13 @@ describe Cdf::Config do
     Cdf::Config.init_from_config(:overwrite)
   end
 
-  before(:each) do
+  before :each do
     @key = :test_config_key
   end
 
   context "when setting values" do
 
-    after(:each) do
+    after :each do
       Cdf::Config.set({@key => @value})
       Cdf::Config[@key].should == @value
     end

@@ -4,8 +4,12 @@ module AsnRecord
   # Returns the [AsnShipment] from the same [AsnFile] with the sequence that is
   # closest to this record's sequence, without being greater
   def nearest_asn_shipment(line_number)
-    AsnShipment.where(:asn_file_id => self.asn_file_id).where("line_number < :line_number", {:line_number => line_number}).order("line_number DESC").
-        limit(1).first
+    #noinspection RubyArgCount
+    AsnShipment.where(:asn_file_id => self.asn_file_id).
+        where("line_number < :line_number", {:line_number => line_number}).
+        order("line_number DESC").
+        limit(1).
+        first
   end
 
 
@@ -32,7 +36,7 @@ module AsnRecord
         create(:asn_file_id => asn_file.id, :order_id => order.id)
 
       rescue ActiveRecord::RecordNotFound => e
-        puts "No order with ID #{order_number}"
+        puts "No order with ID: '#{order_number}'"
         Rails.logger.error "No order with ID #{order_number}"
         raise ActiveRecord::RecordNotFound, "Could not import ASN for order number:#{order_number}"
       end
