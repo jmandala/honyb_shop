@@ -8,7 +8,7 @@ describe PoaLineItemTitleRecord do
   end
 
   context "when creating a new instance" do
-    before(:all) do
+    before :each do
       #noinspection RubyInstanceVariableNamingConvention
       @p = FactoryGirl.create :poa_line_item_title_record
     end
@@ -40,7 +40,7 @@ describe PoaLineItemTitleRecord do
 
   context "when created during an import" do
 
-    before(:all) do
+    before :each do
       @order_1 = FactoryGirl.create :order
 
       # variants, line items

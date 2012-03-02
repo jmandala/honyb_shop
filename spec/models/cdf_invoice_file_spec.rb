@@ -13,15 +13,15 @@ describe CdfInvoiceFile do
   
   it_should_behave_like "an importable file", CdfInvoiceFile, 80, 'BIN' do
     
-    let(:order_1) { Cdf::OrderBuilder.completed_test_order(:ean => product_1.sku, :order_number => 'R483688864') }
-    let(:order_2) { Cdf::OrderBuilder.completed_test_order(:ean => product_1.sku, :order_number => 'R746668282') }
+    let(:create_order_1) { %Q[Cdf::OrderBuilder.completed_test_order(:ean => product_1.sku, :order_number => 'R483688864')] }
+    let(:create_order_2) { %Q[Cdf::OrderBuilder.completed_test_order(:ean => product_1.sku, :order_number => 'R746668282')] }
 
     let(:outgoing_file) { '05536017.BIN' }
     let(:incoming_file) { 'T5536017.BIN' }
 
 
     let(:outgoing_contents) do
-      %Q{0100001169797800000INGRAM BK CO 110822INVOICE COMMUNICATIONS                    
+      %q[%Q[0100001169797800000INGRAM BK CO 110822INVOICE COMMUNICATIONS                    
 150000210003868                   20N2730     254410500020110822                
 450000310003868                   0373200005 000010000499 0035 0000032420110822 
 460000410003868                                              9780373200009      
@@ -50,42 +50,12 @@ describe CdfInvoiceFile do
 4900015100038691ZTESTTRACKCI018370000   0000000000000200000650000000000000000067
 550001610003869     0001500004000004TESTCI0001       0000000                    
 570001710003869     000000000      00000030000130000000000000          000000133
-95000180000000000006000020000000006                                             }
+95000180000000000006000020000000006                                             ]]
     end
 
     let(:test_contents) do
-      %Q{0100001169797800000INGRAM BK CO 110822INVOICE COMMUNICATIONS                    
-150000210003868                   20N2730     254410500020110822                
-450000310003868                   0373200005 000010000499 0035 0000032420110822 
-460000410003868                                              9780373200009      
-48000051000386820110822HQPB FAMOUS FIRS00000#{@order_1.number.ljust_trim(22)}#{@order_1.line_items[0].id.ljust_trim(10)}0000
-4900006100038681ZTESTTRACKCI018370000   0000032400000000000000000000000000000324
-450000710003868                   0373200005 000010000499 0035 0000032420110822 
-460000810003868                                              9780373200009      
-48000091000386820110822HQPB FAMOUS FIRS00000#{@order_2.number.ljust_trim(22)}#{@order_2.line_items[0].id.ljust_trim(10)}0000
-4900010100038681ZTESTTRACKCI018360000   0000032400000000000000000000000000000324
-550001110003868     0000900002000002TESTCI0001       0000000                    
-570001210003868     000000648      00000000000000000000000000          000000648
-150000110003869                   20N2730            00020110822                
-450000210003869                   555887564X 000010000000 0000 0000000020110822 
-460000310003869                                              9785558875645      
-48000041000386920110822 ORDER CHARGE   00000#{@order_1.number.ljust_trim(22)}          0000
-450000510003869                   5558875666 000010000065 0000 0000006520110822 
-460000610003869                                              9785558875669      
-48000071000386920110822 PER PIECE CHARG00000#{@order_1.number.ljust_trim(22)}          0000
-4900008100038691ZTESTTRACKCI018370000   0000000000000100000650000000000000000066
-450000910003869                   555887564X 000010000000 0000 0000000020110822 
-460001010003869                                              9785558875645      
-48000111000386920110822 ORDER CHARGE   00000#{@order_2.number.ljust_trim(22)}          0000
-450001210003869                   5558875666 000010000065 0000 0000006520110822 
-460001310003869                                              9785558875669      
-48000141000386920110822 PER PIECE CHARG00000#{@order_2.number.ljust_trim(22)}          0000
-4900015100038691ZTESTTRACKCI018370000   0000000000000200000650000000000000000067
-550001610003869     0001500004000004TESTCI0001       0000000                    
-570001710003869     000000000      00000030000130000000000000          000000133
-95000180000000000006000020000000006                                             }
+      outgoing_contents
     end
-
 
     let(:product_1) { @product_1 = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product') }
     let(:product_2) { @product_2 = Factory(:product, :sku => '978-0-37320-000-2', :price => 10, :name => 'test product 2') }

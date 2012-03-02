@@ -7,7 +7,7 @@ describe PoaLineItemPubRecord do
   end
 
   context "when creating a new instance" do
-    before(:all) do
+    before :each do
       #noinspection RubyInstanceVariableNamingConvention
       @p = FactoryGirl.create :poa_line_item_pub_record
     end
@@ -43,7 +43,7 @@ describe PoaLineItemPubRecord do
 
   context "when created during an import" do
 
-    before(:all) do
+    before :all do
       @order_1 = FactoryGirl.create :order
 
       # variants, line items

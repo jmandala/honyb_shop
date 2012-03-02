@@ -16,23 +16,17 @@ describe AsnFile do
     let(:outgoing_file) { '05503677.PBS' }
     let(:incoming_file) { 'T5503677.PBS' }
 
+    let(:create_order_1) { %q[Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R374103387')] }
+    let(:create_order_2) { %q[Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R674657678')] }
     
-    let(:order_1) { Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R374103387') }
-    let(:order_2) { Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R674657678') }
-
-
     let(:outgoing_contents) do
-      "CR20N2730   000000024.0                                                                                                                                                                                 
+      %q[%Q[CR20N2730   000000024.0                                                                                                                                                                                 
 ORR674657678                    00000039980000000000000000000000000000000000000000001000000000499800000200   000120110812                                                                               
-ODR674657678            C 01706          0373200005037320000500001     00001001ZTESTTRACKCI017060000   SCAC 2              000049900003242         TESTSSLCI01706000001000000020129780373200009         
-"
+ODR674657678            C 01706          0373200005037320000500001     00001001ZTESTTRACKCI017060000   SCAC 2              000049900003242         TESTSSLCI01706000001000000020129780373200009         ]]
     end
 
     let(:test_contents) do
-      "CR20N2730   000000024.0                                                                                                                                                                                 
-ORR374103387                    00000019990000000000000000000000000000000000000000001000000000299900000100   000120110812                                                                               
-ODR374103387            C 01705          0373200005037320000500001     00001001ZTESTTRACKCI017050000   SCAC 1              000049900003241         TESTSSLCI01705000001000000020129780373200009         
-"
+      outgoing_contents
     end
 
     let(:product_1) { @product_1 = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product') }
@@ -90,7 +84,7 @@ def should_import_asn_shipment_detail_record(parsed, asn_file)
      :quantity_slashed,
      :quantity_shipped].each { |field| ImportFileHelper.should_match_i(db_record, record, field) }
 
-    db_record.weight.should == BigDecimal.new((record[:weight].to_f / 100).to_s, 0)
+    db_record.weight.should == BigDecimal.new((record[:weight].to_f / 100).to_s)
 
     db_record.asn_shipping_method_code.should == AsnShippingMethodCode.find_by_code(record[:shipping_method_or_slash_reason_code])
 
@@ -129,7 +123,7 @@ def should_import_asn_shipment_record(parsed, asn_file)
      :order_total,
      :freight_charge].each { |field| ImportFileHelper.should_match_money(db_record, record, field) }
 
-    db_record.shipping_and_handling.should == BigDecimal.new((record[:shipping_and_handling].to_f / 10000).to_s, 0)
+    db_record.shipping_and_handling.should == BigDecimal.new((record[:shipping_and_handling].to_f / 10000).to_s)
   end
 end
 

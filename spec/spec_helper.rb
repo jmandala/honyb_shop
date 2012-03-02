@@ -33,6 +33,8 @@ Spork.prefork do
 
   counter = -1
   RSpec.configure do |config|
+    config.treat_symbols_as_metadata_keys_with_true_values = true
+    
     config.mock_with :rspec
     config.use_transactional_fixtures = false
 
@@ -52,27 +54,28 @@ Spork.prefork do
 
     config.before(:each) do
       DatabaseCleaner.strategy = :truncation, {:except => %w[
-      configurations
-      tax_rate 
-      po_box_options 
-      calculators 
-      users
-      roles
-      roles_users 
-      asn_slash_codes 
       asn_order_statuses 
+      asn_slash_codes 
+      asn_shipping_method_codes
+      calculators 
       cdf_binding_codes 
+      comment_types 
+      configurations
+      countries 
       dc_codes 
+      po_box_options 
       po_statuses 
       po_types 
       poa_statuses 
       poa_types 
-      comment_types 
-      countries 
+      roles
+      roles_users 
+      shipping_methods
       states 
+      tax_rate 
+      users
       zones 
-      zone_members 
-      shipping_methods]}
+      zone_members ]}
     end
 
     config.before(:each) do

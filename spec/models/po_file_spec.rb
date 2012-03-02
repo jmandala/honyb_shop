@@ -2,18 +2,35 @@ require_relative '../spec_helper'
 
 describe PoFile do
 
-  before(:all) do
+  before :each do
+    Cdf::Config.init_from_config unless Cdf::Config.instance
+  end
 
-    Cdf::Config.init_from_config unless Cdf::Config.instance    
-    
-    Order.all.each &:destroy!
-    
-    @builder = Cdf::OrderBuilder
-    @order = @builder.completed_test_order({:id => 5,
-                                            :name => 'single order/multiple lines/multiple quantity: Hawaii',
-                                            :line_item_count => 2,
-                                            :line_item_qty => 2,
-                                            :ship_location => :HI})
+  let(:builder) { Cdf::OrderBuilder }
+  let(:create_order) { builder.completed_test_order({:id => 5,
+                                                     :name => 'single order/multiple lines/multiple quantity: Hawaii',
+                                                     :line_item_count => 2,
+                                                     :line_item_qty => 2,
+                                                     :ship_location => :HI}) }
+
+  let(:generate_po_file) { PoFile.generate }
+
+  it "should create an order, and find the order it creates" do
+    Order.count.should == 0
+    order = create_order
+    Order.count.should == 1
+    Order.find_by_id(order.id).should == order
+  end
+
+  it "should still have no orders!" do
+    Order.count.should == 0
+  end
+
+  it "should have orders that need po files" do
+    Order.needs_po.count.should == 0
+    order = create_order
+    order.needs_po?.should == true
+    Order.needs_po.count.should == 1
   end
 
   context "default behaviors" do
@@ -65,11 +82,9 @@ describe PoFile do
 
   context "when generating a purchase order" do
 
-    before(:all) do
-      order_count = Order.needs_po.count
-      @po_file = PoFile.generate
-      @po_file.orders.count.should == order_count
-      Order.needs_po.count.should == 0
+    before :each do
+      @order = create_order
+      @po_file = generate_po_file
     end
 
     after(:all) do
@@ -77,7 +92,7 @@ describe PoFile do
     end
 
     it "should have orders" do
-      @po_file.orders.count.should == 1
+      @po_file.orders.should == [@order]
     end
 
     it "should not have poa_files" do
@@ -93,8 +108,6 @@ describe PoFile do
     end
 
     it "should put the file to the FTP server" do
-      #puts @po_file.read
-
       @po_file.put.should == @po_file.submitted_at
       @po_file.submitted_at.should_not == nil
       @po_file.submitted?.should == true
@@ -108,13 +121,23 @@ describe PoFile do
     end
 
     it "should return the previous submitted at data if submitted twice" do
+      @po_file.put
       previous = @po_file.submitted_at
       @po_file.put.should == previous
     end
 
     context "when parsing a PoFile" do
 
-      before(:all) do
+      before :each do
+        @order = create_order
+        @po_file = generate_po_file
+        @parsed = FixedWidth.parse(File.new(@po_file.path), :po_file)
+
+        @po_file.orders.count.should == 1
+        @po_file.orders.should == [@order]
+      end
+
+      before :all do
         FixedWidth.define :po_file do |d|
           d.template :default do |t|
             t.record_code 2
@@ -354,7 +377,6 @@ describe PoFile do
 
         end
 
-        @parsed = FixedWidth.parse(File.new(@po_file.path), :po_file)
 
       end
 

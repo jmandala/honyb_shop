@@ -7,7 +7,7 @@ describe PoaOrderControlTotal do
   end
 
   context "when creating a new instance" do
-    before(:all) do
+    before :each do
       #noinspection RubyInstanceVariableNamingConvention
       @p = FactoryGirl.create :poa_order_control_total
     end

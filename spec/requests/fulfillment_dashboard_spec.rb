@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-RSpec.configure do |config|
-  config.filter_run_excluding :broken
-end
+#RSpec.configure do |config|
+#  config.filter_run_excluding :broken
+#end
 
-describe "admin fulfillment dashboard", :broken do
-
+describe "admin fulfillment dashboard", :broken => true do
+=begin
   let(:email) { 'spree@example.com' }
   let(:password) { 'spree123' }
   let(:user) { User.find_by_email email }
@@ -60,5 +60,6 @@ describe "admin fulfillment dashboard", :broken do
 
     end
   end
+=end
 end
 

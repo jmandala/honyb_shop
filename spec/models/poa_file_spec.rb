@@ -8,63 +8,57 @@ describe PoaFile do
 
     let(:outgoing_file) { '110809180859.fbc' }
     let(:incoming_file) { 't10809180859.fbc' }
-    
+
     let(:po_file_name) { outgoing_file.gsub(/fbc/, 'fbo') }
 
-    let(:order_number_1) { 'R554266337' }
-    let(:order_number_2) { 'R543255800' }
+    let(:create_order_1) { %q[Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R543255800')]}
+    let(:create_order_2) { %q[Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R554266337')]}
 
-    let(:order_1) { Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R543255800') }
-    let(:order_2) { Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R554266337') }
-    
-    
-    
-    
     let(:outgoing_contents) do
-%Q[02000011697978     INGRAM       110810RUYFU110809180859.FBO F030000000     1    
-1100002             #{order_1.number.ljust_trim(22)}20N273016979780110810110810110810     
-2100003#{order_1.number.ljust_trim(22)}THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 
-2100004#{order_1.number.ljust_trim(22)}CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 
-2100005#{order_1.number.ljust_trim(22)}NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 
-2100006#{order_1.number.ljust_trim(22)}ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 
-2100007#{order_1.number.ljust_trim(22)}EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 
-2100008#{order_1.number.ljust_trim(22)} AT 1-800-234-6737.                                
-4000009#{order_1.number.ljust_trim(22)}#{order_1.line_items[0].id.ljust_trim(10)}            9780373200009       00100100C
-4100010#{order_1.number.ljust_trim(22)}000 000000{ 0000 0000 0000 0000 0000 0000 0000     
-4200011#{order_1.number.ljust_trim(22)}HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M
-4300012#{order_1.number.ljust_trim(22)}HQPB                030900019350000000010000000    
-4400013#{order_1.number.ljust_trim(22)}                    00004.99EN00003.240000001      
-4500014#{order_1.number.ljust_trim(22)}2                                                  
-4000015#{order_1.number.ljust_trim(22)}#{order_1.line_items[1].id.ljust_trim(10)}            978037352805        00100005C
-4100016#{order_1.number.ljust_trim(22)}000         0000 0000 0000 0000 0000 0000 0000     
-4100017#{order_1.number.ljust_trim(22)}000 000000  0000 0000 0000 0000 0000 0000 0000     
-4200018#{order_1.number.ljust_trim(22)}                                                   
-4300019#{order_1.number.ljust_trim(22)}                        00022000000000000000000    
-4400020#{order_1.number.ljust_trim(22)}                    00000.00EN00000.000000001      
-4500021#{order_1.number.ljust_trim(22)}5                                                  
-5900022#{order_1.number.ljust_trim(22)}000200000000002000000000100000000040000000000000001
-1100023             #{order_2.number.ljust_trim(22)}20N273016979780110810110810110810     
-2100024#{order_2.number.ljust_trim(22)}THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 
-2100025#{order_2.number.ljust_trim(22)}CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 
-2100026#{order_2.number.ljust_trim(22)}NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 
-2100027#{order_2.number.ljust_trim(22)}ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 
-2100028#{order_2.number.ljust_trim(22)}EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 
-2100029#{order_2.number.ljust_trim(22)} AT 1-800-234-6737.                                
-4000030#{order_2.number.ljust_trim(22)}#{order_2.line_items[0].id.ljust_trim(10)}            9780373200009       00100100C
-4100031#{order_2.number.ljust_trim(22)}000 000000{ 0000 0000 0000 0000 0000 0000 0000     
-4200032#{order_2.number.ljust_trim(22)}HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M
-4300033#{order_2.number.ljust_trim(22)}HQPB                030900043350000000010000000    
-4400034#{order_2.number.ljust_trim(22)}                    00004.99EN00003.240000001      
-4500035#{order_2.number.ljust_trim(22)}3                                                  
-4000036#{order_2.number.ljust_trim(22)}#{order_2.line_items[1].id.ljust_trim(10)}            978037352805        00100005C
-4100037#{order_2.number.ljust_trim(22)}000         0000 0000 0000 0000 0000 0000 0000     
-4100038#{order_2.number.ljust_trim(22)}000 000000  0000 0000 0000 0000 0000 0000 0000     
-4200039#{order_2.number.ljust_trim(22)}                                                   
-4300040#{order_2.number.ljust_trim(22)}                        00046000000000000000000    
-4400041#{order_2.number.ljust_trim(22)}                    00000.00EN00000.000000001      
-4500042#{order_2.number.ljust_trim(22)}6                                                  
-5900043#{order_2.number.ljust_trim(22)}000200000000002000000000100000000040000000000000001
-9100044000000000000400002000000000200001000020001200000000260000200001          ]      
+      %q[%Q[02000011697978     INGRAM       110810RUYFU110809180859.FBO F030000000     1    
+1100002             #{@order_1.number.ljust_trim(22)}20N273016979780110810110810110810     
+2100003#{@order_1.number.ljust_trim(22)}THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 
+2100004#{@order_1.number.ljust_trim(22)}CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 
+2100005#{@order_1.number.ljust_trim(22)}NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 
+2100006#{@order_1.number.ljust_trim(22)}ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 
+2100007#{@order_1.number.ljust_trim(22)}EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 
+2100008#{@order_1.number.ljust_trim(22)} AT 1-800-234-6737.                                
+4000009#{@order_1.number.ljust_trim(22)}#{@order_1.line_items[0].id.ljust_trim(10)}            9780373200009       00100100C
+4100010#{@order_1.number.ljust_trim(22)}000 000000{ 0000 0000 0000 0000 0000 0000 0000     
+4200011#{@order_1.number.ljust_trim(22)}HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M
+4300012#{@order_1.number.ljust_trim(22)}HQPB                030900019350000000010000000    
+4400013#{@order_1.number.ljust_trim(22)}                    00004.99EN00003.240000001      
+4500014#{@order_1.number.ljust_trim(22)}2                                                  
+4000015#{@order_1.number.ljust_trim(22)}#{@order_1.line_items[1].id.ljust_trim(10)}            978037352805        00100005C
+4100016#{@order_1.number.ljust_trim(22)}000         0000 0000 0000 0000 0000 0000 0000     
+4100017#{@order_1.number.ljust_trim(22)}000 000000  0000 0000 0000 0000 0000 0000 0000     
+4200018#{@order_1.number.ljust_trim(22)}                                                   
+4300019#{@order_1.number.ljust_trim(22)}                        00022000000000000000000    
+4400020#{@order_1.number.ljust_trim(22)}                    00000.00EN00000.000000001      
+4500021#{@order_1.number.ljust_trim(22)}5                                                  
+5900022#{@order_1.number.ljust_trim(22)}000200000000002000000000100000000040000000000000001
+1100023             #{@order_2.number.ljust_trim(22)}20N273016979780110810110810110810     
+2100024#{@order_2.number.ljust_trim(22)}THANK YOU FOR YOUR ORDER.  IF YOU REQUIRE ASSISTAN 
+2100025#{@order_2.number.ljust_trim(22)}CE, PLEASE CONTACT OURELECTRONIC ORDERING DEPARTME 
+2100026#{@order_2.number.ljust_trim(22)}NT AT 1-800-234-6737 OR VIA EMAIL AT        FLASHB 
+2100027#{@order_2.number.ljust_trim(22)}ACK@INGRAMBOOK.COM.  TO CANCEL AN ORDER, PLEASE SP 
+2100028#{@order_2.number.ljust_trim(22)}EAK WITH AN     ELECTRONIC ORDERING REPRESENTATIVE 
+2100029#{@order_2.number.ljust_trim(22)} AT 1-800-234-6737.                                
+4000030#{@order_2.number.ljust_trim(22)}#{@order_2.line_items[0].id.ljust_trim(10)}            9780373200009       00100100C
+4100031#{@order_2.number.ljust_trim(22)}000 000000{ 0000 0000 0000 0000 0000 0000 0000     
+4200032#{@order_2.number.ljust_trim(22)}HQPB FAMOUS FIRSTS MATCHMAKERSMACOMBER DEBBIE     M
+4300033#{@order_2.number.ljust_trim(22)}HQPB                030900043350000000010000000    
+4400034#{@order_2.number.ljust_trim(22)}                    00004.99EN00003.240000001      
+4500035#{@order_2.number.ljust_trim(22)}3                                                  
+4000036#{@order_2.number.ljust_trim(22)}#{@order_2.line_items[1].id.ljust_trim(10)}            978037352805        00100005C
+4100037#{@order_2.number.ljust_trim(22)}000         0000 0000 0000 0000 0000 0000 0000     
+4100038#{@order_2.number.ljust_trim(22)}000 000000  0000 0000 0000 0000 0000 0000 0000     
+4200039#{@order_2.number.ljust_trim(22)}                                                   
+4300040#{@order_2.number.ljust_trim(22)}                        00046000000000000000000    
+4400041#{@order_2.number.ljust_trim(22)}                    00000.00EN00000.000000001      
+4500042#{@order_2.number.ljust_trim(22)}6                                                  
+5900043#{@order_2.number.ljust_trim(22)}000200000000002000000000100000000040000000000000001
+9100044000000000000400002000000000200001000020001200000000260000200001          ]]
     end
 
     let(:test_contents) do
@@ -99,22 +93,12 @@ describe PoaFile do
     end
   end
 
-  before(:all) do
+  before :each do
     FactoryGirl.create(:chambersburg)
-    Order.all.each &:destroy!
   end
-
-  after(:all) do
-    Order.all.each &:destroy!
-  end
-
-  before(:each) do
-    PoaFile.all.each &:destroy
-  end
-
 
   context "when importing an exception file" do
-    before(:each) do
+    before :each do
       @error_file_name = 'error_file.fbc'
       @error_file = PoaFile.create(:file_name => @error_file_name)
       @error_file.write_data 'NO MAINFRAME'

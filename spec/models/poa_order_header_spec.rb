@@ -3,7 +3,7 @@ require_relative "../spec_helper"
 describe "PoaOrderHeader" do
   context "when creating an instance" do
 
-    before(:all) do
+    before :each do
       @poa_order_header = FactoryGirl.create(:poa_order_header)
     end
 

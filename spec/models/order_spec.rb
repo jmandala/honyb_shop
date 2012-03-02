@@ -35,8 +35,10 @@ describe Order do
 
   context "When duplicating an order" do
 
-    before :all do
-      @original = Cdf::OrderBuilder.completed_test_order
+    let(:create_order) { Cdf::OrderBuilder.completed_test_order}
+    
+    before :each do
+      @original = create_order
       @duplicate = @original.duplicate
     end
 
