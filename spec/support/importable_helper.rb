@@ -2,9 +2,6 @@ require_relative '../spec_helper'
 
 shared_examples "an importable file" do |klass, record_length, ext|
 
-  after :all do
-    @import_class.all.each &:destroy
-  end
 
   before :all do
     @import_class = klass
@@ -13,8 +10,6 @@ shared_examples "an importable file" do |klass, record_length, ext|
   end
 
   before :each do
-    @import_class.all.each &:destroy
-    
     @order_1 = eval create_order_1
     @order_2 = eval create_order_2
 

@@ -45,18 +45,6 @@ Order.class_eval do
 
   register_update_hook :update_auth_before_ship
 
-  # Deletes this object along with all dependent associations
-  def destroy!
-    self.poa_order_headers.all.each &:destroy
-    self.asn_shipment_details.all.each &:destroy
-    self.asn_shipments.all.each &:destroy
-    self.cdf_invoice_headers.all.each &:destroy
-    self.cdf_invoice_detail_totals.all.each &:destroy
-    self.cdf_invoice_freight_and_fees.all.each &:destroy
-    self.inventory_units.all.each &:destroy
-    self.destroy
-  end
-
   def cdf_invoice_files
     result = []
     self.cdf_invoice_headers.each do |h|
@@ -249,4 +237,16 @@ Order.class_eval do
     self.split_shipment_type = SPLIT_SHIPMENT_TYPE[Cdf::Config[:split_shipment_type].to_sym] if self.split_shipment_type.nil?
   end
 
+  # Deletes this object along with all dependent associations
+  def destroy!
+    self.poa_order_headers.all.each &:destroy
+    self.asn_shipment_details.all.each &:destroy
+    self.asn_shipments.all.each &:destroy
+    self.cdf_invoice_headers.all.each &:destroy
+    self.cdf_invoice_detail_totals.all.each &:destroy
+    self.cdf_invoice_freight_and_fees.all.each &:destroy
+    self.inventory_units.all.each &:destroy
+    self.destroy
+  end
+  
 end

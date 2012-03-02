@@ -9,10 +9,6 @@ describe AsnShipmentDetail do
   let(:asd_shipped) { AsnShipmentDetail.new(:asn_order_status => shipped_status, :asn_shipping_method_code => asn_shipping_method_code_shipped) }
   let(:asd) { AsnShipmentDetail.new(:order => mock_model(Order, :id => 1)) }
 
-  after :each do
-    AsnShipmentDetail.all.each &:destroy
-  end
-
   context "default values" do
     it "should have no line item" do
       asd.line_item.should == nil

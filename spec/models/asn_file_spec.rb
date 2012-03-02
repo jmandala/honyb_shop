@@ -2,15 +2,6 @@ require_relative '../spec_helper'
 
 describe AsnFile do
 
-  before :all do
-    Order.all.each &:destroy!
-  end
-  
-  after :all do
-    Order.all.each &:destroy!
-  end
-  
-  
   it_should_behave_like "an importable file", AsnFile, 200, 'PBS' do
 
     let(:outgoing_file) { '05503677.PBS' }

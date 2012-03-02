@@ -3,9 +3,9 @@ require_relative '../spec_helper'
 describe "CDF Compliance" do
 
   before :all do
-    AsnFile.all.each &:destroy
     @builder = Cdf::OrderBuilder
   end
+
 =begin
   context "should handle single order / single line / single quantity" do
 

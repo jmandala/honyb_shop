@@ -2,18 +2,9 @@ require 'spec_helper'
 
 describe PoaAdditionalDetail do
 
-  after(:all) do
-    Order.all.each &:destroy!
-  end
-
   context "when creating a new instance" do
     
     let(:pad) { FactoryGirl.create :poa_additional_detail }
-
-    after(:all) do
-      poa_file = pad.poa_file
-      poa_file.destroy
-    end
 
     it "should have default values" do
       pad.availability_date.should_not == nil

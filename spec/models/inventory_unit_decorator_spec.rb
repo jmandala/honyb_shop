@@ -1,15 +1,5 @@
 describe InventoryUnit do
 
-  before :all do
-    Order.all.each &:destroy!
-    InventoryUnit.all.each &:destroy
-  end
-
-  after :all do
-    Order.all.each &:destroy!
-    InventoryUnit.all.each &:destroy    
-  end
-
   let(:variant) { mock_model(Variant, :id => 1) }
   let(:variant_2) { mock_model(Variant, :id => 2) }
   let(:line_item) { mock_model(LineItem, :variant => variant, :quantity => 5) }

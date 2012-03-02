@@ -2,10 +2,6 @@ require_relative '../spec_helper'
 
 describe PoaLineItemPubRecord do
 
-  after(:all) do
-    Order.all.each &:destroy!
-  end
-
   context "when creating a new instance" do
     before :each do
       #noinspection RubyInstanceVariableNamingConvention
