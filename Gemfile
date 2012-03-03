@@ -50,5 +50,5 @@ gem "cdf", :path => "cdf", :require => "cdf"
 
 gem 'routing-filter'
 
-gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "975ab7c2c60a7aee53fd80a95447fbe0d53b1f79"
+gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "ea013e840c08acdc2f106fca7c5db14c50253603"
 #gem 'honyb_theme', :path => '../honyb_theme'
