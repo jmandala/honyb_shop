@@ -7,17 +7,30 @@ describe AsnFile do
     let(:outgoing_file) { '05503677.PBS' }
     let(:incoming_file) { 'T5503677.PBS' }
 
-    let(:create_order_1) { %q[Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R374103387')] }
-    let(:create_order_2) { %q[Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R674657678')] }
+    let(:shipping_method) { ShippingMethod.find_by_name('2nd Day Air') }
+    let(:asn_shipping_method_code) { shipping_method.asn_shipping_method_code.code }
+    
+    let(:create_order_1) { %q[Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R374103387', :shipping_method => shipping_method.name)] }
+    let(:create_order_2) { %q[Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R674657678', :shipping_method => shipping_method.name)] }
+
+    let(:qty_shipped) { 1.ljust_trim(5)}
+    let(:qty_predicted) { 0.ljust_trim(5)}
+    let(:qty_slashed) { 0.ljust_trim(5)}
+    let(:tracking) { 'ZTESTTRACKCI017060000'.ljust_trim(25)}
+    let(:status_code) { '00'.ljust_trim(2)}
     
     let(:outgoing_contents) do
       %q[%Q[CR20N2730   000000024.0                                                                                                                                                                                 
-ORR674657678                    00000039980000000000000000000000000000000000000000001000000000499800000200   000120110812                                                                               
-ODR674657678            C 01706          0373200005037320000500001     00001001ZTESTTRACKCI017060000   SCAC 2              000049900003242         TESTSSLCI01706000001000000020129780373200009         ]]
+OR#{@order_1.number.ljust_trim(22)}        00000039980000000000000000000000000000000000000000001000000000499800000200   000120110812                                                                               
+OD#{@order_1.number.ljust_trim(22)}C 01706          03732000050373200005#{qty_predicted}#{qty_slashed}#{qty_shipped}#{status_code}#{tracking}SCAC 2              00004990000324#{@order_1.line_items[0].id.ljust_trim(10)}TESTSSLCI01706000001000000020#{asn_shipping_method_code.ljust_trim(2)}#{@order_1.line_items[0].variant.sku.ljust_trim(15)}       
+OD#{@order_1.number.ljust_trim(22)}C 01706          03732000050373200005#{qty_predicted}#{qty_slashed}#{qty_shipped}#{status_code}#{tracking}SCAC 2              00004990000324#{@order_1.line_items[1].id.ljust_trim(10)}TESTSSLCI01706000001000000020#{asn_shipping_method_code.ljust_trim(2)}#{@order_1.line_items[1].variant.sku.ljust_trim(15)}       ]]
     end
 
     let(:test_contents) do
-      outgoing_contents
+      %q[%Q[CR20N2730   000000024.0                                                                                                                                                                                 
+OR#{@order_2.number.ljust_trim(22)}        00000039980000000000000000000000000000000000000000001000000000499800000200   000120110812                                                                               
+OD#{@order_2.number.ljust_trim(22)}C 01706          03732000050373200005#{qty_predicted}#{qty_slashed}#{qty_shipped}#{status_code}#{tracking}SCAC 2              00004990000324#{@order_2.line_items[0].id.ljust_trim(10)}TESTSSLCI01706000001000000020#{asn_shipping_method_code.ljust_trim(2)}#{@order_2.line_items[0].variant.sku.ljust_trim(15)}       
+OD#{@order_2.number.ljust_trim(22)}C 01706          03732000050373200005#{qty_predicted}#{qty_slashed}#{qty_shipped}#{status_code}#{tracking}SCAC 2              00004990000324#{@order_2.line_items[1].id.ljust_trim(10)}TESTSSLCI01706000001000000020#{asn_shipping_method_code.ljust_trim(2)}#{@order_2.line_items[1].variant.sku.ljust_trim(15)}       ]]
     end
 
     let(:product_1) { @product_1 = Factory(:product, :sku => '978-0-37320-000-9', :price => 10, :name => 'test product') }
@@ -47,8 +60,8 @@ def should_reference_shipment(parsed, asn_file)
   end
 end
 
-def should_import_asn_shipment_detail_record(parsed, asn_file)
-
+def should_import_asn_shipment_detail_record(parsed, asn_file)  
+  
   parsed[:asn_shipment_detail].each do |record|
     db_record = AsnShipmentDetail.find_self asn_file, record[:__LINE_NUMBER__]
     db_record.should_not == nil

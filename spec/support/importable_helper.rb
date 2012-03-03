@@ -168,8 +168,8 @@ shared_examples "an importable file" do |klass, record_length, ext|
           before :each do
             @import_class.download
             @import_class.needs_import.count.should > 0
-            @import_file = @import_class.needs_import.first
-            @parsed = @import_file.parsed
+            @first_import_file = @import_class.needs_import.first
+            @parsed = @first_import_file.parsed
 
             @order_1.should_not == nil
             @order_2.should_not == nil
@@ -181,8 +181,8 @@ shared_examples "an importable file" do |klass, record_length, ext|
           end
 
           it "should import files one by one" do
-            @import_file.import.should_not == nil
-            @import_file.imported_at.should_not == nil
+            @first_import_file.import.should_not == nil
+            @first_import_file.imported_at.should_not == nil
             @import_class.needs_import.count.should == 1
           end
 
@@ -195,21 +195,21 @@ shared_examples "an importable file" do |klass, record_length, ext|
 
           context "and asn file is imported" do
             before :each do
-              @import_file.import
+              @first_import_file.import
             end
 
             it "should return the correct data" do
-              @import_file.data.should == @import_class.add_delimiters(@sample_file[:outgoing])
+              @first_import_file.data.should == @import_class.add_delimiters(@sample_file[:outgoing])
             end
 
             it "should import the correct file name" do
-              @import_file.file_name.should == @file_names[:outgoing]
+              @first_import_file.file_name.should == @file_names[:outgoing]
             end
 
             it "should validate import results" do
               validations.each do |v|
                 puts "Validates #{v}"
-                send(v, @parsed, @import_file)
+                send(v, @parsed, @first_import_file)
               end
             end
 

@@ -4,7 +4,6 @@ gem 'rails', '3.1.3'
 
 gem 'sqlite3'
 
-
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -15,18 +14,8 @@ group :assets do
 end
 
 gem 'jquery-rails'
-
-# gem 'bcrypt-ruby', '~>3.0.0'
-
-# Deploy with Capistrano
 gem 'capistrano'
-
-# Bundle the extra gems:
-#gem 'bj'
-#gem 'nokogiri'
-
 gem 'haml'
-
 gem 'faker'
 gem "factory_girl_rails"
 
@@ -36,15 +25,7 @@ end
 
 # Dev/Test gems
 group :test, :development do
-  if RUBY_VERSION < "1.9"
-    gem "ruby-debug"
-  else
-    gem "ruby-debug19"
-  end
-  
   gem 'launchy'
-  
-  #gem 'rails-dev-boost'
   gem 'spork', '~> 0.9.0.rc'
   gem 'capybara'
   gem 'database_cleaner'
@@ -56,19 +37,18 @@ group :test, :development do
   gem 'turn', :require => false
 end
 
-
-# Followed by spreeitself first, all spree-specific extensions second
 gem 'spree', '0.70.3'
 
 gem "spree_comments", :git => 'git://github.com/spree/spree_comments.git', :ref => "a33693ffaeb60fc8bcde6c805c9659ff4b7e2bd6"
 gem "acts_as_commentable"
 
-gem "spree_paypal_express", :git => 'git://github.com/spree/spree_paypal_express.git', :ref => "bea1aa48e0089083546bec4b19565a40e9a50a20"
+#gem "spree_paypal_express", :git => 'git://github.com/spree/spree_paypal_express.git', :ref => "bea1aa48e0089083546bec4b19565a40e9a50a20"
 
 gem "spree_pages", :git => 'git://github.com/BDQ/spree_pages.git'
 
 gem "cdf", :path => "cdf", :require => "cdf"
 
 gem 'routing-filter'
+
 #gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "975ab7c2c60a7aee53fd80a95447fbe0d53b1f79"
 gem 'honyb_theme', :path => '../honyb_theme'

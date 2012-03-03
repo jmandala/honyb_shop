@@ -89,7 +89,6 @@ Then /^click on css "(.*)"$/ do |selector|
 end
 
 Then /^I debug$/ do
-  require 'ruby-debug'; debugger
   breakpoint
   0
 end
