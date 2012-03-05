@@ -2,9 +2,12 @@ require 'spec_helper'
 
 describe Cdf::StockImport do
 
-  let(:line_count) { 1000000 }
+  let(:line_count) { 10000000 }
+  let(:inventory_path) { File.join CdfConfig::data_lib_in_root('2012'), 'inventory' }
 
   before :all do
+    GC.enable
+
     @import_def = Parser.define do |r|
       r.gtin_prefix 1
       r.ean 13
@@ -63,26 +66,102 @@ describe Cdf::StockImport do
       r.ingram_title_code 9
       r.spacer 19
     end
+
+    @isbns = %w{  
+                9780670022953
+                9780811218702
+                9781556593321
+                9781852249229
+                9781566892513
+                9781933517520
+                9781566892438
+                9781934200407
+                9780375421143
+                9780981952079
+                9780819571304
+                9781933254784
+                9781934103210
+                9780924047848
+                9781934029169
+                9781848611283
+                9781933517476
+                9780887485350
+                9789876580168
+                9780393932997
+                9781555974831
+                9781857548402
+                9780536419293
+                9781555975210
+                9781594515521
+                9789089790651
+                9780061537189
+                9780670032181
+                9781555974800
+                9781934542026
+                9780262123112
+                9781556593062
+                9780521349505
+                9781846143533
+                9781849011013
+                9780674050549
+                9780226660615
+                9780226673394
+                9780393930672
+                9780807047156
+                9780674018532
+                9780262195676
+                9780984213382
+                9780525423065
+              }
+
   end
 
   it "should parse the import feed" do
-    File.open(path_full, 'r') do |f|
-      line_count.times do
-        line = f.gets || break
-        product = @import_def.parse(line)
-          if product[:ean].starts_with? '978'
-            puts "EAN: #{product[:ean]}, #{product[:list_price]} (#{PRODUCT_TYPE[product[:product_type]]}) #{AVAILABILITY[product[:product_availability_code]]} #{STATUS[product[:publisher_status_code]]}"
+    get_inventory_files.each do |file|
+      break if @isbns.size == 0
+      
+      File.open(path_to(file), 'r') do |f|
+        break if @isbns.size == 0
+        count = 0
+        line_count.times do
+          line = f.gets || break
+          count += 1
+          product = @import_def.parse(line)
+          if product[:ean].match /#{@isbns.join('|')}/
+            puts "MATCH IN: #{file}"
+            puts "EAN: '#{product[:ean]}', #{product[:list_price]} (#{PRODUCT_TYPE[product[:product_type]]}) #{AVAILABILITY[product[:product_availability_code]]} #{STATUS[product[:publisher_status_code]]}"
+            @isbns.delete product[:ean]
+            break if @isbns.size == 0
           end
+        end
       end
+      GC.start
     end
-
+    
+    if @isbns.size > 0
+      puts "MISSING ISBNS:"
+      @isbns.each {|i| puts "- #{i}" }
+    end
+    
   end
+
+  it "should parse these products" do
+    lines = []
+    lines << '09780670022953              06700229500000243000006200003560000384000000000000000000000000000000000000000037000000000000000000000000000000000000000000000400000040007REG0004000REGIPYYYY    2011100420111004Y99991231N    NYR   REG        REG0002850000000VIK 0872 A  R      N21012339786                  '
+
+    puts @import_def.parse(lines[0]).to_yaml
+  end
+
+  it "should retrieve all inventory files" do
+    get_inventory_files.size.should > 0
+  end
+
 
 end
 
 
 def path_full
-  File.join CdfConfig::data_lib_in_root('2012'), 'stockv2@ingram.dat'
+  File.join inventory_path, 'xao'
 end
 
 def path_small
@@ -108,6 +187,17 @@ end
 def init_small_file
   write_small_file(get_stock, path_small)
 end
+
+def get_inventory_files
+  files = []
+  Dir.foreach(inventory_path) { |f| files << f if File.file?(path_to f) }
+  files.sort
+end
+
+def path_to(file)
+  File.join inventory_path, file
+end
+
 
 PRODUCT_TYPE = {'R' => 'Hardcover - also called cloth, retail trade, or trade',
                 'Q' => 'Quality Paper - also called trade paper',
