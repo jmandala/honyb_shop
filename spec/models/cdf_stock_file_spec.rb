@@ -67,7 +67,24 @@ describe Cdf::StockImport do
       r.spacer 19
     end
 
-    @isbns = %w{  
+    @isbns = %w{
+                9780393932997
+                9780536419293
+                9780670032181
+                9780807047156
+                9780981952079
+                9781846143533
+                9781849011013
+                9781852249229
+                9781857548402
+                9781933254784
+                9781934029169
+                9781934103210
+                9781934542026
+                9789876580168
+    }
+
+    @all_isbns = %w{  
                 9780670022953
                 9780811218702
                 9781556593321
@@ -119,7 +136,7 @@ describe Cdf::StockImport do
   it "should parse the import feed" do
     get_inventory_files.each do |file|
       break if @isbns.size == 0
-      
+
       File.open(path_to(file), 'r') do |f|
         break if @isbns.size == 0
         count = 0
@@ -137,12 +154,12 @@ describe Cdf::StockImport do
       end
       GC.start
     end
-    
+
     if @isbns.size > 0
       puts "MISSING ISBNS:"
-      @isbns.each {|i| puts "- #{i}" }
+      @isbns.each { |i| puts "- #{i}" }
     end
-    
+
   end
 
   it "should parse these products" do
