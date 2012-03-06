@@ -6,6 +6,13 @@ GIT
       spree_core (>= 0.60)
 
 GIT
+  remote: git://github.com/jmandala/rack-p3p.git
+  revision: bedf958c396c6b455c886e87af7560b03ccbe56d
+  specs:
+    rack-p3p (0.6.0)
+      rack (>= 1.0.1)
+
+GIT
   remote: git://github.com/spree/spree_comments.git
   revision: a33693ffaeb60fc8bcde6c805c9659ff4b7e2bd6
   ref: a33693ffaeb60fc8bcde6c805c9659ff4b7e2bd6
@@ -337,6 +344,7 @@ DEPENDENCIES
   launchy
   minitest-reporters (>= 0.5.0)
   mysql2
+  rack-p3p!
   rails (= 3.1.3)
   routing-filter
   rspec-rails
