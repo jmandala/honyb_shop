@@ -52,5 +52,5 @@ gem 'routing-filter'
 
 gem 'rack-p3p', :git => 'git://github.com/jmandala/rack-p3p.git'
 
-#gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "ea013e840c08acdc2f106fca7c5db14c50253603"
-gem 'honyb_theme', :path => '../honyb_theme'
+gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "976ced9d82b6dce18e92bd751dc66930498e8d87"
+#gem 'honyb_theme', :path => '../honyb_theme'

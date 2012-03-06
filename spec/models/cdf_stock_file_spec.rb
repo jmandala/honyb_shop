@@ -134,6 +134,7 @@ describe Cdf::StockImport do
   end
 
   it "should parse the import feed" do
+    pending "slow test"
     get_inventory_files.each do |file|
       break if @isbns.size == 0
 
