@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.1.3'
+gem 'rails', '3.1.4'
 
 gem 'sqlite3'
 
@@ -37,7 +37,7 @@ group :test, :development do
   gem 'turn', :require => false
 end
 
-gem 'spree', '0.70.3'
+gem 'spree', '0.70.5'
 
 gem "spree_comments", :git => 'git://github.com/spree/spree_comments.git', :ref => "a33693ffaeb60fc8bcde6c805c9659ff4b7e2bd6"
 gem "acts_as_commentable"
