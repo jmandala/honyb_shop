@@ -16,8 +16,11 @@ describe 'user_decorator' do
   end
 
   it "should set password confirmation automatically" do
+    test_email = 'test@example.com'
+    test_user = User.find_by_email(test_email)
+    test_user.delete
     
-    user.email = 'test@example.com'
+    user.email = test_email
     user.password = 'password'
     user.save!
     
