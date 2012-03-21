@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'user_decorator' do
+describe 'product' do
 
   let(:product) { Product.new }
   
