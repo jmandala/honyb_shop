@@ -36,6 +36,9 @@ module CdfInvoiceDetailRecord
       find_nearest cdf_invoice_header, line_number, :after
     end
 
+    # Returns the instance of the including class having the same CdfInvoiceHeader
+    # but with a lower line_number value when <tt>where</tt> is <tt>:before</tt>, or a higher
+    # line_number when <tt>where</tt> is <tt>:after</tt>.
     def find_nearest(cdf_invoice_header, line_number, where=:before)
       if where == :before
         relative_to = '<'
@@ -44,14 +47,14 @@ module CdfInvoiceDetailRecord
       else
         raise ArgumentError, "illegal argument specified for where: #{where}"
       end
-      
+
       raise ArgumentError, "line_number must not be nil!" if line_number.nil?
       raise ArgumentError, "cdf_invoice_header must not be nil!" if cdf_invoice_header.nil?
 
+      #noinspection RubyArgCount
       where(:cdf_invoice_header_id => cdf_invoice_header.id).
           where("line_number #{relative_to} :line_number", {:line_number => line_number}).
-          order("line_number DESC").
-          limit(1).first
+          order("line_number DESC").limit(1).first
     end
 
     def find_nearest_after!(cdf_invoice_header, line_number)
@@ -76,9 +79,7 @@ module CdfInvoiceDetailRecord
       object = self.find_self(cdf_invoice_file, line_number)
       return object unless object.nil?
 
-      cdf_invoice_header = CdfInvoiceHeader.
-          where(:cdf_invoice_file_id => cdf_invoice_file.id).
-          where("line_number < ?", line_number).
+      cdf_invoice_header = CdfInvoiceHeader.where(:cdf_invoice_file_id => cdf_invoice_file.id).where("line_number < ?", line_number).
           order('line_number DESC').
           limit(1).
           first

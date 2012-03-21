@@ -1,3 +1,4 @@
+#noinspection RubyArgCount
 Shipment.class_eval do
 
   has_many :children, :class_name => Shipment.name, :foreign_key => 'parent_id'
@@ -37,7 +38,7 @@ Shipment.class_eval do
     inventory_units_shipped
   end
 
-  # Removes any []InventoryUnit]s that have status 'sold'
+  # Removes any [InventoryUnit]s that have status 'sold'
   # and adds them to a child shipment
   def transfer_sold_to_child
     return unless self.inventory_units.sold.count > 0
@@ -68,4 +69,5 @@ Shipment.class_eval do
   def self.debug_shipment_state(shipment, message)
     shipment.debug_shipment_state message if shipment
   end
+  
 end

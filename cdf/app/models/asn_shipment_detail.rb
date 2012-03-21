@@ -13,6 +13,17 @@ class AsnShipmentDetail < ActiveRecord::Base
   belongs_to :asn_shipping_method_code
   belongs_to :dc_code
 
+  def initialize(attributes = nil, options = {})
+    super(attributes, options)
+
+    init_to_zero([:quantity_shipped, :quantity_slashed, :quantity_canceled, :quantity_predicted])
+  end
+
+  def init_to_zero(attrs = [])
+    attrs.each do |attr|
+      self.assign_attributes(attr => 0) unless self.read_attribute(attr).respond_to?(:times)
+    end
+  end
 
   def self.spec(d)
     d.asn_shipment_detail do |l|
@@ -42,56 +53,15 @@ class AsnShipmentDetail < ActiveRecord::Base
   end
 
   def before_populate(data)
-    self.asn_shipment = nearest_asn_shipment(data[:__LINE_NUMBER__])
-
-    [:ingram_item_list_price, :net_discounted_price, :weight].each do |key|
-      self.send("#{key}=", self.class.as_cdf_money(data, key))
-      data.delete key
-    end
-
-    self.asn_order_status = AsnOrderStatus.find_by_code(data[:item_detail_status_code])
-    data.delete :status
-
-    self.asn_slash_code = AsnSlashCode.find_by_code(data[:shipping_method_or_slash_reason_code])
-    if !self.asn_slash_code
-      self.asn_shipping_method_code = AsnShippingMethodCode.find_by_code(data[:shipping_method_or_slash_reason_code])
-    end
-    data.delete :shipping_method_or_slash_reason_code
-
-    self.order = Order.find_by_number!(data[:client_order_id])
-    data.delete :client_order_id
-
-    self.dc_code = DcCode.find_by_asn_dc_code(data[:shipping_warehouse_code])
-    if self.dc_code.nil?
-      # try with just the first digit due to spec inconsistency
-      first = data[:shipping_warehouse_code].match(/./).to_s
-      codes = DcCode.where("asn_dc_code LIKE ?", "#{first}%")
-      if codes.count
-        self.dc_code = codes.first
-      end
-    end
-    data.delete :shipping_warehouse_code
-
-    line_items = LineItem.find_by_id(data[:line_item_id_number])
-    self.line_item = line_items
-    data.delete :line_item_id_number
-
-    [:quantity_canceled,
-     :quantity_predicted,
-     :quantity_slashed,
-     :quantity_shipped].each do |field|
-      value = data[field]
-      if value.empty?
-        self.send "#{field}=", 0
-      else
-        self.send "#{field}=", value.to_i
-      end
-      data.delete field
-    end
-
-    # make sure tracking code is set
-    self.tracking = data[:tracking].strip
-    data.delete :tracking
+    assign_asn_shipment(data)
+    assign_prices(data)
+    assign_asn_order_status(data)
+    assign_shipping_method_or_slash_code(data)
+    assign_order(data)
+    assign_dc_code(data)
+    assign_line_item(data)
+    assign_quantities(data)
+    assign_tracking(data)
 
     init_shipment
   end
@@ -119,7 +89,7 @@ class AsnShipmentDetail < ActiveRecord::Base
   # The constraints are:
   # * the shipping method matches
   # * AND the order matches
-  # * AND there is NO tracking number on the shipment and no tracking number on this object
+  # * AND the tracking number matches, or there is NO tracking number on the shipment and no tracking number on this object
   def available_shipment
 
     sql = available_shipment_query
@@ -157,6 +127,8 @@ class AsnShipmentDetail < ActiveRecord::Base
     # if there are no inventory_units, delete the shipment
     if self.shipment.inventory_units.count == 0
       self.shipment.delete
+      self.shipment = nil
+      self.save!
       return
     end
 
@@ -167,6 +139,14 @@ class AsnShipmentDetail < ActiveRecord::Base
 
     self.save!
     self.shipment
+  end
+
+  def canceled?
+    if self.asn_order_status
+      self.asn_order_status && self.asn_order_status.canceled?
+    end
+
+    false
   end
 
   def shipped?
@@ -181,11 +161,52 @@ class AsnShipmentDetail < ActiveRecord::Base
     self.asn_shipment.shipment_date if self.asn_shipment
   end
 
+  def first_sold_inventory_unit
+    if self.shipment
+      inventory_unit = self.shipment.inventory_units.sold(self.variant).limit(1).first
+    end
+    inventory_unit ||= self.order.inventory_units.sold(self.variant).limit(1).first
+  end
+
+
+  # Returns the shipment that will be considered the parent of the shipment associated with this object
+  # A parent is any shipment on the same order, with the same shipping method, shipped within 1 day of this shipment
+  def find_parent_shipment
+    sql = "order_id = :order_id AND shipped_at = :shipped_at"
+    params = {:order_id => self.order.id, :shipped_at => self.shipment_date}
+
+    # match shipping methods if one exists
+    if self.shipping_method
+      sql += " AND shipping_method_id = :shipment_id"
+      params[:shipment_id] = self.shipping_method.id
+    end
+
+    Shipment.where(sql, params).order('created_at asc').first
+  end
+
+  def new_shipment_for_order(inventory_unit, state = nil)
+    parent = find_parent_shipment
+    return parent.create_child([inventory_unit]) if parent
+
+    shipment = Shipment.create!(:address => self.order.ship_address, :order => self.order, :shipping_method => self.shipping_method, :inventory_units => [inventory_unit])
+
+    if state
+      shipment.state=state
+    end
+
+    shipment
+  end
+
+
+  private
+  
+  
   # assigns [Shipment] to this [AsnShipmentDetail]
   # * as a result the shipment will be marked as shipped
   # * the tracking number will be set
   # * the inventory will be allocated
   def assign_shipment
+    raise Cdf::IllegalStateError, "Error attempting to assign_shipment: Shipment is null" if self.shipment.nil?
     raise Cdf::IllegalStateError, "Error attempting to ship shipment #{shipment.number}. Current state: #{shipment.state}" unless self.shipment.can_ship?
 
     # save the shipment status
@@ -218,18 +239,20 @@ class AsnShipmentDetail < ActiveRecord::Base
       assign_inventory_by_type(:slashed)
     end
 
+    self.quantity_canceled.times do
+      assign_inventory_by_type(:canceled)
+    end
+
   end
 
   def assign_inventory_by_type(type)
-    inventory_unit = self.shipment.inventory_units.sold(self.variant).limit(1).first if shipment
+    inventory_unit = first_sold_inventory_unit
 
-    inventory_unit ||= self.order.inventory_units.sold(self.variant).limit(1).first
-
-    raise Cdf::IllegalStateError, "Must have inventory units to assign!: #{order.shipments.count}" if inventory_unit.nil?
+    raise Cdf::IllegalStateError, "Must have inventory units to assign! The order has #{order.shipments.count} total and " if inventory_unit.nil?
 
     if type == :shipped
       self.inventory_units << inventory_unit
-      self.shipment ||= new_shipment_for_order(inventory_unit)
+      self.shipment ||= new_shipment_for_order(inventory_unit, 'ready')
       self.shipment.inventory_units << inventory_unit unless self.shipment.inventory_units.include?(inventory_unit)
       inventory_unit.ship!
 
@@ -240,30 +263,73 @@ class AsnShipmentDetail < ActiveRecord::Base
     end
 
     self.save!
-
+  end
+  
+  def assign_asn_shipment(data)
+    self.asn_shipment = nearest_asn_shipment(data[:__LINE_NUMBER__])
   end
 
+  def assign_tracking(data)
+    self.tracking = data[:tracking].strip
+    data.delete :tracking
+  end
 
-  # Returns the shipment that will be considered the parent of the shipment associated with this object
-  # A parent is any shipment on the same order, with the same shipping method, shipped within 1 day of this shipment
-  def find_parent_shipment
-    sql = "order_id = :order_id AND shipped_at = :shipped_at"
-    params = {:order_id => self.order.id, :shipped_at => self.shipment_date}
-
-    # match shipping methods if one exists
-    if self.shipping_method
-      sql += " AND shipping_method_id = :shipment_id"
-      params[:shipment_id] = self.shipping_method.id
+  def assign_quantities(data)
+    [:quantity_canceled,
+     :quantity_predicted,
+     :quantity_slashed,
+     :quantity_shipped].each do |field|
+      value = data[field]
+      if value.empty?
+        self.send "#{field}=", 0
+      else
+        self.send "#{field}=", value.to_i
+      end
+      data.delete field
     end
-
-    Shipment.where(sql, params).order('created_at asc').first
   end
 
-  def new_shipment_for_order(inventory_unit)
-    parent = find_parent_shipment
-    return parent.create_child([inventory_unit]) if parent
-
-    Shipment.create(:address => self.order.ship_address, :order => self.order, :shipping_method => self.shipping_method, :inventory_units => [inventory_unit])
+  def assign_line_item(data)
+    line_item = LineItem.find_by_id(data[:line_item_id_number])
+    self.line_item = line_item
+    data.delete :line_item_id_number
   end
 
+  def assign_dc_code(data)
+    self.dc_code = DcCode.find_by_asn_dc_code(data[:shipping_warehouse_code])
+    if self.dc_code.nil?
+      # try with just the first digit due to spec inconsistency
+      first = data[:shipping_warehouse_code].match(/./).to_s
+      codes = DcCode.where("asn_dc_code LIKE ?", "#{first}%")
+      if codes.count
+        self.dc_code = codes.first
+      end
+    end
+    data.delete :shipping_warehouse_code
+  end
+
+  def assign_order(data)
+    self.order = Order.find_by_number!(data[:client_order_id])
+    data.delete :client_order_id
+  end
+
+  def assign_shipping_method_or_slash_code(data)
+    self.asn_slash_code = AsnSlashCode.find_by_code(data[:shipping_method_or_slash_reason_code])
+    unless self.asn_slash_code
+      self.asn_shipping_method_code = AsnShippingMethodCode.find_by_code(data[:shipping_method_or_slash_reason_code])
+    end
+    data.delete :shipping_method_or_slash_reason_code
+  end
+
+  def assign_asn_order_status(data)
+    self.asn_order_status = AsnOrderStatus.find_by_code(data[:item_detail_status_code])
+    data.delete :status
+  end
+
+  def assign_prices(data)
+    [:ingram_item_list_price, :net_discounted_price, :weight].each do |key|
+      self.send("#{key}=", self.class.as_cdf_money(data, key))
+      data.delete key
+    end
+  end
 end

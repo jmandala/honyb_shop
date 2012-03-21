@@ -1,19 +1,15 @@
-$VERBOSE = nil
-
 require 'rubygems'
 require 'spork'
-require 'spork/ext/ruby-debug'
-
 
 Spork.prefork do
   ENV["RAILS_ENV"] ||= "cucumber"
   require File.expand_path(File.dirname(__FILE__) + '/../../config/environment')
 
-  require 'cucumber'
-  require 'cucumber/rails'
-  require 'cucumber/formatter/unicode' # Comment out this line if you don't want Cucumber Unicode support
+  #require 'cucumber'
+  #require 'cucumber/rails'
+  #require 'cucumber/formatter/unicode' # Comment out this line if you don't want Cucumber Unicode support
   require 'rspec/rails'
-  require 'cucumber/rails/rspec'
+  #require 'cucumber/rails/rspec'
 
   Capybara.default_selector = :css
 end

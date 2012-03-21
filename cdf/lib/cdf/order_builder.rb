@@ -32,7 +32,7 @@ class Cdf::OrderBuilder
       {:id => 29, :name => 'backorder cancel reported in asn', :ean_type => :out_of_stock_backorder_cancel},
       {:id => 30, :name => 'backorder shipped on product receipt', :ean_type => :out_of_stock_backorder_ship},
       {:id => 31, :name => 'shipping 1 item in multiple boxes from the same DC: in stock', :line_item_qty => 30, :ean_type => :in_stock},
-      {:id => 32, :name => 'shipping 1 item in multiple boxes from the same DC', :line_item_qty => 30, :ean_type => :multiple_boxes},      
+      {:id => 32, :name => 'shipping 1 item in multiple boxes from the same DC', :line_item_qty => 30, :ean_type => :multiple_boxes},
 
   ]
 
@@ -48,6 +48,12 @@ class Cdf::OrderBuilder
     orders
   end
 
+  def self.create_for_scenario(name)
+    raise ArgumentError, "No scenarios given" if name.nil?
+    scenario = find_scenario_by_name name
+    completed_test_order scenario
+  end
+
   def self.find_scenario(id)
     SCENARIOS.each do |scenario|
       return scenario if scenario[:id] == id.to_i
@@ -55,6 +61,27 @@ class Cdf::OrderBuilder
     raise ArgumentError, "No scenario found with id: '#{id}'"
   end
 
+  def self.find_scenario_by_name(name)
+    SCENARIOS.each do |scenario|
+      return scenario if scenario[:name] == name
+    end
+    raise ArgumentError, "No scenario found with name: '#{name}'"
+  end
+
+  # Creates a new completed order setting default values, or values from the options passed
+  # @param opts [Hash] hash of valid options including
+  # - state_abbr
+  # - line_item_count
+  # - line_item_qty
+  # - backordered_line_item_count
+  # - backordered_line_item_qty
+  # - dc_code
+  # - split_shipment_type
+  # - name
+  # - ean_type
+  # - ean
+  # - order_number
+  # @return [Order] a new order created with the options provided
   def self.completed_test_order(opts={})
     opts[:state_abbr] ||= :ME
     opts[:line_item_count] ||= 1
@@ -64,8 +91,9 @@ class Cdf::OrderBuilder
     opts[:dc_code] ||= :default
     opts[:split_shipment_type] ||= :default
 
-    order = Order.new_test
+    order = Order.create_test_order
     order.order_name = opts[:name]
+    order.number = opts[:order_number] if opts[:order_number]
 
     init_dc_code order, opts[:dc_code]
     init_split_shipment_type order, opts[:split_shipment_type]
@@ -80,12 +108,20 @@ class Cdf::OrderBuilder
     product_builder = Cdf::ProductBuilder.new
 
     opts[:line_item_count].times do
-      if opts[:ean_type].respond_to?(:each)
-        opts[:ean_type].each { |ean_type| order.add_variant product_builder.next_product!(ean_type).master, opts[:line_item_qty] }
+      if opts[:ean]
+        if opts[:ean].respond_to?(:each)
+          opts[:ean].each { |ean| order.add_variant Cdf::ProductBuilder.create!(:sku => ean, :name => 'Custom Product').master, opts[:line_item_qty] }
+        else
+          order.add_variant Cdf::ProductBuilder.create!(:sku => opts[:ean], :name => 'Custom Product').master, opts[:line_item_qty]
+        end
       else
-        order.add_variant product_builder.next_product!(opts[:ean_type]).master, opts[:line_item_qty]
-      end
 
+        if opts[:ean_type].respond_to?(:each)
+          opts[:ean_type].each { |ean_type| order.add_variant product_builder.next_product!(ean_type).master, opts[:line_item_qty] }
+        else
+          order.add_variant product_builder.next_product!(opts[:ean_type]).master, opts[:line_item_qty]
+        end
+      end
     end
 
     order.payments.create(
@@ -119,7 +155,7 @@ class Cdf::OrderBuilder
     ShippingMethod.find_by_name!(opts[:shipping_method])
   end
 
-  def self.create_address(opts)
+  def self.create_address(opts={})
     opts[:state_abbr] ||= :ME
     opts[:address1] ||= "10 Lovely Street"
     my_addr = address

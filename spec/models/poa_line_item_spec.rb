@@ -1,15 +1,9 @@
-require_relative '../spec_helper'
+require 'spec_helper'
 
 describe PoaLineItem do
 
-
-    after(:all) do
-      PoaFile.all.each { |p| p.destroy}
-      LineItem.all.each { |l| l.destroy }
-    end
-
   context "when creating a new instance" do
-    before(:all) do
+    before :each do
       #noinspection RubyInstanceVariableNamingConvention
       @p = FactoryGirl.create :poa_line_item
     end

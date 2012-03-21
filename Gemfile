@@ -1,9 +1,8 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.1.3'
+gem 'rails', '3.1.4'
 
 gem 'sqlite3'
-
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -15,18 +14,8 @@ group :assets do
 end
 
 gem 'jquery-rails'
-
-# gem 'bcrypt-ruby', '~>3.0.0'
-
-# Deploy with Capistrano
 gem 'capistrano'
-
-# Bundle the extra gems:
-#gem 'bj'
-#gem 'nokogiri'
-
 gem 'haml'
-
 gem 'faker'
 gem "factory_girl_rails"
 
@@ -34,27 +23,21 @@ group :production do
   gem 'mysql2'
 end
 
-gem 'ruby-debug19', :require => 'ruby-debug'
-
 # Dev/Test gems
-group :cucumber, :test, :development do
-  #gem 'rails-dev-boost'
+group :test, :development do
+  gem 'launchy'
   gem 'spork', '~> 0.9.0.rc'
   gem 'capybara'
-  gem 'cucumber'
-  gem 'cucumber-rails'
   gem 'database_cleaner'
   gem 'rspec-rails'
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
-  #gem 'guard-rspec'
-  #gem 'guard-cucumber'
-  #gem 'guard-spork'
+  gem 'guard-rspec'
+  gem 'minitest-reporters', '>= 0.5.0'
+  gem 'guard-spork'
   gem 'turn', :require => false
 end
 
-
-# Followed by spree itself first, all spree-specific extensions second
-gem 'spree', '0.70.3'
+gem 'spree', '0.70.5'
 
 gem "spree_comments", :git => 'git://github.com/spree/spree_comments.git', :ref => "a33693ffaeb60fc8bcde6c805c9659ff4b7e2bd6"
 gem "acts_as_commentable"
@@ -66,5 +49,8 @@ gem "spree_pages", :git => 'git://github.com/BDQ/spree_pages.git'
 gem "cdf", :path => "cdf", :require => "cdf"
 
 gem 'routing-filter'
-#gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "975ab7c2c60a7aee53fd80a95447fbe0d53b1f79"
+
+gem 'rack-p3p', :git => 'git://github.com/jmandala/rack-p3p.git'
+
+#gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "976ced9d82b6dce18e92bd751dc66930498e8d87"
 gem 'honyb_theme', :path => '../honyb_theme'

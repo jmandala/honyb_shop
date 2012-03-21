@@ -1,22 +1,36 @@
-require_relative '../spec_helper'
+require 'spec_helper'
 
 describe PoFile do
 
-  before(:all) do
-    Cdf::Config.set(:cdf_bill_to_account => '20N1031')
-    Cdf::Config.set(:cdf_ship_to_account => '20N2730')
-    Cdf::Config.set(:cdf_ship_to_password => 'MANDAFB4')
-    Cdf::Config.set(:cdf_ftp_user => 'c20N2730')
-    Cdf::Config.set(:cdf_ftp_password => 'q3429czhvf')
-    Cdf::Config.set(:cdf_ftp_server => 'ftp1.ingrambook.com')
-    Cdf::Config.set(:cdf_run_mode => :test)
+  before :each do
+    Cdf::Config.init_from_config unless Cdf::Config.instance
+  end
 
-    @builder = Cdf::OrderBuilder
-    @order = @builder.completed_test_order({:id => 5, 
-                                            :name => 'single order/multiple lines/multiple quantity: Hawaii', 
-                                            :line_item_count => 2,
-                                            :line_item_qty => 2, 
-                                            :ship_location => :HI})
+  let(:builder) { Cdf::OrderBuilder }
+  let(:create_order) { builder.completed_test_order({:id => 5,
+                                                     :name => 'single order/multiple lines/multiple quantity: Hawaii',
+                                                     :line_item_count => 2,
+                                                     :line_item_qty => 2,
+                                                     :ship_location => :HI}) }
+
+  let(:generate_po_file) { PoFile.generate }
+
+  it "should create an order, and find the order it creates" do
+    Order.count.should == 0
+    order = create_order
+    Order.count.should == 1
+    Order.find_by_id(order.id).should == order
+  end
+
+  it "should still have no orders!" do
+    Order.count.should == 0
+  end
+
+  it "should have orders that need po files" do
+    Order.needs_po.count.should == 0
+    order = create_order
+    order.needs_po?.should == true
+    Order.needs_po.count.should == 1
   end
 
   context "default behaviors" do
@@ -68,23 +82,25 @@ describe PoFile do
 
   context "when generating a purchase order" do
 
-    before(:all) do
-      order_count = Order.needs_po.count
-      @po_file = PoFile.generate
-      @po_file.orders.count.should == order_count
-      Order.needs_po.count.should == 0
+    before :each do
+      @order = create_order
+      @po_file = generate_po_file
     end
 
     after(:all) do
       @po_file.delete_file if @po_file
     end
-    
+
     it "should have orders" do
-      @po_file.orders.count.should == 1
+      @po_file.orders.should == [@order]
     end
 
     it "should not have poa_files" do
       @po_file.poa_files.count.should == 0
+    end
+
+    it "should be a test purchase order" do
+      @po_file.po_type.should == PoFile::PO_TYPE[:test_purchase_order]
     end
 
     it "should read the purchase order" do
@@ -92,29 +108,36 @@ describe PoFile do
     end
 
     it "should put the file to the FTP server" do
-      puts @po_file.read
-
       @po_file.put.should == @po_file.submitted_at
       @po_file.submitted_at.should_not == nil
-      puts @po_file.submitted_at
       @po_file.submitted?.should == true
-      
+
       @client = CdfFtpClient.new
-      
-      puts @client.incoming_files.to_yaml
-      puts @client.archive_files.to_yaml
-      puts @client.outgoing_files.to_yaml
-      puts @client.test_files.to_yaml
+
+      @client.incoming_files.should == []
+      @client.archive_files.should == []
+      @client.outgoing_files.should == []
+      @client.test_files.should == []
     end
 
     it "should return the previous submitted at data if submitted twice" do
+      @po_file.put
       previous = @po_file.submitted_at
       @po_file.put.should == previous
     end
 
     context "when parsing a PoFile" do
 
-      before(:all) do
+      before :each do
+        @order = create_order
+        @po_file = generate_po_file
+        @parsed = FixedWidth.parse(File.new(@po_file.path), :po_file)
+
+        @po_file.orders.count.should == 1
+        @po_file.orders.should == [@order]
+      end
+
+      before :all do
         FixedWidth.define :po_file do |d|
           d.template :default do |t|
             t.record_code 2
@@ -168,7 +191,7 @@ describe PoFile do
             l.template :default
             l.ingram_ship_to_account_number 7
             l.po_type 1
-            l.order_type 2
+            l.split_shipment_type 2
             l.dc_code 1
             l.spacer 1
             l.green_light 1
@@ -354,7 +377,6 @@ describe PoFile do
 
         end
 
-        @parsed = FixedWidth.parse(File.new(@po_file.path), :po_file)
 
       end
 
@@ -393,7 +415,7 @@ describe PoFile do
         record.length.should == 1
         should_match(record.first, {:record_code => '10',
                                     :sequence_number => '00002',
-                                    :ingram_bill_to_account_number => Cdf::Config.get(:cdf_bill_to_account),
+                                    :ingram_bill_to_account_number => Cdf::Config[:cdf_bill_to_account],
                                     :vendor_san => '1697978',
                                     :order_date => @order.completed_at.strftime("%y%m%d"),
                                     :backorder_cancel_date => (@order.completed_at + 3.months).strftime("%y%m%d"),
@@ -412,17 +434,18 @@ describe PoFile do
         record = @parsed[:po_21]
         record.length.should == 1
         should_match(record.first, {:record_code => '21',
-                                    :ingram_ship_to_account_number => Cdf::Config.get(:cdf_ship_to_account),
+                                    :ingram_ship_to_account_number => Cdf::Config[:cdf_ship_to_account],
                                     :sequence_number => '00004',
                                     :po_number => @order.number.ljust_trim(22),
-                                    :po_type => Records::Po::Po21::PO_TYPE[:purchase_order],
-                                    :shplit_shipment_type => Order::SPLIT_SHIPMENT_TYPE[:release_when_full],
+                                    :po_type => PoFile::PO_TYPE[:test_purchase_order],
                                     :dc_code => '',
                                     :green_light => 'Y',
                                     :poa_type => Records::Po::Po21::POA_TYPE[:full_acknowledgement],
-                                    :ship_to_password => Cdf::Config.get(:cdf_ship_to_password),
+                                    :ship_to_password => Cdf::Config[:cdf_ship_to_password],
                                     :carrier_shipping_method => '### USA ECONOMY',
                                     :split_order_allowed => 'Y'})
+
+        should_match(record.first, :split_shipment_type => Order::SPLIT_SHIPMENT_TYPE[:release_when_full])
       end
 
       it "should format po_40 correctly" do
@@ -437,5 +460,7 @@ describe PoFile do
 end
 
 def should_match(record, hash)
-  hash.each_key { |key| record[key].should == hash[key] }
+  hash.each_key do |key|
+    record[key].should == hash[key]
+  end
 end

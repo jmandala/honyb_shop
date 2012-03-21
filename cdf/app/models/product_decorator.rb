@@ -8,5 +8,8 @@ Product.class_eval do
     "EN"
   end
 
+  def self.spec_test
+    true
+  end
 
 end

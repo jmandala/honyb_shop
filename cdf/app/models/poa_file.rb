@@ -62,6 +62,8 @@ class PoaFile < ActiveRecord::Base
 
   end
 
+  
+  
   def populate_file_header(p)
     if !p.key?(:header)
       raise ArgumentError, "Invalid file data. Expected ':header'. Got: #{self.data}"

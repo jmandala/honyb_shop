@@ -13,6 +13,9 @@ class CdfFtpClient
 
   attr_reader :server, :user, :password
 
+  BAD_PASSWORD = 'bad password'
+  
+  
   def run_mode
     Cdf::Config[:cdf_run_mode].to_sym
   end
@@ -30,10 +33,13 @@ class CdfFtpClient
   end
 
   def initialize(opts={})
-    @keep_alive = opts[:keep_alive] || false
+    @keep_alive = opts[:keep_alive]
     @server = Cdf::Config[:cdf_ftp_server]
     @user = Cdf::Config[:cdf_ftp_user]
     @password = Cdf::Config[:cdf_ftp_password]
+    
+    # unset the password unless in production
+    #@password = BAD_PASSWORD unless Rails.env.production?
     @ftp = nil
   end
 

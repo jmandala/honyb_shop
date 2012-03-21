@@ -1,9 +1,9 @@
 class FixedWidth
   class Column
-    DEFAULT_PADDING = ' '
-    DEFAULT_ALIGNMENT = :right
-    DEFAULT_TRUNCATE = false
-    DEFAULT_FORMATTER = :to_s
+    DEFAULT_PADDING = ' ' unless Column.const_defined? :DEFAULT_PADDING
+    DEFAULT_ALIGNMENT = :right unless Column.const_defined? :DEFAULT_ALIGNMENT
+    DEFAULT_TRUNCATE = false unless Column.const_defined? :DEFAULT_TRUNCATE
+    DEFAULT_FORMATTER = :to_s unless Column.const_defined? :DEFAULT_FORMATTER
 
     attr_reader :name, :length, :alignment, :padding, :truncate, :group
 
@@ -53,7 +53,7 @@ class FixedWidth
     end
 
     private
-    BLANK_REGEX = /^\s*$/
+    BLANK_REGEX = /^\s*$/ unless Column.const_defined? :BLANK_REGEX
 
     def blank?(value)
       value =~ BLANK_REGEX

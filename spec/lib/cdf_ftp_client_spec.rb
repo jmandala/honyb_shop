@@ -2,14 +2,20 @@ require_relative '../spec_helper'
 require 'net/ftp'
 
 describe CdfFtpClient do
-
-  before(:all) do
-    Cdf::Config.set(:cdf_ftp_server => 'test_ftp_server')
-    Cdf::Config.set(:cdf_ftp_user => 'test_ftp_user')
-    Cdf::Config.set(:cdf_ftp_password => 'test_ftp_password')
+  
+  before :all do
     Cdf::Config.set(:cdf_run_mode => :test)
+
+    Cdf::Config.init_from_config(:overwrite)
+    
     @default_client = CdfFtpClient.new
   end
+
+
+  after :all do
+    Cdf::Config.set(:cdf_run_mode => :mock)
+  end
+
 
   context "when using default initialization" do
 
@@ -26,6 +32,8 @@ describe CdfFtpClient do
 
     it "should be in test mode" do
       @default_client.test?.should == true
+      @default_client.mock?.should == false
+      @default_client.live?.should == false
     end
   end
 
@@ -33,12 +41,13 @@ describe CdfFtpClient do
 
     context "when run in test mode" do
 
+      before :all do
+        Cdf::Config.set(:cdf_run_mode => 'test')
+      end
+      
       context "when credentials are valid" do
 
         before(:each) do
-          Cdf::Config.set(:cdf_ftp_user => 'c20N2730')
-          Cdf::Config.set(:cdf_ftp_password => 'q3429czhvf')
-          Cdf::Config.set(:cdf_ftp_server => 'ftp1.ingrambook.com')
           @client = CdfFtpClient.new
         end
 
@@ -84,16 +93,16 @@ describe CdfFtpClient do
           
           alive.put('~/archive', file_name)
           
-          files = alive.get_all('~/archive', '.*\.txt', 'download_dir')
+          files = alive.get_all('~/archive', '.*\.txt', 'tmp/download_dir')
           files.should == [file_name]
           
-          new_file = File.join('download_dir', file_name)
+          new_file = File.join('tmp/download_dir', file_name)
           
           content.should == File.read(new_file)
           
           File.delete file_name
           File.delete new_file
-          FileUtils.rm_f 'download_dir'
+          FileUtils.rm_f 'tmp/download_dir'
           
           alive.delete('~/archive', file_name)
           alive.close

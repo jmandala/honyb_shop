@@ -3,7 +3,7 @@ module Records
   class Base
 
     # The character sequence between records -- defined by Ingram
-    LINE_TERMINATOR = "\r\n"
+    LINE_TERMINATOR = "\r\n" unless Base.const_defined? :LINE_TERMINATOR
 
     def initialize(sequence, args = {})
       @sequence = sequence

@@ -17,6 +17,10 @@ module Records
       def po_number
         @order.number.ljust_trim 22
       end
+      
+      def po_file
+        @order.po_file
+      end
 
       def line_item
         @options[:line_item]

@@ -1,7 +1,7 @@
+#noinspection RubyArgCount
 ShippingMethod.class_eval do
   
   has_one :asn_shipping_method_code
-
   
   def available?(order, display_on=nil)
     display_check = (self.display_on == display_on.to_s || self.display_on.blank?)

@@ -1,46 +1,34 @@
-require_relative '../spec_helper'
+require 'spec_helper'
 
 describe PoaAdditionalDetail do
 
-  after(:all) do
-    PoaFile.all.each &:destroy
-    Order.all.each &:destroy
-    LineItem.all.each &:destroy
-  end
-
   context "when creating a new instance" do
-    before(:all) do
-      @pad = FactoryGirl.create :poa_additional_detail
-    end
-
-    after(:all) do
-      poa_file = @pad.poa_file
-      poa_file.destroy
-    end
+    
+    let(:pad) { FactoryGirl.create :poa_additional_detail }
 
     it "should have default values" do
-      @pad.availability_date.should_not == nil
-      @pad.po_number.should_not == nil
-      @pad.poa_order_header.should_not == nil
+      pad.availability_date.should_not == nil
+      pad.po_number.should_not == nil
+      pad.poa_order_header.should_not == nil
     end
 
     it "should have a sequence number" do
-      @pad.sequence_number.should_not == nil
-      @pad.sequence_number.to_i > 0
+      pad.sequence_number.should_not == nil
+      pad.sequence_number.to_i > 0
     end
 
     it "should delegate poa_file" do
-      @pad.poa_file.should == @pad.poa_order_header.poa_file
+      pad.poa_file.should == pad.poa_order_header.poa_file
     end
 
     it "should #find_self" do
-      PoaAdditionalDetail.find_self(@pad.poa_file, @pad.sequence_number).should == @pad
+      PoaAdditionalDetail.find_self(pad.poa_file, pad.sequence_number).should == pad
     end
   end
 
   context "when created during an import" do
 
-    before(:all) do
+    before :each do
       @order_1 = FactoryGirl.create :order
 
       # variants, line items

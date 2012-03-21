@@ -1,14 +1,9 @@
-require_relative '../spec_helper'
+require 'spec_helper'
 
 describe PoaLineItemTitleRecord do
 
-  after(:all) do
-    PoaFile.all.each { |p| p.destroy }
-    LineItem.all.each { |l| l.destroy }
-  end
-
   context "when creating a new instance" do
-    before(:all) do
+    before :each do
       #noinspection RubyInstanceVariableNamingConvention
       @p = FactoryGirl.create :poa_line_item_title_record
     end
@@ -40,7 +35,7 @@ describe PoaLineItemTitleRecord do
 
   context "when created during an import" do
 
-    before(:all) do
+    before :each do
       @order_1 = FactoryGirl.create :order
 
       # variants, line items
@@ -75,7 +70,6 @@ describe PoaLineItemTitleRecord do
         poa_line_item = instance_variable_get "@poa_line_item_#{i}"
         poa_line_item.should_not == nil
         poa_line_item_title_record.poa_line_item.should == nil
-        puts "my sequence: #{poa_line_item_title_record.sequence_number}"
         poa_line_item_title_record.nearest_poa_line_item.should == poa_line_item
       end
 

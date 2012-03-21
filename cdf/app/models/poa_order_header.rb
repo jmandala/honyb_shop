@@ -50,13 +50,16 @@ class PoaOrderHeader < ActiveRecord::Base
     end
   end
 
+  #noinspection RailsChecklist04
   def self.find_self(order, poa_file)
     where(:order_id => order, :poa_file_id => poa_file).first
   end
 
+  #noinspection RailsChecklist04
   def self.find_self!(order, poa_file)
     object = find_self(order, poa_file)
     return object unless object.nil?
+    #noinspection RubyArgCount
     create(:order => order, :poa_file => poa_file)
   end
 

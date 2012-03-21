@@ -73,17 +73,44 @@ end
 namespace :assets do
   desc "create symlinks from shared resources to the release path"
   task :symlink, :roles => :app do
-    release_image_dir = "#{release_path}/public/spree/"
-    shared_image_dir = "#{shared_path}/uploaded-files/spree/products/"
 
-    run "mkdir -p #{release_image_dir}"
-    run "mkdir -p #{shared_image_dir}"
-
-    run "ln -nfs #{shared_image_dir} #{release_image_dir}"
+    symlink_to_shared '/public/spree/products', '/uploaded-files/spree/products'
+    symlink_to_shared '/cdf/data_lib'
+    symlink_to_shared '/cdf/config/config.yml'
   end
-
 end
 
 after "deploy:update_code", "assets:symlink"
 
 load 'deploy/assets'
+
+# @returns true if path is a directory -- has not file extension
+def path_is_dir(path)
+  File.extname(path) == ''
+end
+
+# Creates a symlink from the <tt>from</tt> path within the release to the <tt>to</tt> path 
+# in the shared path.
+# 
+# If <tt>to</tt> is nil, use the <tt>from</tt> path value
+def symlink_to_shared(from, to = nil)
+  orig_path = release_path + from
+
+  if to
+    dest_path = shared_path + to
+  else 
+    dest_path = shared_path + from    
+  end
+
+  run "mkdir -p #{orig_path}" if path_is_dir orig_path
+  run "mkdir -p #{dest_path}" if path_is_dir dest_path  
+
+  # if the original path exists, 
+  # and the path is a directory
+  # rsync all the existing files to the destination first
+  # then delete it
+  run "if [ -d '#{orig_path}' ]; then rsync -avz #{orig_path}/ #{dest_path}; fi" if path_is_dir orig_path
+  
+  run "rm -rf #{orig_path} && ln -s #{dest_path} #{orig_path}"
+  
+end

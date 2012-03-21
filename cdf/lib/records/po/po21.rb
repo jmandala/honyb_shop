@@ -4,17 +4,6 @@ module Records
 # Purchase Order Options Record
     class Po21 < PoBase
 
-      PO_TYPE = {
-          :purchase_order => '0',
-          :request_confirmation => '1',
-          :reserved => '2',
-          :stock_status_request => '3',
-          :reserved => '4',
-          :specific_confirmation => '5',
-          :request_confirmation_web_service => '7',
-          :test_purchase_order => '8'
-      }
-
       # The POA Type allows you to define the amount of detail that will be returned in the POA.
       # It is specified in the PO file and returned in the POA File Header to indicate which records
       # will be included in the POA file. One of the following codes should be entered in the PO Record 21, position 44
@@ -30,12 +19,11 @@ module Records
           :no_42_43_or_44_records => '4',
           :exception_acknowledgement => '5'
       }
-
       
       def cdf_record
         cdf = super
         cdf << ingram_ship_to_account_number
-        cdf << po_type
+        cdf << po_file.po_type
         cdf << split_shipment_type
         cdf << dc_code
         cdf << reserved(1)
@@ -56,20 +44,6 @@ module Records
         Cdf::Config.get(:cdf_ship_to_account).ljust_trim 7
       end
 
-      def po_type
-        if Cdf::Config.get(:cdf_run_mode).nil?
-          Cdf::Config.set({:cdf_run_mode => 'false'})
-        end
-
-        # Never send test orders while in TEST_MODE
-        if Cdf::Config.get(:cdf_run_mode) == 'true'
-          return PO_TYPE[:purchase_order].ljust_trim(1)
-        end
-
-        # todo: make a way to pass in the PO_TYPE
-        PO_TYPE[:purchase_order].ljust_trim 1
-
-      end
 
       def split_shipment_type
         @order.split_shipment_type.ljust_trim 2

@@ -9,11 +9,12 @@ module SpreeSite
         Rails.env.production? ? require(c) : load(c)
       end
 
-      Spree::Config.set(:checkout_zone => 'ALL US')
-      Spree::Config.set(:site_name => 'honyb ~ the ultimate indie bookstore')
-      
+      if Spree::Config.instance
+        Spree::Config.set(:checkout_zone => 'ALL US')
+        Spree::Config.set(:site_name => 'honyb ~ the ultimate indie bookstore')
+      end
+
     end
-    
 
     config.to_prepare &method(:activate).to_proc
   end

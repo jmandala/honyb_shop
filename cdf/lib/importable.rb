@@ -204,7 +204,6 @@ module Importable
 
   end
 
-
   def data
     raise ArgumentError, "File not found: #{path}" unless File.exists?(path)
     return @data unless @data.nil? || @data.empty?
