@@ -51,6 +51,7 @@ gem "cdf", :path => "cdf", :require => "cdf"
 gem 'routing-filter'
 
 gem 'rack-p3p', :git => 'git://github.com/jmandala/rack-p3p.git'
+gem 'rack-jsonp-middleware'
 
 gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "097a35b6ec637f47f5415c7c16bfa7cc8aa3702e"
 #gem 'honyb_theme', :path => '../honyb_theme'
