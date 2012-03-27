@@ -31,6 +31,7 @@ set :scm_verbose, true
 set :use_sudo, false
 set :rails_env, :production
 
+set :keep_releases, '10'
 
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts
@@ -81,6 +82,7 @@ namespace :assets do
 end
 
 after "deploy:update_code", "assets:symlink"
+after "deploy", "deploy:cleanup"
 
 load 'deploy/assets'
 
