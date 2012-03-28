@@ -39,7 +39,7 @@ module HonybShop
     config.middleware.use Rack::JSONP
     
     # force ssl in order to get cookies to work properly
-    config.force_ssl = true
+    #config.force_ssl = true
     
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
