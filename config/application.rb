@@ -33,7 +33,7 @@ module HonybShop
     
     require 'rack_p3p'
     #config.middleware.insert_before ActionDispatch::Session::CookieStore, Rack::P3p, %Q{NON DSP COR CUR ADM DEV TAI PSA PSD IVA IVD CON HIS OTP OUR DEL SAM UNR STP ONL PUR NAV COM}
-    config.middleware.insert_before ActionDispatch::Session::CookieStore, Rack::P3p
+    config.middleware.insert_before ActionDispatch::Session::CookieStore, Rack::P3p, %Q{This is not a P3P policy! See http://www.honyb.com/privacy for more info.}
     
     require 'rack/jsonp'    
     config.middleware.use Rack::JSONP
