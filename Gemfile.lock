@@ -158,7 +158,6 @@ GEM
     highline (1.6.2)
     hike (1.2.1)
     i18n (0.6.0)
-    ie_iframe_cookies (0.1.2)
     jquery-rails (1.0.19)
       railties (~> 3.0)
       thor (~> 0.14)
@@ -348,7 +347,6 @@ DEPENDENCIES
   guard-spork
   haml
   honyb_theme!
-  ie_iframe_cookies
   jquery-rails
   launchy
   minitest-reporters (>= 0.5.0)

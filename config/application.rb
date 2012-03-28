@@ -31,8 +31,9 @@ module HonybShop
     config.middleware.use "RedirectLegacyProductUrl"
     config.middleware.use "SeoAssist"
     
-    #require 'rack_p3p'
+    require 'rack_p3p'
     #config.middleware.insert_before ActionDispatch::Session::CookieStore, Rack::P3p, %Q{NON DSP COR CUR ADM DEV TAI PSA PSD IVA IVD CON HIS OTP OUR DEL SAM UNR STP ONL PUR NAV COM}
+    config.middleware.insert_before ActionDispatch::Session::CookieStore, Rack::P3p
     
     require 'rack/jsonp'    
     config.middleware.use Rack::JSONP
