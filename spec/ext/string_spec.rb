@@ -9,6 +9,12 @@ describe String do
     "abc".ljust_trim(10).should == "abc       "
     "abc".ljust_trim(10, "-").should == "abc-------"
   end
+  
+  it "should justify 35 characters" do
+    result = "1234567890123456789012345678901234567890".ljust_trim(35)
+    result.length.should == 35
+    result.should == "12345678901234567890123456789012345"
+  end
 
 
   #it "should wrap every x characters" do

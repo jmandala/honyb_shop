@@ -5,7 +5,7 @@ class String
     end
 
     Rails.logger.warn "String trimmed. Orig '#{self}'. Length: '#{length}'"
-    self[0, length-1]
+    self[0, length]
 
   end
   

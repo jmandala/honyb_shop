@@ -3,7 +3,11 @@ require 'spec_helper'
 describe PoFile do
 
   before :each do
-    Cdf::Config.init_from_config unless Cdf::Config.instance
+    Cdf::Config.init_from_config unless Cdf::Config.instance    
+  end
+  
+  after :each do 
+    Order.all.each &:destroy
   end
 
   let(:builder) { Cdf::OrderBuilder }
@@ -84,6 +88,8 @@ describe PoFile do
 
     before :each do
       @order = create_order
+      @order.save!
+
       @po_file = generate_po_file
     end
 
@@ -126,13 +132,11 @@ describe PoFile do
       @po_file.put.should == previous
     end
 
+
     context "when parsing a PoFile" do
 
       before :each do
-        @order = create_order
-        @po_file = generate_po_file
         @parsed = FixedWidth.parse(File.new(@po_file.path), :po_file)
-
         @po_file.orders.count.should == 1
         @po_file.orders.should == [@order]
       end
@@ -453,6 +457,29 @@ describe PoFile do
         record.should_not == nil
         record.length.should == 2
       end
+
+
+      it "should format po_32 correctly" do
+        record = @parsed[:po_32]
+        record.length.should == 2
+        [:address1, :address2].each_with_index do |field, i|
+          record[i][:recipient_address_line].should == @order.ship_address.send(field)
+        end
+      end
+
+      it "should format po_34 correctly" do
+        records = @parsed[:po_34]
+        records.length.should == 1
+        record = records[0]
+        
+          record[:recipient_city].should == @order.ship_address.city
+          record[:recipient_postal_code].should == @order.ship_address.zipcode
+          record[:recipient_state].should == @order.ship_address.state.abbr
+          record[:recipient_country].should == @order.ship_address.country.iso3
+        
+        
+      end
+
 
     end
 

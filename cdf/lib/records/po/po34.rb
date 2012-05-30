@@ -17,19 +17,19 @@ module Records
       end
 
       def recipient_city
-        @order.bill_address.city.ljust_trim 25
+        @order.ship_address.city.ljust_trim 25
       end
 
       def recipient_postal_code
-        @order.bill_address.zipcode.ljust_trim 11
+        @order.ship_address.zipcode.ljust_trim 11
       end
 
       def recipient_state
-        @order.bill_address.state.abbr.ljust_trim(3)
+        @order.ship_address.state.abbr.ljust_trim(3)
       end
 
       def recipient_country
-        @order.bill_address.country.iso3
+        @order.ship_address.country.iso3
       end
     end
   end

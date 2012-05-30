@@ -33,7 +33,6 @@ class Cdf::OrderBuilder
       {:id => 30, :name => 'backorder shipped on product receipt', :ean_type => :out_of_stock_backorder_ship},
       {:id => 31, :name => 'shipping 1 item in multiple boxes from the same DC: in stock', :line_item_qty => 30, :ean_type => :in_stock},
       {:id => 32, :name => 'shipping 1 item in multiple boxes from the same DC', :line_item_qty => 30, :ean_type => :multiple_boxes},
-
   ]
 
   def self.create_for_scenarios(scenarios=[])
@@ -83,7 +82,9 @@ class Cdf::OrderBuilder
   # - order_number
   # @return [Order] a new order created with the options provided
   def self.completed_test_order(opts={})
-    opts[:state_abbr] ||= :ME
+    bill_address = create_address opts
+    ship_address = create_address opts
+
     opts[:line_item_count] ||= 1
     opts[:line_item_qty] ||= 1
     opts[:backordered_line_item_count] ||= 0
@@ -98,10 +99,8 @@ class Cdf::OrderBuilder
     init_dc_code order, opts[:dc_code]
     init_split_shipment_type order, opts[:split_shipment_type]
 
-    address = create_address opts
-
-    order.bill_address = address
-    order.ship_address = address
+    order.bill_address = bill_address
+    order.ship_address = ship_address
 
     order.shipping_method = select_shipping_method order, opts
 
@@ -157,26 +156,47 @@ class Cdf::OrderBuilder
 
   def self.create_address(opts={})
     opts[:state_abbr] ||= :ME
-    opts[:address1] ||= "10 Lovely Street"
     my_addr = address
-    my_addr.address1 = opts[:address1]
-    my_addr.state = State.find_by_abbr!(opts[:state_abbr])
-    my_addr.country = my_addr.state.country
+    [:address1, :address2, :city].each do |field|
+      my_addr.send("#{field.to_s}=", opts[field]) if opts[field]
+    end
+
+    if opts[:state_abbr]
+      my_addr.state = State.find_by_abbr!(opts[:state_abbr])
+      my_addr.country = my_addr.state.country
+    end
+
     my_addr.save!
     my_addr
   end
 
   def self.address
+    us = Country.find_by_iso('US')
+    state = us.states[rand(us.states.size - 1)]
+
     Address.new(
-        :firstname => 'John',
-        :lastname => 'Doe',
-        :address1 => '10 Lovely Street',
-        :address2 => 'Northwest',
-        :city => 'Herndon',
-        :zipcode => '20170',
-        :phone => '123-4356-7890',
-        :alternative_phone => '123-333-9999'
+        :firstname => random_string(:prefix => 'First Name'),
+        :lastname => random_string(:prefix => 'Last Name'),
+        :address1 => random_string(:prefix => 'Address 1'),
+        :address2 => random_string(:prefix => 'Address 2'),
+        :city => random_string(:prefix => 'City'),
+        :state => state,
+        :country => us,
+        :zipcode => random_string(:length => 5),
+        :phone => random_string(:length => 10),
+        :alternative_phone => random_string(:length => 10)
     )
+  end
+
+  def self.random_string(opts={})
+    opts[:length] ||= 12
+    random = SecureRandom.base64(opts[:length])
+    
+    if opts[:prefix]
+      return "#{opts[:prefix]}-#{random}" 
+    end
+    
+    random
   end
 
   def self.init_dc_code(order, dc_code)

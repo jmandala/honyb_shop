@@ -9,7 +9,7 @@ en:
   fulfillment_po_files: "PO Files"
   po_files: "PO Files"
   po_file: "PO File"
-  create_po_file: "Generate PO (%{count} %{order})"
+  create_po_file: "Generate PO"
   submit_all_po_files: "Submit %{count} %{file}"
   destroy_all_po_files: "Delete All POs"
   submit_po_file: "Submit PO"
