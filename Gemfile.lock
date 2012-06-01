@@ -1,11 +1,4 @@
 GIT
-  remote: code.mandaladesigns.com:/repos/honyb/honyb_theme.git
-  revision: 776b1a6fcb34dbe156dc1a98d1c7d8c1ea8161b5
-  ref: 776b1a6fcb34dbe156dc1a98d1c7d8c1ea8161b5
-  specs:
-    honyb_theme (0.2.0)
-
-GIT
   remote: git://github.com/BDQ/spree_pages.git
   revision: a45c907abe05f97066041ecc343b8f8c68cedbee
   specs:
@@ -35,6 +28,11 @@ GIT
   specs:
     spree_paypal_express (1.0.1)
       spree_core (>= 0.40.3)
+
+PATH
+  remote: ../honyb_theme
+  specs:
+    honyb_theme (0.2.0)
 
 PATH
   remote: cdf
