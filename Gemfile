@@ -55,5 +55,5 @@ gem 'rack-jsonp-middleware'
 
 #gem 'ie_iframe_cookies'
 
-#gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "776b1a6fcb34dbe156dc1a98d1c7d8c1ea8161b5"
-gem 'honyb_theme', :path => '../honyb_theme'
+gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "8846f85e6385722a6f4db7061a19e6f3dbf26165"
+#gem 'honyb_theme', :path => '../honyb_theme'
