@@ -12,6 +12,7 @@
 //= require store/spree_promo
 
 //= require_tree .
+//= require easyXDM.min
 //= require jquery.fancybox-1.3.4
 //= require store/cdf
 //= require store/honyb_wishlist
