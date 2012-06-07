@@ -41,7 +41,7 @@ module Records
 
 
       def ingram_ship_to_account_number
-        Cdf::Config.get(:cdf_ship_to_account).ljust_trim 7
+        Cdf::Config.get(:cdf_ship_to_account)
       end
 
 
@@ -64,7 +64,7 @@ module Records
       end
 
       def ship_to_password
-        Cdf::Config.get(:cdf_ship_to_password).ljust_trim 8
+        Cdf::Config.get(:cdf_ship_to_password)
       end
 
       # Address   Shipping Method     Big BISAC Code Sent     ASN Allow PO Box
