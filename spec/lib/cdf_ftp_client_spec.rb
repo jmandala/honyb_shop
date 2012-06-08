@@ -56,10 +56,12 @@ describe CdfFtpClient do
         end
 
         it "should have valid credentials" do
+          pending "needs test FTP server"
           @client.valid_credentials?.should == true
         end
 
         it "should connect and list contents" do
+          pending "needs test FTP server"
           list = nil
           @client.connect do |ftp|
             list = ftp.list
@@ -69,6 +71,7 @@ describe CdfFtpClient do
         end
         
         it "should stay open when keep_alive is set" do
+          pending "needs test FTP server"
           @alive_client = CdfFtpClient.new({:keep_alive => true})
           @alive_client.dir
           @alive_client.open?.should == true
@@ -77,6 +80,7 @@ describe CdfFtpClient do
           
         end
         it "should get a list of remote files" do
+          pending "needs test FTP server"
           @client.outgoing_files.should_not == nil
           @client.test_files.should_not == nil
           @client.archive_files.should_not == nil
@@ -84,6 +88,7 @@ describe CdfFtpClient do
         end
         
         it "should put a file the archive and then download it and cleanup" do
+          pending "needs test FTP server"
           content = "#{rand(50)}-#{rand(50)}-#{rand(50)}"
           file_name = 'test.txt'
           File.open(file_name, 'w') { |f| f.write content }

@@ -164,6 +164,7 @@ describe Cdf::StockImport do
   end
 
   it "should parse these products" do
+    pending "experimental"
     lines = []
     lines << '09780670022953              06700229500000243000006200003560000384000000000000000000000000000000000000000037000000000000000000000000000000000000000000000400000040007REG0004000REGIPYYYY    2011100420111004Y99991231N    NYR   REG        REG0002850000000VIK 0872 A  R      N21012339786                  '
 
@@ -171,6 +172,7 @@ describe Cdf::StockImport do
   end
 
   it "should retrieve all inventory files" do
+    pending "experimental"
     get_inventory_files.size.should > 0
   end
 

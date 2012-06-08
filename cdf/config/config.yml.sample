@@ -3,8 +3,8 @@
 cdf_ftp_user: FTP_USER_NAME
 cdf_ftp_password: FTP_PASSWORD
 cdf_ftp_server: ftp1.ingrambook.com
-cdf_ship_to_password: SHIP_PASSWORD
-cdf_ship_to_account: SHIP_ACCOUNT
-cdf_bill_to_account: BILL_ACCOUNT
+cdf_ship_to_password: SHIP_PAS # max ship_to_password length is 8 characters
+cdf_ship_to_account: SHIP_12    # max ship_to_account length is 7 characters
+cdf_bill_to_account: BILL_12    # max bill_to_account length is 7 characters
 days_to_hold_backorder: 1 # number of days to hold a back order before it is cancelled
 split_shipment_type: !ruby/symbol release_when_full # strategy to use when order can be partially fulfilled
