@@ -101,6 +101,10 @@ Spork.each_run do
   Dir[Rails.root.join("lib/**/*.rb")].each { |f| require f }
   Dir[Rails.root.join("cdf/lib/**/*.rb")].each { |f| require f }
   Dir[Rails.root.join("cdf/app/**/*_decorator.rb")].each { |f| require f }
+  
+  # honyb_affiliate watchers
+  Dir[Rails.root.join("../honyb_affiliate/app/**/*_decorator.rb")].each { |f| require f }
+  Dir[Rails.root.join("../honyb_affiliate/lib/**/*_decorator.rb")].each { |f| require f }
 
   require 'spree_core/testing_support/factories'
 end
