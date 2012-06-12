@@ -18,4 +18,4 @@ Example
 Example goes here.
 
 
-Copyright (c) 2011 [name of extension creator], released under the New BSD License
+Copyright (c) 2012 [Joshua Jacobs], all rights reserved.

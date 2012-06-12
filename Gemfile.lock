@@ -1,11 +1,4 @@
 GIT
-  remote: code.mandaladesigns.com:/repos/honyb/honyb_theme.git
-  revision: 6f00b5b7cd5042bf7d44adda1e91dc5d32caca33
-  ref: 6f00b5b7cd5042bf7d44adda1e91dc5d32caca33
-  specs:
-    honyb_theme (0.2.0)
-
-GIT
   remote: git://github.com/BDQ/spree_pages.git
   revision: a45c907abe05f97066041ecc343b8f8c68cedbee
   specs:
@@ -37,13 +30,23 @@ GIT
       spree_core (>= 0.40.3)
 
 PATH
+  remote: ../honyb_affiliate
+  specs:
+    honyb_affiliate (0.2.0)
+
+PATH
+  remote: ../honyb_theme
+  specs:
+    honyb_theme (0.2.0)
+
+PATH
   remote: cdf
   specs:
     cdf (0.70.1)
       cucumber-rails
       haml
       rspec-rails
-      spree_core (>= 0.70.1)
+      spree_core (>= 0.70.5)
 
 GEM
   remote: http://rubygems.org/
@@ -346,6 +349,7 @@ DEPENDENCIES
   guard-rspec
   guard-spork
   haml
+  honyb_affiliate!
   honyb_theme!
   jquery-rails
   launchy
@@ -355,7 +359,7 @@ DEPENDENCIES
   rack-p3p!
   rails (= 3.1.4)
   routing-filter
-  rspec-rails
+  rspec-rails (~> 2.0)
   sass-rails (~> 3.1.4)
   spork (~> 0.9.0.rc)
   spree (= 0.70.5)

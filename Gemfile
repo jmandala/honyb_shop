@@ -29,7 +29,7 @@ group :test, :development do
   gem 'spork', '~> 0.9.0.rc'
   gem 'capybara'
   gem 'database_cleaner'
-  gem 'rspec-rails'
+  gem 'rspec-rails', "~> 2.0"
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
   gem 'guard-rspec'
   gem 'minitest-reporters', '>= 0.5.0'
@@ -53,7 +53,6 @@ gem 'routing-filter'
 gem 'rack-p3p', :git => 'git://github.com/jmandala/rack-p3p.git'
 gem 'rack-jsonp-middleware'
 
-#gem 'ie_iframe_cookies'
-
-gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "6f00b5b7cd5042bf7d44adda1e91dc5d32caca33"
-#gem 'honyb_theme', :path => '../honyb_theme'
+#gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "6f00b5b7cd5042bf7d44adda1e91dc5d32caca33"
+gem 'honyb_theme', :path => '../honyb_theme'
+gem 'honyb_affiliate', :path => '../honyb_affiliate'
