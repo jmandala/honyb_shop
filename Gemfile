@@ -55,4 +55,5 @@ gem 'rack-jsonp-middleware'
 
 #gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "6f00b5b7cd5042bf7d44adda1e91dc5d32caca33"
 gem 'honyb_theme', :path => '../honyb_theme'
-gem 'honyb_affiliate', :path => '../honyb_affiliate'
+#gem 'honyb_affiliate', :path => '../honyb_affiliate'
+gem 'honyb_affiliate', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_affiliate.git'
