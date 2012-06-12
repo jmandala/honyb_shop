@@ -5,6 +5,7 @@ describe HomeController, :type => :controller do
 
   before do
     controller.stub :current_user => nil
+    Affiliate.current = nil
   end
 
   it "initializes the affiliate on every request" do
