@@ -35,6 +35,7 @@ group :test, :development do
   gem 'minitest-reporters', '>= 0.5.0'
   gem 'guard-spork'
   gem 'turn', :require => false
+  gem 'ruby-debug19'
 end
 
 gem 'spree', '0.70.5'
@@ -52,6 +53,9 @@ gem 'routing-filter'
 
 gem 'rack-p3p', :git => 'git://github.com/jmandala/rack-p3p.git'
 gem 'rack-jsonp-middleware'
+
+gem 'delayed_job_active_record'
+gem 'daemons'
 
 #gem 'ie_iframe_cookies'
 

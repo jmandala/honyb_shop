@@ -12,6 +12,7 @@ module SpreeSite
       if Spree::Config.instance
         Spree::Config.set(:checkout_zone => 'ALL US')
         Spree::Config.set(:site_name => 'honyb ~ the ultimate indie bookstore')
+        Spree::Config.set(:auto_capture => true )
       end
 
     end

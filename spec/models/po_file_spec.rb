@@ -19,6 +19,24 @@ describe PoFile do
 
   let(:generate_po_file) { PoFile.generate }
 
+  it "should create a PO file and submit it after creating an order" do
+    Order.count.should == 0
+    order = create_order
+    Order.count.should == 1
+
+    id = order.id
+    sleep(20.seconds)    # wait for the observer to kick in, queue the action, and for the action to be picked up by the background thread
+
+    order = Order.find_by_id(id)
+    order.payment.state.should == "completed"
+    order.needs_po?.should == false
+    order.po_file.should_not == nil
+    order.po_file.orders.include?(order).should == true
+
+    order.po_file.submitted_at.should_not == nil
+    order.po_file.submitted?.should == true
+  end
+
   it "should create an order, and find the order it creates" do
     Order.count.should == 0
     order = create_order

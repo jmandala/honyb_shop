@@ -1,3 +1,5 @@
+require_dependency "po_file"
+
 #noinspection RubyArgCount
 Order.class_eval do
 
@@ -227,7 +229,26 @@ Order.class_eval do
   def hello
     "hello"
   end
-  
+
+  def self.when_to_run
+    if ENV["RAILS_ENV"] == 'production'
+      Cdf::Config[:cdf_po_file_generate_delay].to_i.minutes.from_now      # in production, use the config delay - all other environments, run immediately. Review?
+    else
+      0.minutes.from_now
+    end
+  end
+
+  def generate_and_submit_po_file
+    Delayed::Worker.logger.error "generating a submitting a PO file"
+    self.update!        # update to make sure the shipping state is correct
+    if !self.nil? && self.needs_po? && !self.payment.nil? && self.payment.state == "completed"
+      po_file = PoFile.generate_from_order self     # generate the PO file from our order
+      po_file.put                                   # submit the PO file
+    else
+      Delayed::Worker.logger.error "ERROR: Attempting to generate and submit a PO file, but the Order #{self.nil? ? '[nil]' : self.id} is in an invalid state"
+    end
+  end
+  handle_asynchronously :generate_and_submit_po_file, :run_at => Proc.new { when_to_run }
 
   private
   # Sets the order type if not already set 

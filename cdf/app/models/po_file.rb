@@ -55,29 +55,12 @@ class PoFile < ActiveRecord::Base
     super
   end
 
+  def self.generate_from_order(order)
+    PoFile.generate_core([] << order)
+  end
 
-  # Generates a new PoFile for every order that is ready for
-  # shipment
   def self.generate
-    po_file = PoFile.new
-    po_file.save!
-
-    data = po_file.po00.cdf_record + Records::Base::LINE_TERMINATOR
-
-    Order.needs_po.limit(25).each do |order|
-      po_file.orders << order
-      po = order.as_cdf(po_file.count[:total_records])
-      data << po.to_s
-      po_file.update_counters(order, po)
-    end
-
-    data << po_file.po90.cdf_record
-
-    FileUtils.mkdir_p(File.dirname(po_file.path))
-    File.open(po_file.path, 'w') { |f| f.write data }
-
-    po_file.save!
-    po_file
+    PoFile.generate_core
   end
 
   def self.prefix
@@ -171,6 +154,30 @@ class PoFile < ActiveRecord::Base
       count[i.to_s] = 0
     end
     count
+  end
+
+  # Generates a new PoFile - by default, use every order that is ready for
+  # shipment (limit 25), or pass in your own array of orders that need PO files
+  def self.generate_core(orders=Order.needs_po.limit(25))
+    po_file = PoFile.new
+    po_file.save!
+
+    data = po_file.po00.cdf_record + Records::Base::LINE_TERMINATOR
+
+    orders.each do |order|
+      po_file.orders << order
+      po = order.as_cdf(po_file.count[:total_records])
+      data << po.to_s
+      po_file.update_counters(order, po)
+    end
+
+    data << po_file.po90.cdf_record
+
+    FileUtils.mkdir_p(File.dirname(po_file.path))
+    File.open(po_file.path, 'w') { |f| f.write data }
+
+    po_file.save!
+    po_file
   end
 
 
