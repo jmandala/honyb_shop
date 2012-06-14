@@ -46,14 +46,13 @@ gem "spree_paypal_express", :git => 'git://github.com/spree/spree_paypal_express
 
 gem "spree_pages", :git => 'git://github.com/BDQ/spree_pages.git'
 
-gem "cdf", :path => "cdf", :require => "cdf"
 
 gem 'routing-filter'
 
 gem 'rack-p3p', :git => 'git://github.com/jmandala/rack-p3p.git'
 gem 'rack-jsonp-middleware'
 
-#gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git', :ref => '72a192357756e142686b728e835f43c3a5c52896'
+# HONYB EXTENSIONS
+gem "cdf", :path => "cdf" # todo: move to the 'extensions' dir
+gem 'honyb_affiliate', :path => 'extensions/honyb_affiliate'
 gem 'honyb_theme', :path => '../honyb_theme'
-gem 'honyb_affiliate', :path => '../honyb_affiliate'
-#gem 'honyb_affiliate', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_affiliate.git', :ref => 'afee50458ffdf811ffc1afdbaa68ec0d64b6fb11'

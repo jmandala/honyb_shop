@@ -30,12 +30,6 @@ GIT
       spree_core (>= 0.40.3)
 
 PATH
-  remote: ../honyb_affiliate
-  specs:
-    honyb_affiliate (0.2.0)
-      routing-filter
-
-PATH
   remote: ../honyb_theme
   specs:
     honyb_theme (0.2.0)
@@ -49,6 +43,12 @@ PATH
       haml
       rspec-rails
       spree_core (>= 0.70.5)
+
+PATH
+  remote: extensions/honyb_affiliate
+  specs:
+    honyb_affiliate (0.2.1)
+      routing-filter
 
 GEM
   remote: http://rubygems.org/
