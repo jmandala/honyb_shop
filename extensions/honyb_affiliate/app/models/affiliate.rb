@@ -13,10 +13,12 @@
 #
 # Example Urls
 # ------------
-# /embed/h-the-affiliate-id-b/ => honyb_id = 'the-affiliate-id'
+# /embed/h-the-affiliate-id/ => honyb_id = 'the-affiliate-id'
 # 
 class Affiliate < ActiveRecord::Base
 
+  has_many :users
+  
   def self.current
     Thread.current[:affiliate]
   end

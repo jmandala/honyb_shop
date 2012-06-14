@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120612191428) do
+ActiveRecord::Schema.define(:version => 20120614180201) do
 
   create_table "activators", :force => true do |t|
     t.string   "description"
@@ -1078,6 +1078,7 @@ ActiveRecord::Schema.define(:version => 20120612191428) do
     t.string   "unlock_token"
     t.datetime "locked_at"
     t.datetime "remember_created_at"
+    t.integer  "affiliate_id"
   end
 
   add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"
