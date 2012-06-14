@@ -1,3 +1,4 @@
+<div id="admin-user">
 <h1><%= t(:user_account) %></h1>
 
 <table>
@@ -15,19 +16,15 @@
   </tr>
 
   <tr data-hook="affiliate">
-    <th><%= t :affiliate_id %></th>
+    <th><%= t :affiliate_key %></th>
     <td>
-      <%= @user.affiliate_key %>
+      <%=  render :partial => 'affiliate_key' %>
     </td>
   </tr>
-
-
 </table>
-
-
-
 
 <p>
   <%= link_to_edit @user, :class => 'edit_user' %> <%= t(:or) %>
   <%= link_to t(:back), collection_url %>
 </p>
+</div>

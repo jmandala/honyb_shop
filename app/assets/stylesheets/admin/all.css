@@ -13,5 +13,5 @@
  *= require_self
  *= require_tree .
  *= require store/cdf
- 
+ *= require admin/user
 */
