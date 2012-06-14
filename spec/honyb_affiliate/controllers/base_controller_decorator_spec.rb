@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe HomeController, :type => :controller do
-  let(:honyb_id) { 'the-affiliate-id' }
+  let(:affiliate_key) { 'the-affiliate-id' }
 
   before do
     controller.stub :current_user => nil
@@ -13,46 +13,46 @@ describe HomeController, :type => :controller do
 
     get :index
     Affiliate.current.should == nil
-    request.session[:honyb_id].should == nil
+    request.session[:affiliate_key].should == nil
   end
 
-  context "invalid honyb_id" do
+  context "invalid affiliate_key" do
 
     it "should raise error with invalid param data" do
       begin
-        get :index, :honyb_id => honyb_id
+        get :index, :affiliate_key => affiliate_key
       rescue ActiveRecord::RecordNotFound => e
-        e.message.should == %Q{Couldn't find Affiliate with honyb_id = #{honyb_id}}
+        e.message.should == %Q{Couldn't find Affiliate with affiliate_key = #{affiliate_key}}
       end
     end
 
     it "should raise error with invalid session data" do
       begin
-        request.session[:honyb_id] = honyb_id
+        request.session[:affiliate_key] = affiliate_key
         get :index
       rescue ActiveRecord::RecordNotFound => e
-        e.message.should == %Q{Couldn't find Affiliate with honyb_id = #{honyb_id}}
+        e.message.should == %Q{Couldn't find Affiliate with affiliate_key = #{affiliate_key}}
       end
     end
 
   end
   
-  context "valid honyb_id" do
+  context "valid affiliate_key" do
     before do
-      @affiliate = Affiliate.create(:honyb_id => honyb_id)
+      @affiliate = Affiliate.create(:affiliate_key => affiliate_key)
     end
     
     it "should get the affiliate with the param data" do
-      get :index, :honyb_id => honyb_id
+      get :index, :affiliate_key => affiliate_key
       Affiliate.current.should == @affiliate
-      request.session[:honyb_id].should == honyb_id
+      request.session[:affiliate_key].should == affiliate_key
     end
     
     it "should get the affiliate with the session data" do
-      request.session[:honyb_id] = honyb_id
+      request.session[:affiliate_key] = affiliate_key
       get :index
       Affiliate.current.should == @affiliate
-      request.session[:honyb_id].should == honyb_id
+      request.session[:affiliate_key].should == affiliate_key
     end
   end
 end

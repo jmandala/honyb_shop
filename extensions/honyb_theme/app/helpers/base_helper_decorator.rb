@@ -29,7 +29,7 @@ Spree::BaseHelper.class_eval do
     @body_class ||= ''
     append_class(@body_class, embed_class)
     append_class(@body_class, ssl_class)
-    append_class(@body_class, Affiliate.current.honyb_id) if Affiliate.current
+    append_class(@body_class, Affiliate.current.affiliate_key) if Affiliate.current
     @body_class
   end
   

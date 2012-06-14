@@ -6,10 +6,10 @@ Spree::BaseController.class_eval do
   private
 
   def init_affiliate
-    params[:honyb_id] ||= request.session[:honyb_id]
+    params[:affiliate_key] ||= request.session[:affiliate_key]
     
-    Affiliate.init(params[:honyb_id])
-    request.session[:honyb_id] = Affiliate.current.honyb_id if Affiliate.has_current?
+    Affiliate.init(params[:affiliate_key])
+    request.session[:affiliate_key] = Affiliate.current.affiliate_key if Affiliate.has_current?
   end
 
 end

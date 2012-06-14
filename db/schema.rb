@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120614180201) do
+ActiveRecord::Schema.define(:version => 20120614191539) do
 
   create_table "activators", :force => true do |t|
     t.string   "description"
@@ -66,12 +66,12 @@ ActiveRecord::Schema.define(:version => 20120614180201) do
   add_index "adjustments", ["order_id"], :name => "index_adjustments_on_order_id"
 
   create_table "affiliates", :force => true do |t|
-    t.string   "honyb_id",   :null => false
+    t.string   "affiliate_key", :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "affiliates", ["honyb_id"], :name => "honyb_id", :unique => true
+  add_index "affiliates", ["affiliate_key"], :name => "honyb_id", :unique => true
 
   create_table "asn_files", :force => true do |t|
     t.string   "record_code",               :limit => 2
