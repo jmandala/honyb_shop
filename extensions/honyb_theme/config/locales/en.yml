@@ -1,0 +1,86 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+en:
+  use_my_billing_address: Use My Billing Address
+  my_cart: My Cart
+  checkout_arrow: Checkout &raquo;
+  about: About
+  site_map: Site Map
+  terms_of_service: Terms of Service
+  privacy_statement: Privacy Statement
+  refund_policy: Refund Policy
+  developers: Developers
+  jobs: Jobs
+  help: Help
+  call_us: Call us any time
+  email: E-mail
+  add_to_cart: Add To Cart &raquo;
+  billing_information: Billing Address
+  shipping_information: Shipping Address
+  ship_address: Shipping Address
+  bill_address: Billing Address
+  prefered_payment_option: My Preferred Payment Option
+  enter_your_credit_card_information: Enter Your Credit Card Information
+  selected_items: Selected Items
+  place_my_order: Place My Order
+  order_contact_details: Contact Information
+  in_stock: <div class="in-stock">In Stock</div><div class="message">This item usually ships in 24 hours.</div>
+  buy_now: Buy Now!
+  why_buy_from_us: Why Buy From Us?
+  why_buy_message: Your purchase directly supports <i>Boston Review</i> and the work we do. Through the <i>BR</i> bookstore we offer a cultivated selection of titles, with free shipping, and a portion of the revenue from every purchase helps fund our journalism and publishing expenses.
+  hide_this: hide this
+  close: close
+  subtotal: Subtotal
+  quantity: Quantity
+  update: Update
+  ssl_message: For your protection, this popup window is secured and encrypted with an SSL security certificate.
+  returning_customer: Returning Customers
+  returning_customer_message: Thanks for coming back! Sign in with your email address and password.
+  new_customer: New Customers
+  new_customer_message: If this is your first purchase with us, please create an account.
+  forgot_password: "Forgot your password?"
+  please_correct_the_error_listed_below: 
+      one: "Please correct the error listed below"
+      other: "Please correct the errors listed below"      
+  checkout_address: Your Addresses
+  required_fields_are_bold: Required fields are <strong>bold</strong>.
+  shipping_address_2: Address Line 2
+  postal_code: Postal Code
+  phone_number: Phone Number
+  remember_me: Remember Me
+  log_in: Log In
+  password: Password
+  registration: Become A Member
+  create_account: Create An Account
+  first_name: First Name
+  last_name: Last Name
+  shipping_address: Address Line 1
+  city: City
+  state: State
+  country: Country
+  optional: Optional
+  for_billing_questions: For Billing Questions
+  choose_your_shipping_speed: Choose Your Shipping Speed
+  checkout_delivery: Select Shipping
+  shipping_times: Shipping times are calculated from the time your order leaves our warehouse (typically within 24 hours).
+  card_number: Card Number
+  month: Month
+  year: Year
+  security_code: Security Code
+  payment_note: Your credit card statement will show a charge to <strong>"honyb.com"</strong>, our fulfillment partner.
+  looking_for_your_security_code: Looking for your security code?
+  security_code_explanation: Your card's security code, also called a CVV, is a <strong>3 or 4 digit number only located on your card</strong>. VISA, MasterCard, and Discover include the number on the back. American Express displays the number on the front.
+  checkout_confirm: Place Order!
+  review_your_order: Review Your Order
+  review_order_message: Please review all the items on your order. Make any changes or click the "Place Order" button to complete your purchase.
+  name_on_card: Name On Card
+  shipping_speed: Shipping Speed
+  status_complete: Complete
+  order_num: Order Num 
+  date: Date
+  order_processed_successfully: Thank you for ordering with us. You really made our day!
+  global:
+    powered_by_honyb: Powered by <a href="http://honyb.com" target="_blank">Honyb</a>.
+    continue_shopping: Continue Shopping
+    or: or

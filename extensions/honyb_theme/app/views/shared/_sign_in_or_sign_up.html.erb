@@ -1,0 +1,9 @@
+<div id="new-customer">
+  <%= render :template => 'user_registrations/new', :locals => {:hide_banner => true } %>
+</div>
+
+<div id="existing-customer">
+  <h2><%= t :returning_customer %></h2>
+  <p><%= t :returning_customer_message %></p>
+  <%= render :partial => 'shared/login' %>
+</div>

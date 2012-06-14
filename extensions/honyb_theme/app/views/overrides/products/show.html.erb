@@ -1,0 +1,99 @@
+<%
+   # Define product properties
+   if @product_properties
+     subtitle = @product_properties.includes(:property).where('properties.name = "Subtitle"').first
+     author = @product_properties.includes(:property).where('properties.name = "Author Statement"').first
+     product_details = @product_properties.includes(:property).where('properties.name = "Product Details"').first
+   end
+%>
+
+
+<div data-hook="product_show">
+  <% @body_id = 'product-details' %>
+
+  <%= content_for :banner do %>
+    <h1>Products</h1>
+  <% end %>
+
+  <div class="details">
+    <div id="product-images" data-hook>
+      <div id="main-image">
+        <%= render 'image' %>
+      </div>
+      <div id="thumbnails" data-hook>
+        <%= render 'thumbnails', :product => @product %>
+      </div>
+    </div>
+
+    <div class="properties">
+      <div class="product-details">
+        <% if product_details && product_details.value %>
+          <p> <%= product_details.value.html_safe %> </p>
+        <% end %>
+        <p><%= t :isbn13 %>: <%= @product.sku %></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="product-main">
+    <div class="title-and-author">
+      <div class="title">
+        <h2><%= accurate_title %></h2>
+        <% if subtitle && subtitle.value && !subtitle.value.empty? %>
+          <h3><%= subtitle.value %></h3>
+        <% end %>
+      </div>
+
+      <% if author && author.value %>
+        <div class="author">
+          <%= author.value.html_safe %>
+        </div>
+      <% end %>
+    </div>
+
+    <div id="price-and-purchase">
+      <div class="price"><span class="label">Price:</span><span class="value"><%= product_price(@product) %></span>
+      </div>
+
+      <div id="cart-form" data-hook="cart_form">
+        <%= form_for :order, :url => populate_orders_url do |f| %>
+          <div data-hook="inside_product_cart_form">
+            <% if product_price(@product) %>
+              <%= hidden_field_tag (@product.has_variants? ? :quantity : "variants[#{@product.master.id}]"), 1, :class => "title", :size => 3 %>
+            <% end %>
+
+            <div>
+              <button type="submit" class="checkout add-to-cart"><%= t(:buy_now) %></button>
+            </div>
+
+            <div class="stock"><%= @product.has_stock? ? t(:in_stock).html_safe : t(:backordered).html_safe? %></div>
+
+            <div class="free-shipping"><%= t(:qualifies_for_free_shipping).html_safe %></div>
+        <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div id="product-description" data-hook="product_description">
+      <%-
+          if @product.description
+            the_description = product_description(@product)
+          else
+            the_description = nil
+          end
+      %>
+      <% if the_description %>
+        <h1>Book Description</h1>
+
+        <div class="description">
+          <%= the_description %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <% content_for :sidebar do %>
+
+  <% end %>
+
+</div>

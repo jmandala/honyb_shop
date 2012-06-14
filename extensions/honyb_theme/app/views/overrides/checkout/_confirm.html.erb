@@ -1,0 +1,13 @@
+<% @body_class = 'checkout-confirm' %>
+
+<div id="confirm">
+
+  <div class="intro">
+    <h2><%= t :review_your_order %></h2>
+
+    <p><%= t :review_order_message %></p>
+  </div>
+
+
+  <%= render "overrides/shared/order", :editable => true %>
+</div>

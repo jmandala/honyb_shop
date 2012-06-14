@@ -55,4 +55,4 @@ gem 'rack-jsonp-middleware'
 # HONYB EXTENSIONS
 gem "cdf", :path => "cdf" # todo: move to the 'extensions' dir
 gem 'honyb_affiliate', :path => 'extensions/honyb_affiliate'
-gem 'honyb_theme', :path => '../honyb_theme'
+gem 'honyb_theme', :path => 'extensions/honyb_theme'

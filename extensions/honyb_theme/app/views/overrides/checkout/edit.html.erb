@@ -1,0 +1,26 @@
+<% css_class = "checkout-#{@order.state}" %>
+<%= content_for :banner do %>
+  <h1><span class="faint"><%= t :checkout %>:</span> <span class="highlight"><%= t("checkout_#{@order.state}") %></span>
+  </h1>
+<% end %>
+
+<%= content_for :checkout_bar do %>
+  <div id="checkout-bar" class="<%= css_class %>">
+    <%= image_tag("store/checkout/#{css_class}.png") %>
+  </div>
+<% end %>
+
+
+<%= render "shared/error_messages", :target => @order %>
+
+<div id="main-content" class="<%= css_class%>" role="main-content">
+  <%= form_for @order, :url => update_checkout_path(@order.state) do |form| %>
+    <%= render @order.state, :form => form %>
+  <% end %>
+</div>
+
+<% unless @order.state == 'confirm' %>
+  <div id="order-summary">
+    <%= render 'summary' %>
+  </div>
+<% end %>

@@ -1,0 +1,119 @@
+<% 
+  color = {:orange => '#ff9403', 
+           :blue   => '#0068B8',
+           :gray => '#797A7D',
+           :light_gray => '#e5e5e5',
+           :white => '#fff',
+           :black => '#000'}
+  
+  font = {:alt  =>  "'Signika Negative', sans-serif", 
+          :body => "'Gentium Book Basic', serif",
+          :button => "'Signika Negative', sans-serif"}
+%>
+
+.flash {
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  font-size: 1.1em;
+  margin: 1em;
+  padding: .5em 1em;
+  font-family: <%= font[:alt] %>;
+  font-weight: bold;
+  text-shadow: 0 1px 0 rgba(255,255,255, .8);
+  background: #dadada;
+  border: 1px solid #7f7f7f;  
+  box-shadow: 0 0 10px rgba(0,0,0,.5);
+  -moz-box-shadow: 0 0 10px rgba(0,0,0, .5);
+}
+
+.flash.notice {
+}
+
+.flash.errors {
+  background: #f4b4b4 url('<%= asset_path('store/shadow_top.png') %>') 0 -50px repeat-x;
+  color: maroon;
+  border: 1px solid maroon;
+}
+
+.formError {
+  font-size: 1.1em;
+  margin-bottom: 1em;
+  padding: 0.8em;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  background: <%= color[:light_gray] %> url('<%= asset_path('store/shadow_top.png') %>') 0 -50px repeat-x;
+  color: #000000;
+  border: 1px solid #000000;
+}
+
+.formError p {
+  margin: 0;
+}
+
+.formError ul {
+  margin-bottom: 0;
+}
+
+.formError h2 {
+  font-weight: bold;
+  font-size: 1em;
+  margin: 0;
+
+}
+
+#error-explanation {
+  background: #e5e5e5;
+  border-left: 4px solid red;
+  padding: 4px;
+  margin: 20px 0;
+  text-shadow: 0 1px 0 #fff;
+}
+
+#error-explanation h2 {
+  font-size: .9em;
+}
+
+#error-explanation ul.error-messages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#error-explanation  ul.error-messages li {
+  margin: 0 0 8px 8px;
+  padding: 0;
+  font-size: .625em;
+  color: red;
+}
+
+#errorExplanation {
+  font-size: .775em;
+  margin: 1em 0 3em;
+  padding: 0.8em;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  background: <%= color[:light_gray] %> url('<%= asset_path('store/shadow_top.png') %>') 0 -50px repeat-x;
+  color: #222;
+  border: 1px solid #ccc;
+  font-family: "<%= font[:alt] %>", sans-serif;
+  line-height: 170%;
+  text-shadow: 0 -1px 0 rgba(255, 255, 255, .5);
+}
+
+#errorExplanation p {
+  margin: 0;
+}
+
+#errorExplanation ul {
+  margin-bottom: 0;
+}
+
+#errorExplanation h2 {
+  font-size: 1.2em;
+  margin: 0;
+  text-shadow:  0 -1px 0 rgba(255, 255, 255, .5);
+
+}

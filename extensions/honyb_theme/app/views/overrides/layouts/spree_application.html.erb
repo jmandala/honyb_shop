@@ -1,0 +1,167 @@
+<body id="<%= (@body_id == 'signup' ? 'checkout' : @body_id) || controller.controller_name %>"
+      class="<%= body_class %>" data-hook="body">
+<div id="everything">
+
+  <% if embed? %>
+    <header>
+
+      <div id="logo">
+        <%= image_tag("boston-review/boston-review-logo.gif", :width => "81", :height => "16", :alt => "logo") %>
+      </div>
+
+      <div id="why-buy">
+        <%= t :why_buy_from_us %>
+      </div>
+
+      <nav>
+        <div id="shopping-nav">
+          <ul>
+            <li><%= link_to t(:my_cart), cart_path %></li>
+            <li>&middot;</li>
+            <li><%= link_to t(:checkout_arrow).html_safe, checkout_path %></li>
+          </ul>
+        </div>
+      </nav>
+
+    </header>
+
+    <div id="top-buffer"></div>
+
+    <div id="why-buy-details">
+
+      <div id="why-buy-message">
+        <%= t(:why_buy_message).html_safe %>
+      </div>
+
+      <div id="why-buy-hide">
+        <div class="hide"><%= t :hide_this %></div>
+      </div>
+
+    </div>
+
+    <% if  content_for?(:banner) %>
+      <div id="banner" role="banner">
+        <% if request.ssl? %>
+          <div id="ssl-message">
+            <%= t :ssl_message %>
+          </div>
+        <% end %>
+        <%= yield :banner %>
+      </div>
+    <% end %>
+
+    <% if content_for?(:checkout_bar) %>
+      <%= yield :checkout_bar %>
+    <% end %>
+
+
+  <% else %>
+    <header>
+      <div id="logo">
+        <%= link_to image_tag("store/honyb-logo.png", :width => "301", :height => "80", :alt => "honyb home", :id => "logo"), root_url %>
+      </div>
+
+      <div id="primary-nav">
+        <nav>
+          <% if current_user %>
+            <%= link_to image_tag("store/join.png", :width => 103, :height => 33, :id => 'join-honyb'), account_path, :class => "cart" %>
+          <% else %>
+            <%= link_to image_tag("store/join.png", :width => 103, :height => 33, :id => 'join-honyb'), login_path, :class => "cart" %>
+          <% end %>
+          <div id="shopping-nav">
+            <ul>
+              <li><%= link_to t(:my_cart), cart_path %></li>
+              <li><%= link_to t(:checkout), checkout_path %></li>
+            </ul>
+          </div>
+        </nav>
+
+        <div id="search">
+          <%= form_tag products_url, :method => :get do %>
+            <input type="text" id="s1" class="empty" name="keywords" placeholder="Search for books">
+          <% end %>
+        </div>
+      </div>
+    </header>
+  <% end %>
+
+  <div id="main" role="main">
+    <div class="container">
+
+      <% if flash.notice || flash[:error] %>
+        <div id="messages">
+          <% if flash.notice %>
+            <div class="flash notice"><%= flash.notice %></div>
+          <% end %>
+          <% if flash[:error] %>
+            <div class="flash errors"><%= flash[:error] %></div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% if content_for?(:sidebar) %>
+        <div id="sidebar" role="sidebar">
+          <%= yield :sidebar %>
+        </div>
+      <% end %>
+
+
+
+      <div id="content">
+        <%= yield %>
+      </div>
+
+
+    </div>
+  </div>
+
+
+  <footer data-hook="footer">
+    <div class="container">
+
+      <div class="menu section">
+
+        <% if embed? %>
+          <div id="powered-by-honyb"><%= t('global.powered_by_honyb').html_safe %></div>
+          <h3>Menu</h3>
+          <ul>
+            <li><a href="/embed/pages/about"><%= t :about %></a></li>
+            <li><a href="/embed/pages/privacy_statement"><%= t :privacy_statement %></a></li>
+            <li><a href="/embed/pages/refund_policy"><%= t :refund_policy %></a></li>
+          </ul>
+
+        <% else %>
+
+          <h3>Menu</h3>
+          <ul>
+
+            <li><a href="/pages/about"><%= t :about %></a></li>
+            <li><a href="/pages/site-map"><%= t :site_map %></a></li>
+            <li><a href="/pages/terms-of-service"><%= t :terms_of_service %></a></li>
+            <li><a href="/pages/privacy_statement"><%= t :privacy_statement %></a></li>
+            <li><a href="/pages/refund_policy"><%= t :refund_policy %></a></li>
+            <li><a href="/pages/developers"><%= t :developers %></a></li>
+            <li><a href="/pages/jobs"><%= t :jobs %></a></li>
+            <li><a href="/pages/help"><%= t :help %></a></li>
+          </ul>
+
+          <div id="contact-us" class="section">
+            <%= t :call_us %>: (207) 518-8473, or send us e-mail at
+            <a href="mailto:customercare@honyb.com">customercare@honyb.com</a>
+          </div>
+
+          <div id="copyright" class="section">TM + &copy; <%= t :copyright %> <%= Time.zone.now.year %> Honyb, a Mandala
+            Designs, LLC service. All rights reserved
+          </div>
+
+
+        <% end %>
+
+      </div>
+
+
+    </div>
+  </footer>
+</div>
+
+</body>

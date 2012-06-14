@@ -1,0 +1,12 @@
+<div class="field-pair email">
+  <%= f.label :email, t(:email), :class => 'required' %>
+  <%= f.text_field :email %>
+</div>
+<div id="password-credentials">
+  <div class="field-pair password">
+    <%= f.label :password, t(:password), :class => 'required' %>
+    <%= f.password_field :password %>
+  </div>
+</div>
+
+<div data-hook="signup_below_password_fields"></div>

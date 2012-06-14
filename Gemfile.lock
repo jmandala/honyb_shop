@@ -30,12 +30,6 @@ GIT
       spree_core (>= 0.40.3)
 
 PATH
-  remote: ../honyb_theme
-  specs:
-    honyb_theme (0.2.0)
-      routing-filter
-
-PATH
   remote: cdf
   specs:
     cdf (0.70.1)
@@ -48,6 +42,12 @@ PATH
   remote: extensions/honyb_affiliate
   specs:
     honyb_affiliate (0.2.1)
+      routing-filter
+
+PATH
+  remote: extensions/honyb_theme
+  specs:
+    honyb_theme (0.2.0)
       routing-filter
 
 GEM

@@ -1,0 +1,630 @@
+<% 
+  color = {:orange => '#ff9403', 
+           :blue   => '#0068B8',
+           :gray => '#797A7D',
+           :white => '#fff',
+           :black => '#000'}
+  
+  font = {:alt  =>  "'Signika Negative', sans-serif", 
+          :body => "'Gerorgia', 'Gentium Book Basic', serif",
+          :button => "'Signika Negative', sans-serif"}
+%>
+
+  /* COLORS */
+body {
+  background: <%= color[:orange] %>;
+  font-family: <%= font[:body] %>;
+}
+
+body.embed {
+  background: white;
+}
+
+body, select, input, textarea {
+  color: #222;
+}
+
+#main {
+  background: <%= color[:white] %>;
+  overflow: auto;
+}
+
+#primary-nav {
+  background: transparent url("<%= asset_path 'store/topnav.png' %>") no-repeat;
+}
+
+#shopping-nav a {
+  color: white;
+}
+
+footer {
+  background: #ccc;
+}
+
+#sidebar .list-box {
+  background-color: #F3F3F3;
+}
+
+#banner h1 {
+  color: #4f4f4f;
+}
+
+a, a:active, a:visited {
+  color: #31519A;
+}
+
+a:hover {
+  color: #036;
+}
+
+.no-boxshadow textarea:invalid {
+  background-color: #f0dddd;
+}
+
+span.price.discounted {
+  color: #f00;
+}
+
+button, a.button {
+  background-color: #0095DA;
+  color: #fff;
+}
+
+button:hover, a.button:hover {
+  background-color: #0068B8;
+}
+
+.list-box a {
+  color: #666;
+}
+
+.list-box h2 {
+  color: #364D8C;
+}
+
+#errorExplanation {
+  background-color: #ccc;
+}
+
+  /* BORDERS */
+
+body#product-list .product {
+  border-bottom: 1px solid #a3a3a3;
+}
+
+button, a.button {
+  border: none;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  letter-spacing: 1px;
+}
+
+.list-box h2, #homepage #contact h2 {
+  border-bottom: 1px solid #A3A3A3;
+}
+
+#s1 {
+  border-style: none;
+}
+
+  /* BUTTONS */
+button, a.button {
+  font-family: <%= font[:button] %>;
+  font-weight: bold;
+}
+
+a.button {
+  text-decoration: none;
+  line-height: 37px;
+}
+
+a.button.small {
+  font-size: 10px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
+  color: #666 !important;
+  background-color: #e5e5e5;
+  line-height: 100%;
+  padding: 4px 8px 2px 8px;
+}
+
+
+button, button.checkout.forward, input.button.primary {
+  -moz-box-shadow: inset 0 1px 0 0 #caefab;
+  -webkit-box-shadow: inset 0 1px 0 0 #caefab;
+  box-shadow: inset 0 1px 0 0 #caefab;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #77d42a), color-stop(1, #468513));
+  background: -moz-linear-gradient(center top, #77d42a 5%, #468513 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#77d42a', endColorStr = '#468513');
+  background-color: #77d42a;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border: 1px solid #85cf78;
+  display: inline-block;
+  color: #fff;
+  font-size: 1em;
+  font-weight: 200;
+  font-family: <%= font[:alt] %>;  
+  padding: 6px 24px;
+  text-decoration: none;
+  text-shadow: 0 -1px 0 #6f8a56;
+  text-transform: none;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+button:hover, button.checkout.forward:hover, input.button.primary:hover {
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #468513), color-stop(1, #77d42a));
+  background: -moz-linear-gradient(center top, #468513 5%, #77d42a 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#468513', endColorStr = '#77d42a');
+  background-color: #468513;
+}
+
+button:active, button.checkout.forward:active, input.button.primary:active {
+  position: relative;
+  top: 1px;
+}
+
+button.checkout {
+  -moz-box-shadow: inset 0 1px 0 0 #fce2c1;
+  -webkit-box-shadow: inset 0 1px 0 0 #fce2c1;
+  box-shadow: inset 0 1px 0 0 #fce2c1;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffc477), color-stop(1, #fb9e25));
+  background: -moz-linear-gradient(center top, #ffc477 5%, #fb9e25 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#ffc477', endColorStr = '#fb9e25');
+  background-color: #ffc477;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border: 1px solid #e8bd74;
+  display: inline-block;
+  color: #fff;
+  font-size: 1em;
+  font-weight: bold;
+  padding: 6px 24px;
+  text-decoration: none;
+  text-shadow: 0 -1px 0 #cc9f52;
+  text-transform: none;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+button.checkout:hover {
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #fb9e25), color-stop(1, #ffc477));
+  background: -moz-linear-gradient(center top, #fb9e25 5%, #ffc477 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#fb9e25', endColorStr = '#ffc477');
+  background-color: #fb9e25;
+}
+
+button.checkout:active {
+  position: relative;
+  top: 2px;
+}
+
+a.button.checkout {
+  -moz-box-shadow: inset 0 1px 0 0 #fce2c1;
+  -webkit-box-shadow: inset 0 1px 0 0 #fce2c1;
+  box-shadow: inset 0 1px 0 0 #fce2c1;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffc477), color-stop(1, #c44b0a));
+  background: -moz-linear-gradient(center top, #ffc477 5%, #c44b0a 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#ffc477', endColorStr = '#c44b0a');
+  background-color: #ffc477;
+  border-radius: 1px;
+  -moz-border-radius: 1px;
+  -webkit-border-radius: 1px;
+  border: 1px solid #e8bd74;
+  display: inline-block;
+  color: #fff;
+  font-size: 1.2em;
+  font-weight: normal;
+  padding: 12px 20px;
+  text-decoration: none;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .3);
+  text-transform: none;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  line-height: 100%;
+}
+
+a.button.checkout:hover {
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  background: #c44b0a;
+  text-shadow: 0 0 10px #ffc477;
+  border:  1px solid maroon;
+
+}
+
+a.button.checkout:active {
+  position: relative;
+  top: 2px;
+}
+
+button.checkout.forward.place-order {
+  border-radius: 0;
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  margin:  0;
+  width: 140px;
+}
+
+button.update {
+  -moz-box-shadow: inset 0 1px 0 0 #fff;
+  -webkit-box-shadow: inset 0 1px 0 0 #fff;
+  box-shadow: inset 0 1px 0 0 #fff;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf));
+  background: -moz-linear-gradient(center top, #ededed 5%, #dfdfdf 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#ededed', endColorStr = '#dfdfdf');
+  background-color: #ededed;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border: 1px solid #dcdcdc;
+  display: inline-block;
+  color: #666;
+  font-size: 0.7em;
+  font-weight: bold;
+  padding: 3px 10px;
+  text-decoration: none;
+  text-shadow: 0 1px 1px #fff;
+  text-transform: lowercase;
+  margin-top: 8px;
+  margin-bottom: 10px;
+}
+
+button.update:hover {
+
+}
+
+button.update:active {
+  position: relative;
+  top: 2px;
+}
+
+  /* MAIN TYPOGRAPHY */
+
+  /* fonts.css from the YUI Library: developer.yahoo.com/yui/
+ refer to developer.yahoo.com/yui/3/cssfonts/ for font sizing percentages
+ 
+ there are three custom edits:
+  * remove arial, helvetica from explicit font stack
+  * we normalize monospace styles ourselves
+  * table font-size is reset in the HTML5 reset above so there is no need to repeat
+  */
+body {
+  /*font: 13px/1.231 "PT Serif", serif;*/
+  /**font-size: small;*/
+}
+
+  /* hack retained to preserve specificity */
+
+select, input, textarea {
+  font: 0.825em "Courier New", "courier", sans-serif;
+}
+
+select {
+  font-size: .675em;
+}
+
+  /* normalize monospace sizing
+  * en.wikipedia.org/wiki/MediaWiki_talk:Common.css/Archive_11#Teletype_style_fix_for_Chrome
+  */
+pre, code, kbd, samp {
+  font-family: monospace, sans-serif;
+}
+
+  /*
+  * minimal base styles
+  */
+
+#main p {
+  line-height: 1.4em;
+  font-size: .925em;
+  color: #222;
+}
+
+#main p, #main h2, #main h3, #main dl, #main ul, #main table {
+  margin-bottom: 1em;
+}
+
+#main ul {
+  list-style: disc;
+  margin-left: 20px;
+}
+
+  /* headers (h1,h2,etc) have no default font-size or margin,
+you'll want to define those yourself. */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+}
+
+label, h1, h2, h3, h4, h5, h6 {
+}
+
+  /* always force a scrollbar in non-IE: */
+html {
+  overflow-y: scroll;
+}
+
+:active, :hover, :focus {
+  outline: none;
+}
+
+  /* accessible focus treatment: people.opera.com/patrickl/experiments/keyboard/test */
+a:hover, a:active {
+  outline: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:active, a:hover {
+  text-decoration: underline;
+}
+
+ol {
+  list-style-type: decimal;
+}
+
+  /* remove margins for navigation lists */
+nav ul, nav li {
+  margin: 0;
+}
+
+small {
+  font-size: 85%;
+}
+
+strong, th {
+  font-weight: bold;
+}
+
+td {
+  vertical-align: top;
+}
+
+  /* set sub, sup without affecting line-height: gist.github.com/413930*/
+sub, sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+}
+
+sup {
+  top: -0.5em;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+pre {
+  padding: 15px;
+
+  /* www.pathf.com/blogs/2008/05/formatting-quoted-code-in-blog-posts-css21-white-space-pre-wrap/ */
+  white-space: pre; /* CSS2 */
+  white-space: pre-wrap; /* CSS 2.1 */
+  white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
+  word-wrap: break-word; /* IE */
+}
+
+textarea {
+  overflow: auto;
+}
+
+  /* www.sitepoint.com/blogs/2010/08/20/ie-remove-textarea-scrollbars/ */
+
+.ie6 legend, .ie7 legend {
+  margin-left: -7px;
+}
+
+  /* thnx ivannikolic! */
+
+  /* align checkboxes, radios, text inputs with their label
+by: Thierry Koblentz tjkdesign.com/ez-css/css/base.css  */
+input[type="radio"] {
+  vertical-align: text-bottom;
+}
+
+input[type="checkbox"] {
+  vertical-align: baseline;
+}
+
+.ie7 input[type="checkbox"] {
+  vertical-align: baseline;
+}
+
+.ie6 input {
+  vertical-align: text-bottom;
+}
+
+  /* hand cursor on clickable input elements */
+label, input[type="button"], input[type="submit"], input[type="image"], button {
+  cursor: pointer;
+}
+
+#search input[type="text"] {
+  background: transparent;
+}
+input[type="text"]:focus {
+  background-color: #ffffcc;
+}
+
+.field_with_errors input[type="text"], .field_with_errors  input[type="password"] {
+  border:  1px solid red;
+}
+
+  /* webkit browsers add a 2px margin outside the chrome of form elements */
+button, input, select, textarea {
+  margin: 0;
+}
+
+  /* colors for form validity */
+input:valid, textarea:valid {
+}
+
+input:invalid, textarea:invalid {
+  border-radius: 1px;
+  -moz-box-shadow: 0 0 5px red;
+  -webkit-box-shadow: 0 0 5px red;
+  box-shadow: 0 0 5px red;
+}
+
+#s1 {
+  font-size: .75em;
+  letter-spacing: normal;
+}
+
+.no-boxshadow input:invalid,
+  /* These selection declarations have to be separate.
+No text-shadow: twitter.com/miketaylr/status/12228805301
+Also: hot pink. */
+::-moz-selection {
+  background: #0095da;
+  color: #fff;
+  text-shadow: none;
+}
+
+::selection {
+  background: #0095da;
+  color: #fff;
+  text-shadow: none;
+}
+
+  /*  j.mp/webkit-tap-highlight-color */
+a:link {
+  -webkit-tap-highlight-color: #FF5E99;
+}
+
+  /* make buttons play nice in IE:
+ www.viget.com/inspire/styling-the-button-element-in-internet-explorer/ */
+button {
+  width: auto;
+  overflow: visible;
+}
+
+  /* bicubic resizing for non-native sized IMG:
+ code.flickr.com/blog/2008/11/12/on-ui-quality-the-little-things-client-side-image-resizing/ */
+.ie7 img {
+  -ms-interpolation-mode: bicubic;
+}
+
+span.price {
+  font-size: 1.5em;
+}
+
+span.price.discounted {
+  text-decoration: line-through;
+}
+
+span.price.selling {
+  font-weight: bold;
+}
+
+h1 {
+}
+
+h1 a {
+}
+
+h2 {
+}
+
+h3 {
+}
+
+header a, #banner nav ul li a {
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+#banner h1 {
+  font-family: Impact, Arial Narrow, <%= font[:alt] %>;
+  font-size: 2em;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
+}
+
+  /* footer */
+
+footer, footer a, footer a:visited, footer a:active, footer a:hover {
+  font-family: <%= font[:alt] %>;
+  font-size: 12px;
+  color: #666;
+  text-shadow: 0 1px 1px #fff;
+}
+
+footer .menu, footer#contact-us {
+  text-transform: lowercase;
+}
+
+  /* end footer */
+
+
+  /* list-box */
+.list-box a {
+  text-decoration: none;
+}
+
+.list-box a:hover {
+  text-decoration: underline;
+}
+
+.list-box li {
+  font-size: 1.25em;
+  line-height: 1.5em;
+}
+
+.list-box h2, #homepage #contact h2 {
+  font-size: 170%;
+  text-transform: uppercase;
+  font-weight: normal;
+}
+
+  /* end list-box */
+
+.breadcrumbs, .pagination {
+  font-size: 1.1em;
+}
+
+.pagination {
+  text-align: right;
+}
+
+#sidebar .list-box {
+  background-color: #F3F3F3;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  color: #666;
+}
+
+#shopping-nav, #shopping-nav a {
+  font-family: "Trebuchet MS", sans-serif;
+  font-size: 0.95em;
+  text-transform: lowercase;
+}
+
+.properties, .properties label {
+  font-family: <%= font[:body] %>;
+  color: #666;
+}
+
+.properties label {
+  display: inline;
+}
+
+.properties label:after {
+  content: ":";
+}
+
+.faint {
+  color: #999;
+}
+
+.caption {
+  text-transform: lowercase;
+  color: #656565;
+  font-weight: normal;
+}
