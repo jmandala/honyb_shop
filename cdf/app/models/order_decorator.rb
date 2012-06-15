@@ -231,11 +231,7 @@ Order.class_eval do
   end
 
   def self.when_to_run
-    if ENV["RAILS_ENV"] == 'production'
-      Cdf::Config[:cdf_po_file_generate_delay].to_i.minutes.from_now      # in production, use the config delay - all other environments, run immediately. Review?
-    else
-      0.minutes.from_now
-    end
+    Cdf::Config[:cdf_po_file_generate_delay].to_i.minutes.from_now      # in production, use the config delay - all other environments, run immediately. Review?
   end
 
   def generate_and_submit_po_file
