@@ -1,1 +1,4 @@
-<input type="text" placeholder="affiliate key"/> <input type="submit" value="save"/> or <a>cancel</a>
+<%= form_for @user, :url => { :action => "update_affiliate" }, :remote => true do |f| %>
+  <%= f.text_field :affiliate %>
+  <%= f.submit "Save" %>
+<% end %>

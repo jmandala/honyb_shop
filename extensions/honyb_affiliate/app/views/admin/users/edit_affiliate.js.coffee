@@ -1,1 +1,1 @@
-$('#affiliate-key').replaceWith("<%= escape_javascript render(:partial => 'edit_affiliate') %>")
+$('#affiliate-key .content').replaceWith("<%= escape_javascript render('edit_affiliate') %>")

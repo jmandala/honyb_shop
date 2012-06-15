@@ -1,0 +1,1 @@
+$('#affiliate-key form').replaceWith("<%= escape_javascript render('affiliate_key') %>")

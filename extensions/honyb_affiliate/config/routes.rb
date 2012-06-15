@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     resources :users do
       member do
         get 'edit_affiliate'
+        put 'update_affiliate'
       end
     end
   end
