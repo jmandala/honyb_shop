@@ -24,7 +24,17 @@ module Cdf
       # Initializes from config.yml in order to set
       # default values for all required properties
       def init_from_config(flag=nil)
-        yaml = YAML::load_file(File.join(Rails.root, 'cdf/config/config.yml'))
+        load_config_from_file("config.yml", flag)
+        load_config_from_file("config.#{Rails.env}.yml", flag)
+      end
+
+      private
+
+      def load_config_from_file(file_name, flag)
+        full_file_name = File.join(Rails.root, "cdf/config/#{file_name}")
+        return if !File.exists? full_file_name
+
+        yaml = YAML::load_file(full_file_name)
         yaml.keys.each { |key| self.set(key.to_sym => yaml[key]) unless flag == :overwrite && (self[key.to_sym] || self[key.to_sym].empty?) }
       end
     end

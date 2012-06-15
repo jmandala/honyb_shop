@@ -20,13 +20,13 @@ describe PoFile do
   let(:generate_po_file) { PoFile.generate }
 
   it "should create a PO file and submit it after creating an order" do
+    Delayed::Worker.delay_jobs = false
+
     Order.count.should == 0
     order = create_order
     Order.count.should == 1
 
     id = order.id
-    sleep(20.seconds)    # wait for the observer to kick in, queue the action, and for the action to be picked up by the background thread
-
     order = Order.find_by_id(id)
     order.payment.state.should == "completed"
     order.needs_po?.should == false
@@ -46,13 +46,6 @@ describe PoFile do
 
   it "should still have no orders!" do
     Order.count.should == 0
-  end
-
-  it "should have orders that need po files" do
-    Order.needs_po.count.should == 0
-    order = create_order
-    order.needs_po?.should == true
-    Order.needs_po.count.should == 1
   end
 
   context "default behaviors" do
@@ -108,7 +101,7 @@ describe PoFile do
       @order = create_order
       @order.save!
 
-      @po_file = generate_po_file
+      @po_file = @order.po_file
     end
 
     after(:all) do

@@ -1,0 +1,3 @@
+# CDF Configuration overrides for the Production environment
+
+cdf_po_file_generate_delay: 120
