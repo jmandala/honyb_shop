@@ -1,4 +1,4 @@
 <%= form_for @user, :url => { :action => "update_affiliate" }, :remote => true do |f| %>
-  <%= f.text_field :affiliate %>
+  <%= select(:user, :affiliate_id, options_from_collection_for_select(@affiliates, :id, :affiliate_key)) %>
   <%= f.submit "Save" %>
 <% end %>
