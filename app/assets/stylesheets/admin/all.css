@@ -14,4 +14,6 @@
  *= require_tree .
  *= require store/cdf
  *= require admin/user
+ *= require jquery.jgrowl.css
+ *= require admin/jquery.jgrowl.css
 */

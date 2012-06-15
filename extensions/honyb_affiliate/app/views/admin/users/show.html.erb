@@ -18,7 +18,9 @@
   <tr data-hook="affiliate">
     <th><%= t :affiliate_key %></th>
     <td>
-      <%=  render :partial => 'affiliate_key' %>
+      <div id="affiliate-key" data-hook="affiliate-key">      
+       <%=  render :partial => 'affiliate_key' %>
+      </div>
     </td>
   </tr>
 </table>

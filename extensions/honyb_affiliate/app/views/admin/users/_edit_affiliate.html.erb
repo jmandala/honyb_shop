@@ -1,4 +1,6 @@
-<%= form_for @user, :url => { :action => "update_affiliate" }, :remote => true do |f| %>
-  <%= select(:user, :affiliate_id, options_from_collection_for_select(@affiliates, :id, :affiliate_key)) %>
-  <%= f.submit "Save" %>
-<% end %>
+<div class="content">
+  <%= form_for @user, :url => {:action => "update_affiliate"}, :remote => true do |f| %>
+    <%= select(:user, :affiliate_id, options_from_collection_for_select(@affiliates, :id, :affiliate_key)) %>
+    <%= f.submit "Save" %>
+  <% end %>
+</div>

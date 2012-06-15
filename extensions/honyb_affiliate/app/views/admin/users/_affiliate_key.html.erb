@@ -1,6 +1,4 @@
-<div id="affiliate-key" data-hook="affiliate-key">
-  <div class="content">
+<div class="content">
   <%= @user.affiliate_key.nil? ? t(:none) : @user.affiliate_key %>
   <%= link_to_with_icon 'edit', t(:edit), edit_affiliate_admin_user_path, :class => 'edit-affiliate-key', :remote => true %>
-  </div>
 </div>
