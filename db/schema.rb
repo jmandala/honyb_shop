@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120614191539) do
+ActiveRecord::Schema.define(:version => 20120616084147) do
 
   create_table "activators", :force => true do |t|
     t.string   "description"
@@ -506,6 +506,7 @@ ActiveRecord::Schema.define(:version => 20120614191539) do
     t.integer  "dc_code_id"
     t.string   "split_shipment_type"
     t.integer  "parent_id"
+    t.integer  "affiliate_id"
   end
 
   add_index "orders", ["number"], :name => "index_orders_on_number"

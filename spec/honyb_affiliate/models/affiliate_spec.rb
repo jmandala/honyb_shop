@@ -25,8 +25,10 @@ describe Affiliate, :type => :model do
       %w("" "12345" "12345." "12345$" "12345'").each do |key|
         lambda { Affiliate.validate_affiliate_key(key) }.should raise_error(ArgumentError, "Affiliate Key should be 6-30 characters and contain only letters, numbers, underscores or dashes.")
       end
-      
+
       lambda { Affiliate.validate_affiliate_key("123456") }.should_not raise_error(ArgumentError)
+      lambda { Affiliate.validate_affiliate_key("123456-") }.should_not raise_error(ArgumentError)
+      lambda { Affiliate.validate_affiliate_key("123456_") }.should_not raise_error(ArgumentError)
     end
   end
 
@@ -50,6 +52,19 @@ describe Affiliate, :type => :model do
 
     end
 
+
+    context "with orders" do
+      before do
+        @order = Factory(:order)
+      end
+      
+      it "should have orders" do
+        @order.affiliate = @affiliate
+        @order.save!
+        @affiliate.orders.should == [@order]
+      end
+
+    end
   end
 
 end
