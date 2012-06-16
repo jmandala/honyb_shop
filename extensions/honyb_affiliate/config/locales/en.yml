@@ -4,3 +4,6 @@
 en: 
   affiliate:
     not_found: "Affiliate could not be found."
+    key:
+      not_blank: "Affiliate Key must not be blank."
+      not_unique: "Affiliate Key is not available. Please try another."

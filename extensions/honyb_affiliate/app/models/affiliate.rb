@@ -33,7 +33,6 @@ class Affiliate < ActiveRecord::Base
 
     affiliate = Affiliate.find_by_affiliate_key! affiliate_key
     self.current = affiliate
-
   end
 
   # Returns true if there is a #current Affiliate
@@ -41,4 +40,11 @@ class Affiliate < ActiveRecord::Base
     !current.nil?
   end
 
+  # Returns error message if key is not a valid affiliate key
+  def self.validate_affiliate_key(key)
+    valid_pattern = %r(^[\w\-\_]{6,30})
+    return true if key.match(valid_pattern)
+    raise ArgumentError, "Affiliate Key should be 6-30 characters and contain only letters, numbers, underscores or dashes."
+  end
+  
 end

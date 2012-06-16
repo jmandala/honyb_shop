@@ -88,3 +88,5 @@ en:
     select: Select
     edit: Edit
     cancel: Cancel
+    none: None
+    error: Error

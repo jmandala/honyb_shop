@@ -20,9 +20,19 @@ describe Affiliate, :type => :model do
     end
   end
 
+  context "with the class" do
+    it "must be comprised of alpha letter, numbers, underscores, dashes" do
+      %w("" "12345" "12345." "12345$" "12345'").each do |key|
+        lambda { Affiliate.validate_affiliate_key(key) }.should raise_error(ArgumentError, "Affiliate Key should be 6-30 characters and contain only letters, numbers, underscores or dashes.")
+      end
+      
+      lambda { Affiliate.validate_affiliate_key("123456") }.should_not raise_error(ArgumentError)
+    end
+  end
+
   context "when params are valid" do
-    before do     
-      @user =  Factory(:user)
+    before do
+      @user = Factory(:user)
       @affiliate = Affiliate.create(:affiliate_key => affiliate_key, :users => [@user])
     end
 
@@ -37,7 +47,7 @@ describe Affiliate, :type => :model do
       it "affiliate has a users" do
         @affiliate.users.should == [@user]
       end
-      
+
     end
 
   end
