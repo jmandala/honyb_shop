@@ -9,6 +9,9 @@ Admin::UsersController.class_eval do
     @affiliates << OpenStruct.new(:id => 2, :affiliate_key => "error")
   end
 
+  def show_affiliate
+    render :action => :update_affiliate
+  end
   # Assigns the given affiliate
   def update_affiliate
     begin
