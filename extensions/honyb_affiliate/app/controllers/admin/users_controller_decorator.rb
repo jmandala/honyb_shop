@@ -38,9 +38,12 @@ Admin::UsersController.class_eval do
     end
 
     # Create Affiliate
-    @user.affiliate = Affiliate.create(:affiliate_key => affiliate_key)
-    @user.save!
-    
+    User.transaction do
+      @user.affiliate = Affiliate.create(:affiliate_key => affiliate_key)
+      @user.save!
+    end
+
+
     render :action => :update_affiliate
   end
 

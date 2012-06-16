@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Affiliate, :type => :model do
+describe Affiliate do
   let(:affiliate_key) { 'affiliate-id' }
 
   it "#current should return nil by default" do

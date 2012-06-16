@@ -20,7 +20,13 @@ Spree::BaseController.class_eval do
   def init_affiliate
     params[:affiliate_key] ||= request.session[:affiliate_key]
 
-    Affiliate.init(params[:affiliate_key])
+    begin
+      Affiliate.init(params[:affiliate_key])
+    rescue ActiveRecord::RecordNotFound => e
+      flash[:error] = e.message
+      request.session[:affiliate_key] = nil
+    end
+
     request.session[:affiliate_key] = Affiliate.current.affiliate_key if Affiliate.has_current?
   end
 

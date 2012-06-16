@@ -52,10 +52,9 @@ Spork.prefork do
       counter = 0
     end
 
-    config.before(:each) do
-      DatabaseCleaner.start
-      
-      DatabaseCleaner.strategy = :truncation, {:except => %w[
+    config.before(:suite) do
+      DatabaseCleaner.strategy = :transaction
+      DatabaseCleaner.clean_with(:truncation, {:except => %w[
       asn_order_statuses 
       asn_slash_codes 
       asn_shipping_method_codes
@@ -78,7 +77,11 @@ Spork.prefork do
       tax_rate 
       users
       zones 
-      zone_members ]}
+      zone_members ]})
+    end
+
+    config.before(:each) do
+      DatabaseCleaner.start
     end
 
     config.after(:each) do

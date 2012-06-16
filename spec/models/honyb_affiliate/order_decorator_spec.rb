@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Order, :type => :model do
+describe Order do
   it "has an affiliate" do
     affiliate = Affiliate.create(:affiliate_key => String.random(6))
     order = Factory.create(:order)

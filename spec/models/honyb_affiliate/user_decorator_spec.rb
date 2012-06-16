@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe User, :type => :model do
+describe User do
 
   before do
     @user = Factory(:user)
