@@ -20,14 +20,12 @@ describe PoFile do
   let(:generate_po_file) { PoFile.generate }
 
   it "should create a PO file and submit it after creating an order" do
-    Delayed::Worker.delay_jobs = false
-
     Order.count.should == 0
     order = create_order
     Order.count.should == 1
 
-    id = order.id
-    order = Order.find_by_id(id)
+    order.refresh
+
     order.payment.state.should == "completed"
     order.needs_po?.should == false
     order.po_file.should_not == nil

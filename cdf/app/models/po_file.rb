@@ -55,10 +55,13 @@ class PoFile < ActiveRecord::Base
     super
   end
 
+  # Generate a new PoFile from a given order
   def self.generate_from_order(order)
     PoFile.generate_core([] << order)
   end
 
+  # Generates a new PoFile - by default, use every order that is ready for
+  # shipment (limit 25)
   def self.generate
     PoFile.generate_core
   end

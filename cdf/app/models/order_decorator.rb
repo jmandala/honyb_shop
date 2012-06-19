@@ -230,12 +230,12 @@ Order.class_eval do
     "hello"
   end
 
-  def self.when_to_run
+  def self.when_to_run_po_file
     Cdf::Config[:cdf_po_file_generate_delay].to_i.minutes.from_now      # in production, use the config delay - all other environments, run immediately. Review?
   end
 
   def generate_and_submit_po_file
-    Delayed::Worker.logger.error "generating a submitting a PO file"
+    Delayed::Worker.logger.debug "generating a submitting a PO file"
     self.update!        # update to make sure the shipping state is correct
     if !self.nil? && self.needs_po? && !self.payment.nil? && self.payment.state == "completed"
       po_file = PoFile.generate_from_order self     # generate the PO file from our order
@@ -244,7 +244,7 @@ Order.class_eval do
       Delayed::Worker.logger.error "ERROR: Attempting to generate and submit a PO file, but the Order #{self.nil? ? '[nil]' : self.id} is in an invalid state"
     end
   end
-  handle_asynchronously :generate_and_submit_po_file, :run_at => Proc.new { when_to_run }
+  handle_asynchronously :generate_and_submit_po_file, :run_at => Proc.new { when_to_run_po_file }
 
   private
   # Sets the order type if not already set 

@@ -306,17 +306,27 @@ module Importable
   end
 
   class Downloader
-    def self.download_all_files
+    def self.download_poa_files
+      self.download_files PoaFile
+    end
+
+    def self.download_asn_files
+      self.download_files AsnFile
+    end
+
+    def self.download_cdf_invoice_files
+      self.download_files CdfInvoiceFile
+    end
+
+    private
+
+    def self.download_files(class_instance)
       puts "downloading files"
 
-      poa_files = []
-      asn_files = []
-      cdf_invoice_files = []
+      files = []
 
       begin
-        poa_files = PoaFile.download
-        asn_files = AsnFile.download
-        cdf_invoice_files = CdfInvoiceFile.download
+        files = class_instance.download
       rescue => e
         message = "Error downloading. #{e.message}. #{e.backtrace.slice(0, 15)}"
         Rails.logger.error message
@@ -324,9 +334,9 @@ module Importable
         CdfImportExceptionLog.create(:event => message, :file_name => self.file_name)
       end
 
-      puts "Downloaded and stored #{poa_files.count} Poa Files; #{asn_files.count} Asn Files; and #{cdf_invoice_files.count} Cdf Invoice Files"
+      puts "Downloaded and stored #{files.count} #{class_instance.to_s} Files"
 
-      return poa_files.count + asn_files.count + cdf_invoice_files.count
+      return files.count
     end
   end
 

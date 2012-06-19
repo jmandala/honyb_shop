@@ -90,6 +90,8 @@ Spork.prefork do
 
   end
   ActiveRecord::Schema.verbose = false
+
+  Delayed::Worker.delay_jobs = false    # disable delayed_job for running tests
 end
 
 Spork.each_run do
