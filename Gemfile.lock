@@ -45,10 +45,17 @@ PATH
       routing-filter
 
 PATH
+  remote: extensions/honyb_reports
+  specs:
+    honyb_reports (0.1.0)
+      spree_core (>= 0.70.5)
+
+PATH
   remote: extensions/honyb_theme
   specs:
     honyb_theme (0.2.0)
       routing-filter
+      spree_core (>= 0.70.5)
 
 GEM
   remote: http://rubygems.org/
@@ -352,6 +359,7 @@ DEPENDENCIES
   guard-spork
   haml
   honyb_affiliate!
+  honyb_reports!
   honyb_theme!
   jquery-rails
   launchy

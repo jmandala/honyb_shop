@@ -1,6 +1,6 @@
 module HonybReports
   class Engine < Rails::Engine
-    railtie_name "honyb_affiliate"
+    railtie_name "honyb_reports"
 
     config.autoload_paths += %W(#{config.root}/lib)
 

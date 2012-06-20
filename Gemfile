@@ -46,7 +46,6 @@ gem "spree_paypal_express", :git => 'git://github.com/spree/spree_paypal_express
 
 gem "spree_pages", :git => 'git://github.com/BDQ/spree_pages.git'
 
-
 gem 'routing-filter'
 
 gem 'rack-p3p', :git => 'git://github.com/jmandala/rack-p3p.git'
@@ -55,4 +54,5 @@ gem 'rack-jsonp-middleware'
 # HONYB EXTENSIONS
 gem "cdf", :path => "cdf" # todo: move to the 'extensions' dir
 gem 'honyb_affiliate', :path => 'extensions/honyb_affiliate'
+gem 'honyb_reports', :path => 'extensions/honyb_reports'
 gem 'honyb_theme', :path => 'extensions/honyb_theme'
