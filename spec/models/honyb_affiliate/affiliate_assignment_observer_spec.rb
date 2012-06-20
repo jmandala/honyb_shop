@@ -14,6 +14,7 @@ describe AffiliateAssignmentObserver do
       affiliate = Factory.create(:affiliate)
       Affiliate.current = affiliate
       order = Factory.create(:order)
+      order = Order.find(order.id)            
       order.affiliate.should == affiliate
     end
   end
@@ -25,6 +26,7 @@ describe AffiliateAssignmentObserver do
       order.affiliate = affiliate
       Affiliate.current = Factory.create(:affiliate, :affiliate_key => String.random(10))      
       order.save!
+      order = Order.find(order.id)            
       order.affiliate.should == affiliate
       order.affiliate.should_not == Affiliate.current
     end

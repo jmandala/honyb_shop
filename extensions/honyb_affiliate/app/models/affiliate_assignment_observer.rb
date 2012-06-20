@@ -9,5 +9,6 @@ class AffiliateAssignmentObserver < ActiveRecord::Observer
     end
     
     order.affiliate = Affiliate.current
+    order.save!
   end
 end
