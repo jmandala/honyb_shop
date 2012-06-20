@@ -1,12 +1,6 @@
 Rails.application.routes.draw do
-  filter :affiliate_key_filter
-
-  namespace :admin do
-    namespace :reports do
-      collection do
-        get :sales_detail
-      end
-
-    end
-  end
+  
+  match '/admin/reports/sales_detail' => 'admin/reports#sales_detail',  :via  => [:get, :post],
+                                                              :as   => 'sales_detail_admin_reports'
+  
 end

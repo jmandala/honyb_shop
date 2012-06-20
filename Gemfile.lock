@@ -47,8 +47,7 @@ PATH
 PATH
   remote: extensions/honyb_reports
   specs:
-    honyb_reports (0.1.0)
-      spree_core (>= 0.70.5)
+    honyb_reports (0.1.1)
 
 PATH
   remote: extensions/honyb_theme

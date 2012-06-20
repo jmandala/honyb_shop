@@ -1,4 +1,4 @@
-module HonybReports
+module HonybAffiliate
   class Engine < Rails::Engine
     railtie_name "honyb_affiliate"
 

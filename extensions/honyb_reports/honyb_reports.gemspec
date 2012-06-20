@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'honyb_reports'
-  s.version     = '0.1.0'
+  s.version     = '0.1.1'
   s.summary     = 'Provides reporting and exporting'
 
   s.author        = 'Joshua Jacobs'
@@ -12,8 +12,6 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree_core', '>= 0.70.5'  
-  
   s.has_rdoc = false
   
 end
