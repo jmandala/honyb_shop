@@ -13,7 +13,7 @@ require 'rvm/capistrano'
 set :rvm_ruby_string, 'ruby-1.9.2-p290@rails-3.1.1'
 
 # file paths
-set :repository, "#{user}@#{git_server}:/repos/honyb/honyb_shop.git"
+set :repository, "#{git_server}:/repos/honyb/honyb_shop.git"
 set :deploy_to, "/usr/local/mandala-sites/honyb/#{domain}"
 
 set :scm, :subversion
