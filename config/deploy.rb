@@ -1,4 +1,5 @@
 #require 'bundler/capistrano'
+require "delayed/recipes"
 
 set :user, 'honyb'
 set :application, "honyb_shop"
