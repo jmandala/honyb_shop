@@ -326,7 +326,8 @@ module Importable
       files = []
 
       begin
-        files = class_instance.download
+        class_instance.download
+	files = class_instance.import_all
       rescue => e
         message = "Error downloading. #{e.message}. #{e.backtrace.slice(0, 15)}"
         Rails.logger.error message
