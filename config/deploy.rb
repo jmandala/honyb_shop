@@ -56,6 +56,7 @@ namespace :deploy do
 end
 
 after 'deploy:update_code', :bundle_install
+after 'deploy:update_code', "deploy:migrate"
 after 'deploy:restart', :run_post_commands
 after "deploy:stop",    "delayed_job:stop"
 after "deploy:start",   "delayed_job:start"
