@@ -61,7 +61,11 @@
     %td
       = Cdf::Config[:cdf_ftp_password].empty? ? "[undefined]" : "******"
 
-
+  %tr
+    %th{:scope => 'row'}
+      = t "cdf_po_file_generate_delay" + " (production only)"
+    %td
+      = Cdf::Config[:cdf_po_file_generate_delay]
 
 %p
   = link_to_with_icon 'edit', t("edit"), edit_admin_fulfillment_settings_path, :id => 'admin_fulfillment_settings_link'

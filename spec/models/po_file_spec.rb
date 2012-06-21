@@ -19,6 +19,22 @@ describe PoFile do
 
   let(:generate_po_file) { PoFile.generate }
 
+  it "should create a PO file and submit it after creating an order" do
+    Order.count.should == 0
+    order = create_order
+    Order.count.should == 1
+
+    order.reload
+
+    order.payment.state.should == "completed"
+    order.needs_po?.should == false
+    order.po_file.should_not == nil
+    order.po_file.orders.include?(order).should == true
+
+    order.po_file.submitted_at.should_not == nil
+    order.po_file.submitted?.should == true
+  end
+
   it "should create an order, and find the order it creates" do
     Order.count.should == 0
     order = create_order
@@ -28,13 +44,6 @@ describe PoFile do
 
   it "should still have no orders!" do
     Order.count.should == 0
-  end
-
-  it "should have orders that need po files" do
-    Order.needs_po.count.should == 0
-    order = create_order
-    order.needs_po?.should == true
-    Order.needs_po.count.should == 1
   end
 
   context "default behaviors" do
@@ -90,7 +99,7 @@ describe PoFile do
       @order = create_order
       @order.save!
 
-      @po_file = generate_po_file
+      @po_file = @order.po_file
     end
 
     after(:all) do

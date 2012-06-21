@@ -53,6 +53,11 @@ gem 'routing-filter'
 gem 'rack-p3p', :git => 'git://github.com/jmandala/rack-p3p.git'
 gem 'rack-jsonp-middleware'
 
-#gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "6f00b5b7cd5042bf7d44adda1e91dc5d32caca33"
-gem 'honyb_theme', :path => '../honyb_theme'
-gem 'honyb_affiliate', :path => '../honyb_affiliate'
+gem 'delayed_job_active_record'
+gem 'daemons'
+gem 'whenever', :require => false
+
+#gem 'ie_iframe_cookies'
+
+gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "19bfc7c5a8564a1d296e9a929ef1bc6797218318"
+#gem 'honyb_theme', :path => '../honyb_theme'

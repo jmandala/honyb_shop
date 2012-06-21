@@ -63,6 +63,12 @@
       %td
         = password_field_tag('preferences[cdf_ftp_password]', Cdf::Config[:cdf_ftp_password])
 
+    %tr
+      %th{:scope => 'row'}
+        = label_tag 'preferences[cdf_po_file_generate_delay]', t("cdf_po_file_generate_delay") + " (Production Only)"
+      %td
+        = text_field_tag('preferences[cdf_po_file_generate_delay]', Cdf::Config[:cdf_po_file_generate_delay])
+
   %p{:class =>"form-buttons"}
     = button t('update') 
     = t("or")

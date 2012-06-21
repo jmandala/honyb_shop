@@ -305,6 +305,41 @@ module Importable
     self.class.write_data path, data
   end
 
+  class Downloader
+    def self.download_poa_files
+      self.download_files PoaFile
+    end
+
+    def self.download_asn_files
+      self.download_files AsnFile
+    end
+
+    def self.download_cdf_invoice_files
+      self.download_files CdfInvoiceFile
+    end
+
+    private
+
+    def self.download_files(class_instance)
+      puts "downloading files"
+
+      files = []
+
+      begin
+        files = class_instance.download
+      rescue => e
+        message = "Error downloading. #{e.message}. #{e.backtrace.slice(0, 15)}"
+        Rails.logger.error message
+        Rails.logger.error e.backtrace.slice(0, 15)
+        CdfImportExceptionLog.create(:event => message, :file_name => self.file_name)
+      end
+
+      puts "Downloaded and stored #{files.count} #{class_instance.to_s} Files"
+
+      return files.count
+    end
+  end
+
 end
 
 
