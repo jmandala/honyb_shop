@@ -28,7 +28,7 @@ Admin::ReportsController.class_eval do
     else
       params[:search][:completed_at_is_not_null] = false
     end
-
+    
     params[:search][:meta_sort] ||= "created_at.desc"
 
     @search = Order.metasearch(params[:search])

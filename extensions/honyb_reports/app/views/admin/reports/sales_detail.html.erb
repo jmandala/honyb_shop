@@ -3,25 +3,47 @@
 <table class="admin-report" data-hook="sales_detail">
   <thead>
   <tr>
-    <th><%=  t('order.number') %></th>
-    <th><%=  t(:date) %></th>
-    <th><%=  t('order.affiliate_key') %></th>
-    <th><%=  t('order.total') %></th>
+    <th><%= t('order.number') %></th>
+    <th><%= t(:date) %></th>
+    <th><%= t('order.affiliate_key') %></th>
+    <th><%= t('order.total') %></th>
   </tr>
   </thead>
   <tbody>
-    <%- @orders.each do |order| %>
+  <%- @orders.each do |order| %>
     <tr>
       <td align="right"><%= order.number %></td>
       <td align="right"><%= order.completed_at %></td>
       <td align="right"><%= order.affiliate.affiliate_key if order.affiliate %></td>
       <td align="right"><%= number_to_currency order.total %></td>
     </tr>
-    <%- end %>
+  <%- end %>
   </tbody>
 </table>
 
 <% content_for :sidebar do %>
-  <%= render :partial => 'admin/shared/report_criteria', :locals => {} %>
+  <%= form_for @search, :url => sales_detail_admin_reports_path do |s| %>
+    <%= label_tag nil, t(:date_range) %><br />
+    <div class="date-range-filter">
+      <div class="left sub-field">
+        <%= s.text_field :created_at_greater_than, :class => 'datepicker' %>
+        <br/>
+        <%= label_tag nil, t(:start), :class => 'sub' %>
+      </div>
+      <div class="right sub-field">
+        <%= s.text_field :created_at_less_than, :class => 'datepicker' %>
+        <br/>
+        <%= label_tag nil, t(:stop) %>
+      </div>
+    </div>
+
+    <div class="affiliate_key">
+      <%= s.text_field :affiliate_affiliate_key_contains, :class => 'text' %>
+      <br/>
+      <%= label_tag nil, t('affiliate.affiliate_key') %>
+    </div>
+
+    <p><%= button t(:search) %></p>
+  <% end %>
 <% end %>
 
