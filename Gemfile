@@ -51,6 +51,10 @@ gem 'routing-filter'
 gem 'rack-p3p', :git => 'git://github.com/jmandala/rack-p3p.git'
 gem 'rack-jsonp-middleware'
 
+gem 'ruport'
+gem 'ruport-util'
+gem 'acts_as_reportable'
+
 # HONYB EXTENSIONS
 gem "cdf", :path => "cdf" # todo: move to the 'extensions' dir
 gem 'honyb_affiliate', :path => 'extensions/honyb_affiliate'

@@ -1,25 +1,8 @@
 <h1><%= t(:sales_detail) %> </h1>
 
-<table class="admin-report" data-hook="sales_detail">
-  <thead>
-  <tr>
-    <th><%= t('order.number') %></th>
-    <th><%= t(:date) %></th>
-    <th><%= t('order.affiliate_key') %></th>
-    <th><%= t('order.total') %></th>
-  </tr>
-  </thead>
-  <tbody>
-  <%- @orders.each do |order| %>
-    <tr>
-      <td align="right"><%= order.number %></td>
-      <td align="right"><%= order.completed_at %></td>
-      <td align="right"><%= order.affiliate.affiliate_key if order.affiliate %></td>
-      <td align="right"><%= number_to_currency order.total %></td>
-    </tr>
-  <%- end %>
-  </tbody>
-</table>
+<div id="sales-detail-results">
+  <%= @table.to_html.html_safe %>
+</div>
 
 <% content_for :sidebar do %>
   <%= form_for @search, :url => sales_detail_admin_reports_path do |s| %>
