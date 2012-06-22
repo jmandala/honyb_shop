@@ -8,4 +8,4 @@ cdf_ship_to_account: SHIP_12    # max ship_to_account length is 7 characters
 cdf_bill_to_account: BILL_12    # max bill_to_account length is 7 characters
 days_to_hold_backorder: 1 # number of days to hold a back order before it is cancelled
 split_shipment_type: !ruby/symbol release_when_full # strategy to use when order can be partially fulfilled
-cdf_po_file_generate_delay: 2
+cdf_po_file_generate_delay: 0
