@@ -1,0 +1,163 @@
+/** CART: BEGIN **/
+#cart #banner {
+  display: block;
+}
+
+#cart #content {
+    padding: 0;
+}
+
+#cart-detail {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#cart-detail thead {
+    border-bottom: 1px solid #dadada;
+}
+
+#cart-detail th {
+    font-family: verdana, sans-serif;
+    font-weight: bold;
+    font-size: 0.625em;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 0 0 6px 20px;    
+    color: #222;
+    
+}
+
+#cart-detail th.product-details {
+    width: 60%
+}
+
+#cart-detail th.quantity,#cart-detail th.price {
+    width: 20%;
+    text-align: center;
+}
+
+#cart-detail td {
+    font-family: verdana, sans-serif;
+    color: #666;
+    padding: 12px 0 12px 20px;        
+}
+
+#cart-detail tbody tr  {
+    border-bottom: 1px dashed #dadada;
+}
+
+#cart-detail tbody tr:last-child  {
+    border-bottom: none;
+}
+
+#cart-detail .title, #cart-detail .subtitle, #cart-detail .ext-price {
+    font-weight: bold;
+    color: #000;    
+    font-size: 0.725em;
+}
+
+#cart-detail .subtitle {
+    font-weight: normal;
+}
+
+#cart-detail .title a, #cart-detail .title a:visited, #cart-detail .title a:hover, #cart-detail .title a:active {
+    color: #000;
+}
+
+#cart-detail .title-and-subtitle {
+    margin-bottom: 10px;
+}
+
+#cart-detail .author, #cart-detail .unit-price {
+    color: #666;
+    margin-bottom: 3px;
+    font-size: 0.65em;
+}
+
+#cart-detail .cart-item-image {
+    float: left;
+    padding-right: 10px;
+}
+
+#cart-detail td.quantity,#cart-detail td.cart-item-total {
+    text-align: center;
+} 
+
+#cart input.line-item-quantity {
+    width: 70px;
+    text-align: center;
+}
+
+#cart-detail tfoot {
+    background-color: #f7f6ef;
+    border-top:  1px solid #dadada;
+    border-bottom:  1px solid #dadada;
+}
+
+#cart-detail tfoot td {
+    font-size: 0.85em;
+    font-weight: bold;
+    color: #222;
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+
+#cart-detail tfoot td.subtotal-label {
+    text-align: right;
+}
+
+#cart-detail tfoot td.subtotal-value {
+    text-align: center;
+}
+
+#cart-detail .remove {
+    cursor: pointer;
+    font-size: 11px;
+    color: #666;
+}
+
+#main .container #content #cart-is-empty {
+    margin-left: 20px;
+}
+/** CART: END **/
+
+
+/** BANNER: BEGIN **/
+#banner a.button.checkout {
+    margin: 0 20px 0 0;
+    float: right;
+}
+
+.bottom-checkout {
+    text-align: right;
+    margin-right: 20px;
+}
+
+
+/** BANNER: END **/
+
+#edit_wishlist {
+  padding: 0 140px 10px;
+  display: none;
+  border-bottom: 1px solid #D9D9D9;
+  margin-bottom: 20px;
+}
+#edit_wishlist label{
+  color: #777777;
+}
+#edit_wishlist input[type='text'] {
+  border: 2px solid #A0A0A0;
+  border-radius:2px;
+  margin-bottom: 4px;
+}
+#edit_wishlist input[type="checkbox"] {
+  vertical-align: baseline;
+}
+#edit_wishlist div {
+  float: left;
+}
+#edit_wishlist a.button{
+  float: left;
+  line-height: 15px;
+  margin: 25px 110px;
+}

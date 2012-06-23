@@ -46,8 +46,6 @@ gem "spree_paypal_express", :git => 'git://github.com/spree/spree_paypal_express
 
 gem "spree_pages", :git => 'git://github.com/BDQ/spree_pages.git'
 
-gem "cdf", :path => "cdf", :require => "cdf"
-
 gem 'routing-filter'
 
 gem 'rack-p3p', :git => 'git://github.com/jmandala/rack-p3p.git'
@@ -57,7 +55,12 @@ gem 'delayed_job_active_record'
 gem 'daemons'
 gem 'whenever', :require => false
 
-#gem 'ie_iframe_cookies'
+gem 'ruport'
+gem 'ruport-util'
+gem 'acts_as_reportable'
 
-gem 'honyb_theme', :git => 'code.mandaladesigns.com:/repos/honyb/honyb_theme.git',:ref => "6f00b5b7cd5042bf7d44adda1e91dc5d32caca33"
-#gem 'honyb_theme', :path => '../honyb_theme'
+# HONYB EXTENSIONS
+gem "cdf", :path => "cdf" # todo: move to the 'extensions' dir
+gem 'honyb_affiliate', :path => 'extensions/honyb_affiliate'
+gem 'honyb_reports', :path => 'extensions/honyb_reports'
+gem 'honyb_theme', :path => 'extensions/honyb_theme'

@@ -1,0 +1,38 @@
+<h3><%= t(:order_summary) %></h3>
+
+<div class="summary">
+  <table class="items">
+    <thead>
+    <tr>
+      <th class="description"><%= t :item %></th>
+      <th class="qty"><%= t :qty %></th>
+      <th class="price"><%= t :price %></th>
+    </tr>
+    </thead>
+    <tbody>
+    <% for line_item in @order.line_items %>
+      <% variant = line_item.variant %>
+      <tr>
+        <td class="description"><%= variant.product.name %></td>
+        <td class="qty"><%= line_item.quantity %></td>
+        <td class="price"><%= number_to_currency(line_item.price) %></td>
+      </tr>
+    <% end %>
+    <tr class="totals">
+      <th class="subtotal" colspan="2"><%= t :subtotal %></th>
+      <td class="subtotal"><%= number_to_currency @order.item_total %></td>
+    </tr>
+    <% @order.adjustments.each do |adjustment| %>
+      <tr class="totals">
+        <th class="adjustment" colspan="2"><%= adjustment.label %></th>
+        <td class="amount"><%= number_to_currency adjustment.amount %></td>
+      </tr>
+    <% end %>
+    <tr class="totals grand-total">
+      <th class="total" colspan="2"><%= t :total %></th>
+      <td class="total"><%= number_to_currency @order.total %></td>
+    </tr>
+    </tbody>
+    
+  </table>
+</div>

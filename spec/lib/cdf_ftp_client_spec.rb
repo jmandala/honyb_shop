@@ -13,6 +13,7 @@ describe CdfFtpClient do
 
 
   after :all do
+    
     Cdf::Config.set(:cdf_run_mode => :mock)
   end
 

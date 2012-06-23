@@ -13,4 +13,5 @@
 
 //= require_tree .
 //= require store/cdf
-
+//= require flash
+//= require jquery.jgrowl

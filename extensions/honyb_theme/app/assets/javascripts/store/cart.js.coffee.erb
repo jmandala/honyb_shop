@@ -1,0 +1,10 @@
+$ ->
+  $('#cart .remove').click ->
+    $(this).parents('.quantity').find('.line-item-quantity').each ->
+      $(this).val(0)
+      $(this).parents('form').first().submit()
+
+  $('.embed .continue.shopping').click ->
+    if parent.socket != undefined
+      parent.socket.postMessage('close')
+      false

@@ -1,0 +1,37 @@
+@mixin rounded($radius: 6px){
+  border-radius: $radius;
+  -moz-border-radius: $radius;
+  -webkit-border-radius: $radius;
+}
+
+@mixin embossed-dark($opacity: .5){
+  color: #666 !important;
+  text-shadow: 0 1px rgba(255, 255, 255, $opacity)
+}
+
+@mixin embossed-light($opacity: .5){
+  color: #fff !important;
+  text-shadow: 0 1px rgba(0, 0, 0, $opacity)
+}
+
+.mini-button {
+  @include rounded;
+  @include embossed-dark;
+  background: #ccc;
+  padding: 1px 6px 1px 3px;
+  border: 1px solid #aaa;
+  margin-left: 10px;
+  text-transform: lowercase;
+}
+
+.mini-button {
+  &:visited, &:active, &:link {
+    @extend .mini-button;
+  }
+  
+  &:hover {
+    @include embossed-light;
+    background: #222;
+    
+  }
+}

@@ -1,0 +1,57 @@
+<div class="payment_method <%= payment_method.id %>" style="display:<%= checked == payment_method.id ? "block" : "none" %>;">
+  <h2><%= t(:enter_your_credit_card_information) %></h2>
+</div>
+
+<div class="fields">
+  <div class="payment_method <%= payment_method.id %> field-pair" style="display:<%= checked == payment_method.id ? "block" : "none" %>;">
+    <label class="required"><%= t :card_number %></label>
+    <% options_hash = Rails.env.production? ? {:autocomplete => "off"} : {} %>
+    <%= text_field_tag "#{param_prefix}[number]", '', options_hash.merge(:class => 'required', :size => 19, :maxlength => 19) %>
+  </div>
+
+
+  <div class="payment_method expiration-and-code" style="display:<%= checked == payment_method.id ? "block" : "none" %>;">
+    <div class="payment_method <%= payment_method.id %> exp-month">
+      <label class="required"><%= t :month %></label>
+      <%= select_month(Date.today, {:prefix => param_prefix, :field_name => 'month', :use_month_numbers => true}, :class => 'required half') %>
+      /
+    </div>
+
+    <div class="payment_method <%= payment_method.id %> exp-year">
+      <label class="required"><%= t :year %></label>
+      <%= select_year(Date.today, {:prefix => param_prefix, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15}, :class => 'required half last') %>
+    </div>
+
+
+    <div class="payment_method <%= payment_method.id %> security-code">
+      <label class="required"><%= t :security_code %></label>
+      <%= text_field_tag "#{param_prefix}[verification_value]", '', options_hash.merge(:class => 'required', :size => 5) %>
+      <p class="whats-this">What's this?</p>
+    </div>
+
+  </div>
+</div>
+
+<div class="credit-cards">
+  <% ['mastercard', 'visa', 'american-express', 'discover'].each do |card| %>
+    <%= image_tag "store/icons/#{card}-curved-24px.png", :alt => card.capitalize, :class => card %>
+  <% end %>
+</div>
+
+
+<div class="clear"></div>
+
+<div id="security-code-help" style="display: none">
+  <h2><%= t :looking_for_your_security_code %></h2>
+  <div class="help">
+    <p><%= t(:security_code_explanation).html_safe %></p>
+    <div><%= image_tag asset_path('store/icons/security-code-help.png') %></div>
+  </div>
+</div>
+
+<div class="payment-notes">
+  <h3><%= t :note %></h3>
+  <p><%= t(:payment_note).html_safe %></p>
+</div>
+
+
