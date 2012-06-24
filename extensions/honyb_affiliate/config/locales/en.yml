@@ -2,7 +2,9 @@
 # See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en: 
-  affiliate:
+  new_affiliate: "New Affiliate"
+  affiliate: 
+    logo: "Affiliate logo."
     not_found: "Affiliate could not be found."
     key:
       not_blank: "Affiliate Key must not be blank."

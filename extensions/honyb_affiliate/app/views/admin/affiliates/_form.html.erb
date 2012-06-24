@@ -1,0 +1,18 @@
+<div data-hook="admin_user_form_fields">
+  <%= f.field_container :affiliate_key do %>
+      <%= f.label :affiliate_key, t(:affiliate_key) %>
+      <br/>
+      <%= f.text_field :affiliate_key %>
+      <%= error_message_on :affiliate, :affiliate_key %>
+  <% end %>
+
+  <%= f.field_container :logo do %>
+      <%= image_tag @affiliate.logo.url %>
+      
+      
+      <%= f.label :logo, t('affiliate.logo') %>
+      <br/>
+      <%= f.file_field :logo %>
+      <%= f.error_message_on :affiliate_key %>
+  <% end %>
+</div>

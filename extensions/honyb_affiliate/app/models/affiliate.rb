@@ -20,6 +20,9 @@ class Affiliate < ActiveRecord::Base
   has_many :users
   has_many :orders
   
+  has_attached_file :logo
+  
+  
   def self.current
     Thread.current[:affiliate]
   end

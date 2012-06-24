@@ -11,6 +11,8 @@ Rails.application.routes.draw do
         put 'create_affiliate'
       end
     end
+    
+    resources :affiliates
   end
   
 end
