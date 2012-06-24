@@ -35,53 +35,55 @@ Admin::ReportsController.class_eval do
     @orders = @search
 
     report_def = [
-        {'number' => lambda{ |o, li| o.number }}
+        {'number' => lambda { |o, li| o.number }},
+        {'completed at' => lambda { |o, li| o.completed_at }},
+        {'affiliate key' => lambda { |o, li| o.affiliate_key }},
+        {'email' => lambda { |o, li| o.email }},
+        {'bill-to first name' => lambda { |o, li| o.bill_address.firstname }},
+        {'bill-to last name' => lambda { |o, li| o.bill_address.lastname }},
+        {'bill-to address 1' => lambda { |o, li| o.bill_address.address1 }},
+        {'bill-to address 2' => lambda { |o, li| o.bill_address.address2 }},
+        {'bill-to city' => lambda { |o, li| o.bill_address.city }},
+        {'bill-to zipcode' => lambda { |o, li| o.bill_address.zipcode }},
+        {'bill-to country' => lambda { |o, li| o.bill_address.country.iso3 }},
+        {'ship-to first name' => lambda { |o, li| o.ship_address.firstname }},
+        {'ship-to last name' => lambda { |o, li| o.ship_address.lastname }},
+        {'ship-to address 1' => lambda { |o, li| o.ship_address.address1 }},
+        {'ship-to address 2' => lambda { |o, li| o.ship_address.address2 }},
+        {'ship-to city' => lambda { |o, li| o.ship_address.city }},
+        {'ship-to zipcode' => lambda { |o, li| o.ship_address.zipcode }},
+        {'ship-to country' => lambda { |o, li| o.ship_address.country.iso3 }},
+        {'line item name' => lambda { |o, li| li.product.name }},
+        {'line item sku' => lambda { |o, li| li.product.sku }},
+        {'line item qty' => lambda { |o, li| li.quantity }},
+        {'line item price' => lambda { |o, li| li.price }},
     ]
 
     @table = Ruport::Data::Table(cols_from_report_def(report_def))
-    #completed_at 
-    
-    #            affiliate_key 
-    #            email 
-    #            line_item_name 
-    #            line_item_sku 
-    #            line_item_qty 
-    #            line_item_price
-    #            bill_firstname
-    #            bill_lastname
-    #            bill_address_line_1
-    #            bill_address_line_2
-    #            bill_address_city
-    #            bill_address_state
-    #            bill_address_zip
-    #            bill_address_country
-    #
+
     @orders.each do |o|
       o.line_items.each do |li|
         @table << col_vals_from_report_def(report_def, o, li)
-        #row = {'number' => o.number, 'affiliate_key' => o.affiliate_key}
-        #row['email'] = o.email
-        #row['completed_at'] = o.completed_at
-        #row['line_item_name'] = li.product.name
-        #row['line_item_sku'] = li.product.sku
-        #row['line_item_qty'] = li.quantity
-        #row['line_item_price'] = li.price
-        #row['bill_address_line_1'] = o.bill_address.address1
-        #row['bill_address_line_2'] = o.bill_address.address2
       end
     end
 
     respond_with
   end
 
+  # Returns an array of column names from the report_def
+  # Report_def can be either a hash, in which case the keys
+  # will be returns.
   def cols_from_report_def(report_def)
     cols = []
     report_def.each do |column_def|
-      column_def.keys.each {|k| cols << k}
+      column_def.keys.each { |k| cols << k }
     end
     cols
   end
-  
+
+  # Returns a hash representation of columns and values, derived
+  # from the report_def.
+  # When the report_def contains a hash, the value is a lambda.
   def col_vals_from_report_def(report_def, order, line_item)
     results = {}
     report_def.each do |column_def|
