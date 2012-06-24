@@ -10,7 +10,6 @@ Admin::ReportsController.class_eval do
 
   def sales_detail
 
-    puts 'here i am'
     params[:search] = {} unless params[:search]
 
     if params[:search][:created_at_greater_than].blank?
@@ -35,11 +34,11 @@ Admin::ReportsController.class_eval do
     @search = Order.metasearch(params[:search])
     @orders = @search
 
-    @report_def = [
+    report_def = [
         {'number' => lambda{ |o, li| o.number }}
     ]
 
-    @table = Ruport::Data::Table(cols_from_report_def)
+    @table = Ruport::Data::Table(cols_from_report_def(report_def))
     #completed_at 
     
     #            affiliate_key 
@@ -59,7 +58,7 @@ Admin::ReportsController.class_eval do
     #
     @orders.each do |o|
       o.line_items.each do |li|
-        @table << col_vals_from_report_def(o, li)
+        @table << col_vals_from_report_def(report_def, o, li)
         #row = {'number' => o.number, 'affiliate_key' => o.affiliate_key}
         #row['email'] = o.email
         #row['completed_at'] = o.completed_at
@@ -75,18 +74,22 @@ Admin::ReportsController.class_eval do
     respond_with
   end
 
-  private
-  
-  def cols_from_report_def
-    @report_def.select do |column_def|
-      column_def.keys
+  def cols_from_report_def(report_def)
+    cols = []
+    report_def.each do |column_def|
+      column_def.keys.each {|k| cols << k}
     end
+    cols
   end
   
-  def col_vals_from_report_def(order, line_item)
-    @report_def.select do |column_def|
-      column_def.each_pair {|k,v| {k => v.yield(order, line_item)}}
+  def col_vals_from_report_def(report_def, order, line_item)
+    results = {}
+    report_def.each do |column_def|
+      column_def.each do |k, v|
+        results[k] = v.yield(order, line_item)
+      end
     end
+    results
   end
 
 end

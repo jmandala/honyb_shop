@@ -18,4 +18,22 @@ describe Admin::ReportsController do
     end
   end
 
+  context "#cols_from_report_def" do
+    it "returns column keys" do
+      report_def = []
+      3.times {|i| report_def << {"key-#{i}" => "val-#{i}"}}
+      
+      controller.cols_from_report_def(report_def).should == %W[ key-0 key-1 key-2 ]
+    end
+  end
+  context "#col_vals_from_report_def" do
+    it "returns values from procs" do
+      report_def = [{'key' => lambda{|o,l| o.number}}]
+      order = Factory.create(:order)
+      line_item = Factory.create(:line_item)
+      
+      
+      puts controller.col_vals_from_report_def(report_def, order, line_item)
+    end
+  end
 end
