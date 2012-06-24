@@ -10,6 +10,7 @@ Admin::ReportsController.class_eval do
 
   def sales_detail
 
+    puts 'here i am'
     params[:search] = {} unless params[:search]
 
     if params[:search][:created_at_greater_than].blank?
@@ -34,37 +35,58 @@ Admin::ReportsController.class_eval do
     @search = Order.metasearch(params[:search])
     @orders = @search
 
-    @table = Ruport::Data::Table(%w[number 
-            completed_at 
-            affiliate_key 
-            email 
-            line_item_name 
-            line_item_sku 
-            line_item_qty 
-            line_item_price
-            bill_firstname
-            bill_lastname
-            bill_address_line_1
-            bill_address_line_2
-            bill_address_line_2
-])
+    @report_def = [
+        {'number' => lambda{ |o, li| o.number }}
+    ]
+
+    @table = Ruport::Data::Table(cols_from_report_def)
+    #completed_at 
+    
+    #            affiliate_key 
+    #            email 
+    #            line_item_name 
+    #            line_item_sku 
+    #            line_item_qty 
+    #            line_item_price
+    #            bill_firstname
+    #            bill_lastname
+    #            bill_address_line_1
+    #            bill_address_line_2
+    #            bill_address_city
+    #            bill_address_state
+    #            bill_address_zip
+    #            bill_address_country
+    #
     @orders.each do |o|
       o.line_items.each do |li|
-        row = {'number' => o.number, 'affiliate_key' => o.affiliate_key}
-        row['email'] = o.email
-        row['completed_at'] = o.completed_at
-        row['line_item_name'] = li.product.name
-        row['line_item_sku'] = li.product.sku
-        row['line_item_qty'] = li.quantity
-        row['line_item_price'] = li.price
-        row['bill_address_line_1'] = o.bill_address.address1
-        row['bill_address_line_2'] = o.bill_address.address2
-        @table << row
+        @table << col_vals_from_report_def(o, li)
+        #row = {'number' => o.number, 'affiliate_key' => o.affiliate_key}
+        #row['email'] = o.email
+        #row['completed_at'] = o.completed_at
+        #row['line_item_name'] = li.product.name
+        #row['line_item_sku'] = li.product.sku
+        #row['line_item_qty'] = li.quantity
+        #row['line_item_price'] = li.price
+        #row['bill_address_line_1'] = o.bill_address.address1
+        #row['bill_address_line_2'] = o.bill_address.address2
       end
     end
 
     respond_with
   end
 
+  private
+  
+  def cols_from_report_def
+    @report_def.select do |column_def|
+      column_def.keys
+    end
+  end
+  
+  def col_vals_from_report_def(order, line_item)
+    @report_def.select do |column_def|
+      column_def.each_pair {|k,v| {k => v.yield(order, line_item)}}
+    end
+  end
 
 end
