@@ -1,0 +1,28 @@
+<div class="content" id="select-or-create-affiliate">
+  <table>
+    <thead>
+    <tr>
+      <th><%= label_tag(:affiliate_id, t(:select)) %></th>
+      <td>or</td>
+      <th><%= label_tag(:affiliate_key, t("affiliate.affiliate_key")) %></th>
+    </tr>
+    <tr>
+      <td>
+        <%= form_for @user, :url => {:action => "update_affiliate"}, :remote => true do |f| %>
+          <%= select(:user, :affiliate_id, options_from_collection_for_select(@affiliates, :id, :affiliate_key)) %>
+          <%= button t(:save, :scope => :global), "accept", 'submit' %>
+        <% end %>
+      </td>
+      <td></td>
+      <td>
+        <%= form_for @user, :url => {:action => "create_affiliate"}, :remote => true do |f| %>
+          <%= f.text_field :affiliate_key, :value => '', :size => 15 %>
+          <%= button t(:save, :scope => :global), "accept", 'submit' %>
+        <% end %>
+      </td>
+    </tr>
+    </thead>
+  </table>
+  <%= button_link_to t(:cancel, :scope => :global), show_affiliate_admin_user_path, :remote => true %>
+  
+</div>

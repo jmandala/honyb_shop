@@ -1,0 +1,54 @@
+<div class="toolbar" data-hook="toolbar">
+  <ul class="actions">
+    <li>
+      <p><%= button_link_to t(:new_affiliate), new_object_url, :icon => 'add', :id => 'admin_new_affiliate_link' %></p>
+    </li>
+  </ul>
+  <br class="clear" />
+</div>
+
+<h1><%= t(:listing_affiliates) %></h1>
+
+<table class="index" id="listing_affiliates" data-hook>
+  <thead>
+    <tr data-hook="admin_affiliates_index_headers">
+      <th><%=  t('affiliate.name') %></th>
+      <th><%= sort_link @search,:affiliate_key, t(:affiliate), {}, {:title => 'affiliates_email_title'} %></th>
+      <th data-hook="admin_affiliates_index_header_actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @affiliates.each do |affiliate|%>
+      <tr id="<%= dom_id affiliate %>" data-hook="admin_affiliates_index_rows">
+        <td>      
+          <%= affiliate.name %><br/>
+          <%= image_tag affiliate.logo.url %>
+        </td>
+        <td width="350px" class='affiliate_key'><%=link_to affiliate.affiliate_key, object_url(affiliate) %></td>
+        <td data-hook="admin_affiliates_index_row_actions">
+          <%= link_to_edit affiliate, :class => 'edit' %> &nbsp;
+          <%= link_to_delete affiliate %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= paginate @affiliates %>
+
+
+<% content_for :sidebar do %>
+  <div class="box" data-hook="admin_affiliates_index_search">
+    <h3><%= t(:search) %></h3>
+    <% @search = Affiliate.search %>
+    <%= form_for [:admin, @search] do |f| %>
+      <p>
+        <%= t(:affiliate_key) %><br />
+        <%= f.text_field :affiliate_key_contains, :size =>18 %>
+      </p>
+      <div data-hook="admin_affiliates_index_search_buttons">
+        <p><%= button t(:search) %></p>
+      </div>
+    <% end %>
+  </div>
+<% end %>

@@ -1,0 +1,159 @@
+<% content_for :head do %>
+  <%= javascript_include_tag 'store/checkout', '/states' %>
+<% end %>
+
+<div id="checkout_form_address" role="content">
+  <div id="billing-address">
+    <h2><%= t(:billing_information) %></h2>
+
+    <div class="required-fields-message"><%= t(:required_fields_are_bold).html_safe %></div>
+    <%= form.fields_for :bill_address do |bill_form| %>
+      <div id="billing">
+        <ul class="inner fields">
+          <li>
+            <%= bill_form.label :firstname, t(:first_name), :class => 'required' %>
+            <%= bill_form.text_field :firstname %>
+          </li>
+          <li>
+            <%= bill_form.label :lastname, t(:last_name), :class => 'required' %>
+            <%= bill_form.text_field :lastname %>
+          </li>
+          <li>
+            <%= bill_form.label :address1, t(:shipping_address), :class => 'required' %>
+            <%= bill_form.text_field :address1 %>
+          </li>
+          <li>
+            <%= bill_form.label :address2, "#{t(:shipping_address_2)} <div class='caption'>#{t(:optional)}</div>".html_safe %>
+            <%= bill_form.text_field :address2 %>
+          </li>
+          <li>
+            <%= bill_form.label :city, t(:city), :class => 'required' %>
+            <%= bill_form.text_field :city %>
+          </li>
+          <li>
+            <%= bill_form.label :state, t(:state), :class => 'required' %>
+            <span id="bstate">
+          <% have_states = !@order.bill_address.country.states.empty? %>
+              <noscript>
+                <%= bill_form.text_field :state_name, :class => 'bill-address-state' %>
+              </noscript>
+              <% state_elements = [
+                      bill_form.collection_select(:state_id, @order.bill_address.country.states.uniq.sort,
+                                                  :id, :name,
+                                                  {:include_blank => true},
+                                                  {:class => have_states ? "required" : "hidden",
+                                                   :disabled => !have_states}) +
+                              bill_form.text_field(:state_name,
+                                                   :class => !have_states ? "required" : "hidden",
+                                                   :disabled => have_states)
+              ].join.gsub('"', "'").gsub("\n", "")
+              %>
+              <script type="text/javascript" language="javascript" charset="utf-8">
+                // <![CDATA[
+                document.write("<%= raw state_elements %>");
+                // ]]>
+              </script>
+        </span>
+          </li>
+          <li>
+            <%= bill_form.label :zipcode, t(:postal_code), :class => 'required' %>
+            <%= bill_form.text_field :zipcode %>
+          </li>
+          <li>
+            <%= bill_form.label :country_id, t(:country), :class => 'required' %>
+            <span id="bcountry">
+              <%= bill_form.collection_select :country_id, available_countries.uniq.sort, :id, :name %>
+            </span>
+          </li>
+          <li>
+            <%= bill_form.label :phone, "#{t(:phone_number)} <div class='caption'>#{t(:for_billing_questions)}</div>".html_safe, :class => 'required' %>
+            <%= bill_form.text_field :phone %>
+          </li>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+
+  <div id="shipping-address">
+    <h2><%= t(:shipping_information) %></h2>
+
+    <%= form.fields_for :ship_address do |ship_form| %>
+      <div id="shipping">
+        <div id="use_my_billing_address" class="fields">
+          <%= check_box_tag 'order[use_billing]', '1', @order.use_my_billing_address? %>
+          <label for="order_use_billing" class="tick"><%= t :use_my_billing_address %></label>
+        </div>
+
+        <div class="inner">
+          <div class="required-fields-message"><%= t(:required_fields_are_bold).html_safe %></div>
+
+          <ul class="fields">
+            <li>
+              <%= ship_form.label :firstname, t(:first_name), :class => 'required' %>
+              <%= ship_form.text_field :firstname %>
+            </li>
+            <li>
+              <%= ship_form.label :lastname, t(:last_name), :class => 'required' %>
+              <%= ship_form.text_field :lastname %>
+            </li>
+            <li>
+              <%= ship_form.label :address1, t(:shipping_address), :class => 'required' %>
+              <%= ship_form.text_field :address1 %>
+            </li>
+            <li>
+              <%= ship_form.label :address2, t(:shipping_address_2) %>
+              <%= ship_form.text_field :address2 %>
+            </li>
+            <li>
+              <%= ship_form.label :city, t(:city), :class => 'required' %>
+              <%= ship_form.text_field :city %>
+            </li>
+            <li>
+              <%= ship_form.label :state, t(:state), :class => 'required' %>
+              <span id="sstate">
+            <% have_states = !@order.ship_address.country.states.empty? %>
+                <noscript>
+                  <%= ship_form.text_field :state_name, :class => 'required' %>
+                </noscript>
+                <% state_elements = [
+                        ship_form.collection_select(:state_id, @order.ship_address.country.states,
+                                                    :id, :name,
+                                                    {:include_blank => true},
+                                                    {:class => have_states ? "required" : "hidden",
+                                                     :disabled => !have_states}) +
+                                ship_form.text_field(:state_name,
+                                                     :class => !have_states ? "required" : "hidden",
+                                                     :disabled => have_states)
+                ].join.gsub('"', "'").gsub("\n", "")
+                %>
+                <script type="text/javascript" language="javascript" charset="utf-8">
+                  // <![CDATA[
+                  document.write("<%= raw state_elements %>");
+                  // ]]>
+                </script>
+          </span>
+            </li>
+            <li>
+              <%= ship_form.label :zipcode, t(:postal_code), :class => 'required' %>
+              <%= ship_form.text_field :zipcode %>
+            </li>
+            <li>
+              <%= ship_form.label :country_id, t(:country), :class => 'required' %>
+              <span id="scountry">
+            <%= ship_form.collection_select :country_id, available_countries.uniq.sort, :id, :name %>
+          </span>
+            </li>
+            <li>
+              <%= ship_form.label :phone, t(:phone_number) %>
+              <%= ship_form.text_field :phone %>
+            </li>
+          </ul>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="actions">
+    <button type="submit" class="checkout forward">Continue &raquo;</button>
+  </div>
+</div>

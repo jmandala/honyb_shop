@@ -1,0 +1,11 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+en: 
+  new_affiliate: "New Affiliate"
+  affiliate: 
+    logo: "Affiliate Logo"
+    not_found: "Affiliate could not be found."
+    key:
+      not_blank: "Affiliate Key must not be blank."
+      not_unique: "Affiliate Key is not available. Please try another."

@@ -1,0 +1,6 @@
+en:
+  sales_total: "Sales Total"
+  sales_total_description: "Simple, built-in report."
+  sales_detail: "Sales Detail"
+  sales_detail_description: "Detailed order, line item, customer reports including export."
+      

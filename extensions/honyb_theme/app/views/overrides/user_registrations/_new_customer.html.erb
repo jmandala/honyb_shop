@@ -1,0 +1,19 @@
+<% hide_banner ||= false %>
+
+<% unless hide_banner %>
+  <%= content_for :banner do %>
+    <h1><span class="faint"><%= t :registration %>:</span> <span class="highlight"><%= t :create_account %></span></h1>
+  <% end %>
+<% end %>
+
+<div id="new_customers">
+  <h2><%= t :new_customer %></h2>
+
+  <p><%= t :new_customer_message %></p>
+  <%= form_for(:user, :url => registration_path(User.new)) do |f| %>
+    <%= render 'shared/user_form', :f => f %>
+    <div class="actions">
+      <button type="submit">Register</button>
+    </div>
+  <% end %>
+</div>

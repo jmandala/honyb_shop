@@ -1,0 +1,23 @@
+<%= form_for :user, :url => user_session_path do |f| %>
+  <div id="password-credentials">
+    <div class="field-pair email">
+      <%= f.label :email, t(:email), :class => 'required'%>
+      <%= f.text_field :email, :id => 'login_email' %>
+    </div>
+    <div class="field-pair password">
+      <%= f.label :password, t(:password), :class => 'required' %>
+      <div class="password-and-forgot-password">
+        <%= f.password_field :password, :id => 'login_password' %>
+        <div class="forgot-password">
+          <%= link_to t(:forgot_password), new_user_password_path %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="field-pair remember-me">
+      <%= f.label :remember_me, t('remember_me'), :class => 'tick' %>      
+      <%= f.check_box :remember_me %>
+  </div>
+
+  <div class="actions"><%= f.submit t(:log_in), :class => 'button primary' %></div>
+<% end %>

@@ -1,0 +1,15 @@
+#!/bin/bash -xl
+
+cd $WORKSPACE
+export PATH=$PATH:/usr/local/rvm/bin
+rvm use ruby-1.9.2-p290@rails-3.1.1
+bundle install
+cp cdf/config/config.yml.sample cdf/config/config.yml
+
+# set env vars
+export GEM_PATH=/usr/local/rvm/gems/ruby-1.9.2-p290@rails-3.1.1/gems
+export CI_REPORTS=results
+export RAILS_ENV=test
+
+RAILS_ENV=test bundle exec rake db:drop db:migrate db:test:prepare cdf:db:seed
+bundle exec rspec spec

@@ -1,0 +1,1 @@
+$('#affiliate-key .content').replaceWith("<%= escape_javascript render('edit_affiliate') %>")

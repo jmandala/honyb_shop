@@ -10,8 +10,12 @@
  *= require admin/spree_promo
  *= require admin/spree_dash
 
+ *= require store/cdf
+ *= require admin/user
+ *= require jquery.jgrowl.css
+ *= require admin/jquery.jgrowl.css
+ *= require admin/honyb_reports
+ 
  *= require_self
  *= require_tree .
- *= require store/cdf
- 
 */

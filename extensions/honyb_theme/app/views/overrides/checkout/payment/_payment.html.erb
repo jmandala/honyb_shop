@@ -1,0 +1,32 @@
+<div id="payment" class="fields">
+
+  <% if @order.available_payment_methods.size == 1 %>
+    <% extra_css = "hidden" %>
+  <% else %>
+    <% extra_css = "" %>
+  <% end %>
+
+  <div class="preferred-payment_options <%= extra_css %>">
+    <h2><%= t(:prefered_payment_option) %></h2>
+    <ul>
+      <% @order.available_payment_methods.each do |method| %>
+        <li class="options">
+          <%= radio_button_tag "order[payments_attributes][][payment_method_id]", method.id, method == @order.payment_method %>
+          <label><%= t(method.name, :scope => :payment_methods, :default => method.name) %></label>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <% @order.available_payment_methods.each_with_index do |method, i| %>
+    <div class="<%= method.method_type %>">
+      <%= render "checkout/payment/#{method.method_type}", :payment_method => method, :checked => (@order.try(:payment).try(:payment_method_id) || method.id if i == 0) %>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <button type="submit" class="checkout forward">Continue &raquo;</button>
+  </div>
+
+</div>
+  

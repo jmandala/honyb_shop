@@ -1,0 +1,182 @@
+<% editable ||= false %>
+
+<div id="order-display">
+
+  <% ["ship", "bill"].each do |addr_type| %>
+    <% address = @order.send("#{addr_type}_address") %>
+    <div id="order-<%= addr_type %>-address" class="address">
+      <h3><%= t ("#{addr_type}_address") %></h3>
+
+      <p>
+        <%= address.full_name %><br/>
+        <%= address.address1 %><br/>
+        <% unless address.address2.blank? %>
+          <%= address.address2 %><br/>
+        <% end %>
+        <%= address.city %>&nbsp;
+        <% if address.state_id.blank? %>
+          <br/><%= address.state_name %><br/>
+        <% else %>
+          <%= address.state.abbr %><br/>
+        <% end %>
+        <%= address.country.try(:name) %> <%= address.zipcode %>
+      </p>
+      
+      <% if editable %>
+        <%= link_to "edit", checkout_state_path('address'), :class => 'edit' %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div id="order-payment">
+    <h3>Payment Details</h3>
+
+    <% if @order.payment.payment_method.class.to_s == "BillingIntegration::PaypalExpress" %>
+      <p>You will be redirected to PayPal to complete your order.</p>
+      
+    <% elsif @order.payment.payment_method.class.to_s == 'Gateway::AuthorizeNetCim' %>
+      <div class="field-pair name-on-card">
+        <label>
+          <%= t :name_on_card %>:</label>
+
+        <div class="value">
+          <%= @order.payment.source.name %>
+        </div>
+      </div>
+      <div class="field-pair name-on-card">
+        <label>
+          <%= t :email %>:</label>
+
+        <div class="value">
+          <%= @order.email %>
+        </div>
+      </div>
+
+      <div class="field-pair last-digits">
+        <label>
+          <%= t :card_number %>:</label>
+
+        <div class="value">
+          ****-<%= @order.payment.source.last_digits %>
+        </div>
+      </div>
+
+      <div class="field-pair expiration">
+        <label>
+          <%= t :expiration %>:</label>
+
+        <div class="value">
+          <%= @order.payment.source.month %> /
+          <%= @order.payment.source.year %>
+        </div>
+      </div>
+
+    <% else %>
+      <%= @order.payment.source.name %> <br/>
+      <%= @order.payment.source.display_number %>
+    <% end %>
+
+    <% if editable %>
+      <%= link_to "edit", checkout_state_path('payment'), :class => 'edit' %>
+    <% end %>
+  </div>
+
+  <div id="order-shipping" class="section">
+    <h3 class="shipping-speed">
+      <%= t :shipping_speed %>
+    </h3>
+
+    <% if editable %>
+      <%= link_to "edit", checkout_state_path('shipping'), :class => 'edit' %>
+    <% end %>
+
+    <div id="order-shipments">
+      <% @order.shipments.each do |shipment| %>
+
+        <div class="field-pair shipping-speed">
+          <label>
+            <%= shipment.shipping_method.name %>:
+          </label>
+
+          <div class="value">
+            <%= number_to_currency shipment.cost %>
+          </div>
+        </div>
+
+      <% end %>
+    </div>
+
+    <div id="order-items" class="section">
+      <h3 class="selected-items">
+        <%= t :selected_items %>
+      </h3>
+
+      <% if editable %>
+        <%= link_to "edit", cart_path, :class => 'edit' %>
+      <% end %>
+
+      <div class="summary">
+        <table class="items">
+          <thead>
+          <tr>
+            <th class="description"><%= t :item %></th>
+            <th class="qty"><%= t :qty %></th>
+            <th class="price"><%= t :price %></th>
+          <tr>
+          </thead>
+          <tbody>
+          <% for line_item in @order.line_items %>
+            <% variant = line_item.variant %>
+            <tr>
+              <td class="description"><%= variant.product.name %></td>
+              <td class="qty"><%= line_item.quantity %></td>
+              <td class="price"><%= number_to_currency(line_item.price) %></td>
+            </tr>
+          <% end %>
+          </table>
+      </div>
+    </div>
+
+    <div id="order-total">
+      <h3>
+        <%= t :order_total %>
+      </h3>
+
+      <table class="order-total">
+        <tbody>
+        <tr class="totals odd">
+          <th class="subtotal" colspan="2"><%= t :item_total %>:</th>
+          <td class="subtotal"><%= number_to_currency @order.item_total %></td>
+        </tr>
+        <% count = 1 %>
+        <% @order.adjustments.each do |adjustment| %>
+          <% count = count + 1 %>
+          <% alt = count % 2 == 0 ? 'even' : 'odd' %>
+          <tr class="totals <%= alt %>">
+            <th class="adjustment" colspan="2"><%= adjustment.label %>:</th>
+            <td class="amount"><%= number_to_currency adjustment.amount %></td>
+          </tr>
+        <% end %>
+        <tr class="totals grand-total">
+          <th class="total" colspan="2"><%= t :total %>:</th>
+          <td class="total"><%= number_to_currency @order.total %></td>
+        </tr>
+        </tbody>
+
+      </table>
+
+      <% if editable %>
+        <div class="submit" class="section">
+          <% if @order.payment.payment_method.class.to_s == "BillingIntegration::PaypalExpress" %>
+            <button class="blue" type="submit">Go To PayPal</button>
+          <% else %>
+            <button class="checkout forward place-order" type="submit"><%= t(:place_my_order) %>&raquo;</button>
+          <% end %>
+        </div>
+      <% end %>
+
+    </div>
+
+
+  </div>
+</div>

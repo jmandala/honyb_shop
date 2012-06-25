@@ -1,0 +1,313 @@
+/* LAYOUT */
+body#product-list .product {
+    margin-top: -1px;
+    float: left;
+}
+
+body#product-list .product h2 {
+    margin: 10px 0 0;
+}
+
+body#product-list .product .image {
+    width: 280px;
+    float: left;
+    margin-bottom: 10px;
+}
+
+body#product-list .product .details {
+    float: left;
+    width: 320px;
+}
+
+body#product-list .product .details p {
+    margin: 14px 0;
+}
+
+body#product-list .product .description {
+    clear: left;
+}
+
+body#product-list #main .list {
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+body#product-list h1, body#product-details h1 {
+    margin: 0;
+}
+
+body#product-details .details {
+    float: left;
+    margin: 0 20px 20px 0;
+}
+
+body#product-details.embed .details {
+}
+
+body#product-details #product-main {
+    overflow:hidden;
+    
+}
+
+body#product-details #product-images {
+    margin-bottom: 4px;
+}
+
+body#product-details #product-description {
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+#product-images #main-image {
+    min-height: 240px;
+}
+
+#product-images #thumbnails ul {
+    list-style: none;
+}
+
+#product-images #thumbnails li a {
+    display: block;
+    width: 45px;
+    height: 35px;
+    float: left;
+    margin: 0 2px 0 2px;
+}
+
+#product-images #thumbnails li a img {
+    width: 45px;
+}
+
+#cart-form dl {
+    width: 100%;
+    margin: 0;
+    padding: 5px 0 5px 0;
+}
+
+#cart-form dt, #cart-form dd {
+    float: left;
+    line-height: 1.5em;
+}
+
+#cart-form dt {
+    clear: left;
+    width: 140px;
+}
+
+#cart-form dd {
+    width: 80px;
+}
+
+hr {
+    clear: left;
+    visibility: hidden;
+}
+
+#cart-form .extras input {
+    float: left;
+    height: 30px;
+}
+
+#cart-form .extras label {
+    margin-left: 20px;
+    display: block;
+}
+
+#product-main #title h2 {
+    margin-bottom: 1em;   
+}
+
+#product-main #title h3 {
+    margin-bottom: 10px;
+}
+
+#product-main #price-and-purchase {
+    margin:  20px 0 10px 0;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    overflow: hidden;
+}
+
+
+#product-main .free-shipping {
+    padding: 4px;
+    margin-top: 10px;
+}
+
+
+#product-main #product-description {
+}
+
+/* BORDERS */
+
+dl.prices {
+}
+
+body#product-details #product-description {
+}
+
+#product-images #thumbnails li a {
+}
+
+#product-images #thumbnails li a:hover {
+}
+
+#product-main #price-and-purchase {
+    border-top:  1px dashed #999;
+    border-bottom:  1px dashed #999;
+}
+
+#product-main .free-shipping {
+    border:  1px solid #fda93b;
+}
+
+
+/* COLORS */
+
+#product-images #thumbnails ul {
+    background-color: #ff0;
+}
+
+#product-images #thumbnails li {
+    background-color: #0ff;
+}
+
+#cart-form dt {
+    color: #666;
+}
+
+#product-main .author {
+    color: #666;
+}
+
+#product-main .price .label {
+    color: #666;
+}
+
+#product-main .price .value {
+    color: #90150d;
+}
+
+#product-main .stock .in-stock {
+    color: #036621;
+}
+
+#product-main .stock .message {
+    color: #666;
+}
+
+
+#product-main .free-shipping {
+    background-color: #ffffcc;
+}
+
+/* TYPOGRAPHY */
+body#product-list .product {
+    border-bottom: 1px solid #a3a3a3;
+}
+
+body#product-list .product h2 {
+    font-size: 1.5em;
+}
+
+#cart-form dl {
+    font-size: 1.2em;
+}
+
+#cart-form dd {
+    text-align: right;
+    font-size: 1.1em;
+}
+
+#cart-form dd .price {
+    font-size: 1em;
+}
+
+#cart-form dl.part-numbers {
+    font-size: 0.8em;
+}
+
+dl.part-numbers dd {
+    font-weight: bold;
+}
+
+#product-images #main-image {
+}
+
+#product-images #thumbnails li a {
+    text-align: center;
+}
+
+#product-main .title h2 {
+    font-family: Georgia, serif;
+    font-weight: bold;
+    font-size: 1.5em;
+    margin: 0;
+    padding: 0;
+}
+
+#product-main .title h3 {
+    font-weight: normal;
+    line-height: 110%;
+    font-size: 1.25em;
+}
+
+#product-main .author {
+    font-size: .75em;
+    font-style: italic;
+}
+
+#product-main .price .label {
+    font-size: .875em;
+}
+
+#product-main .price .value {
+    font-size: 1.5em;
+    font-family: Georgia, serif;
+    padding-left: .25em;
+}
+
+#product-main .stock {
+    text-transform: uppercase;
+    font-size: .875em;
+    font-weight: bold;
+}
+
+#product-main .stock .message {
+    font-style: italic;
+    text-transform: none;    
+    font-weight: normal;
+}
+
+
+#product-main .free-shipping {
+    font-size: .855em;
+}
+
+#product-details .details {
+    text-align: center;
+    font-size: .825em;
+}
+
+#product-details .properties p {
+    padding:  0;
+    margin:  2px 0 0 0;
+}
+
+
+#product-main #product-description h1 {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin:  0;
+    padding: 0;
+    text-transform: none;
+}
+
+#product-main #product-description h2 {
+    font-size: 1.2em;
+    font-weight: normal;
+    margin:  0;
+    padding: 0;
+    text-transform: none;
+}
+

@@ -52,8 +52,9 @@ Spork.prefork do
       counter = 0
     end
 
-    config.before(:each) do
-      DatabaseCleaner.strategy = :truncation, {:except => %w[
+    config.before(:suite) do
+      DatabaseCleaner.strategy = :transaction
+      DatabaseCleaner.clean_with(:truncation, {:except => %w[
       asn_order_statuses 
       asn_slash_codes 
       asn_shipping_method_codes
@@ -76,7 +77,7 @@ Spork.prefork do
       tax_rate 
       users
       zones 
-      zone_members ]}
+      zone_members ]})
     end
 
     config.before(:each) do
@@ -103,6 +104,10 @@ Spork.each_run do
   Dir[Rails.root.join("lib/**/*.rb")].each { |f| require f }
   Dir[Rails.root.join("cdf/lib/**/*.rb")].each { |f| require f }
   Dir[Rails.root.join("cdf/app/**/*_decorator.rb")].each { |f| require f }
+  
+  # extension watchers
+  Dir[Rails.root.join("extensions/**/app/**/*_decorator.rb")].each { |f| require f }
+  Dir[Rails.root.join("extensions/**/lib/**/*_decorator.rb")].each { |f| require f }
 
   require 'spree_core/testing_support/factories'
 end

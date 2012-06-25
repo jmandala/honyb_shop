@@ -1,0 +1,343 @@
+<% 
+  width = {:max => '90%'}
+%>
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#everything {
+  min-height: 100%;
+}
+
+.embed #main {
+  padding-bottom: 30px;
+  overflow: auto;
+}
+
+.embed footer {
+  margin-top: -34px;
+  line-height: 30px;
+  clear: both;
+}
+
+footer {
+  padding: 2px 0 2px 20px;
+}
+
+header {
+  /*width: 
+<%= width[:max] %> ;*/
+  margin: 0 auto;
+  position: relative;
+  padding: 0 20px;
+}
+
+
+.embed header {
+  background: #90150d;
+  border-bottom: 1px solid #000;
+  color: white;
+  padding: 2px 0;
+  position: fixed;
+  top: 0;
+  height: 22px;
+  width: 100%;
+  z-index: 100;
+}
+
+
+#top-buffer {
+  height: 22px;  
+}
+
+#logo {
+  position: relative;
+  margin: 0 0 6px 0;
+  padding-top: 4px;
+}
+
+
+#primary-nav {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  height: 53px;
+  width: 510px;
+  float: left;
+}
+
+#join-honyb {
+  position: relative;
+  top: 8px;
+  left: 21px;
+}
+
+#shopping-nav {
+  position: absolute;
+  top: 21px;
+  left: 160px;
+}
+
+#shopping-nav li {
+  float: left;
+  margin-left: 20px;
+}
+
+#shopping-nav li:first-child {
+  margin-left: 0;
+}
+
+#search {
+  position: absolute;
+  top: 13px;
+  right: 20px;
+}
+
+#s1 {
+  width: 145px;
+}
+
+.container {
+  /*width: 
+<%= width[:max] %> ;*/
+  margin: 0 auto;
+}
+
+#main {
+  clear: both;
+  padding-top: 20px;
+}
+
+#banner {
+  background: transparent url("<%= asset_path 'store/banner-background.jpg' %>") repeat-x;
+  margin-top: 5px;
+  padding-left: 20px;
+  padding-top: 15px;
+  height: 55px;
+}
+
+#content {
+  padding: 0 20px;
+  overflow: auto;
+}
+
+footer .section {
+  overflow: auto;
+}
+
+footer #powered-by-honyb {
+  float: left;
+  padding-right: 20px;
+}
+
+.menu h3 {
+  display: none;
+}
+
+.menu li {
+  float: left;
+}
+
+.menu li a {
+  margin: 0 10px;
+}
+
+.menu li:first-child a {
+  margin-left: 0;
+}
+
+.menu li:after {
+  content: "|";
+}
+
+.menu li:last-child:after {
+  content: "";
+}
+
+#contact-us {
+  clear: both;
+}
+
+#sidebar .list-box {
+  width: 230px;
+  float: left;
+  padding: 20px 30px 30px 30px;
+
+}
+
+.list-box {
+  padding-top: 30px; /* match #contact  */
+}
+
+.list-box h2, #homepage #contact h2 {
+  margin-bottom: 0.75em;
+  padding-bottom: 0.5em;
+}
+
+#recent-products {
+  margin-top: 40px;
+}
+
+.breadcrumbs, .pagination {
+  padding: 0 0 20px 0;
+}
+
+.breadcrumbs ul {
+  margin-left: 0 !important;
+}
+
+.breadcrumbs li {
+  float: left;
+  list-style: none;
+}
+
+div#sidebar {
+  float: right;
+}
+
+.embed {
+  min-width: 584px;
+}
+
+.embed div#sidebar {
+  position: fixed;
+  right: 10px;
+}
+
+button, a.button {
+  padding: 8px 16px 7px 16px;
+}
+
+.clear {
+  clear: both;
+}
+
+/* EMBED: BEGIN */
+.embed #banner {
+  display: none;
+}
+
+.embed.ssl #banner {
+  background: transparent url("<%= asset_path 'store/double-banner-background.jpg' %>") repeat-x;
+  margin-top: 5px;
+  padding-left: 10px;
+  padding-top: 6px;
+  height: 97px;  
+}
+
+.embed #banner.overlay {
+  margin-top: 0;
+}
+
+.embed #ssl-message {
+  font-family: "Trebuchet MS", verdana, lucida grande, sans-serif;
+  font-size: 0.685em;
+  text-shadow: 0 1px 0 #fff;
+  margin-bottom: 20px;
+}
+
+.embed #everything {
+  /*padding-top: 22px;*/
+}
+
+.embed #logo {
+  float: left;
+  margin: 0 20px 0 10px;
+}
+
+.embed.ssl #logo {
+  background: transparent url("<%= asset_path 'store/lock.gif' %>") no-repeat;
+  padding: 0 0 0 18px;
+  margin-top: 3px;  
+}
+
+.embed #why-buy {
+  text-transform: uppercase;
+  font-family: "Trebuchet MS", verdana, lucida grande, sans-serif;
+  font-size: 0.685em;
+  font-weight: bold;
+  color: #fff;
+  float: left;
+  padding: 2px 20px 0 0;
+  margin-top: 4px;
+  text-shadow: 0 -1px 1px rgba(0, 0, 0, .8);
+  opacity: .6;
+  background-image: url("<%= asset_path 'boston-review/down-arrow.png' %>");
+  background-position: right center;
+  background-repeat: no-repeat;
+  height: 16px;
+  cursor: pointer;  
+}
+
+.embed #why-buy.close {
+  background-image: url("<%= asset_path 'boston-review/up-arrow.png' %>");
+}
+
+#why-buy-details {
+  display: none;
+}
+
+.embed #why-buy-details {
+}
+
+.embed #why-buy-message {
+  background-color: #e0e0e0;
+  padding: 10px;
+  border-bottom: 1px solid #eaeaea;
+  font-family: verdana, sans-serif;
+  font-size: 0.7em;
+  letter-spacing: .05em;
+  text-shadow: 0 1px 1px rgba(255,255,255, 1);
+  margin-top: 5px;
+}
+
+.embed #why-buy-hide {
+  padding: 3px 10px;
+  background-color: #b3b3b3;
+  font-family: "Trebuchet MS", verdana, sans-serif;
+  font-size: 0.7em;
+  letter-spacing: .05em;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);
+  border-top: 1px solid #949494;
+  border-bottom: 1px solid #949494;
+  cursor: pointer;
+}
+
+.embed #why-buy-hide .hide {
+  background-image: url("<%= asset_path 'boston-review/gray-arrow.gif' %>");
+  background-position: left center;
+  background-repeat: no-repeat;
+  padding-left: 18px;
+}
+
+.embed #shopping-nav {
+  top: 2px;
+  right: 20px;
+  left: auto;
+}
+
+.embed #shopping-nav li {
+  margin-left: 8px;
+  padding-top: 2px;
+  color: white;
+  text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.05em;
+  font-size: 0.825em !important;
+}
+
+.embed #close {
+  cursor: pointer;
+}
+
+
+  /* EMBED: END */
+
+
+.or {
+  color: #666;
+  padding: 0 8px 0 6px;
+  font-style: italic;
+}

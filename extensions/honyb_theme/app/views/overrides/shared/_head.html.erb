@@ -1,0 +1,21 @@
+<link href="<%= request.protocol %>fonts.googleapis.com/css?family=Signika+Negative:300,400|Gentium+Book+Basic:400,700" rel="stylesheet" type="text/css">
+
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+
+<%- if embed? %>
+  <!-- BEGIN EMBED -->
+  <script type="text/javascript">
+    window.onload = function () {
+      parent.socket.postMessage($('#everything').height() + 20);
+      parent.socket.postMessage('loaded');
+    };
+  </script>
+
+  <%- if Affiliate.current && !Affiliate.current.css.blank? %>
+    <style type="text/css">
+      <%= Affiliate.current.css %>
+    </style>
+  <%- end %>
+  <!-- END EMBED -->
+<%- end %>
+

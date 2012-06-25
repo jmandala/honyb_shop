@@ -1,0 +1,33 @@
+<% categories = Taxonomy.where(:name => "Categories") %>
+<% has_taxon = @taxon.present? && @taxon.children.present? %>
+<% has_categories = categories.count > 0 && categories.first.root.children.count > 0 %>
+
+<% if has_taxon %>
+  <% header = t(:more_products) %>
+  <% children = @taxon.children %>
+<% elsif has_categories %>
+  <% header = t(:all_products) %>
+  <% children = categories.first.root.children %>
+<% end %>
+
+<% if has_taxon || has_categories %>
+  <div id="all-products" class="list-box">
+    <div class="header">
+      <h2><%= header %></h2>
+    </div>
+
+    <div class="body">
+      <ul>
+        <% children.each_with_index do |taxon, i| %>
+          <li><%= raw link_to(taxon.name, seo_url(taxon)) %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+<% end %>
+
+<% if Rails.application.railties.all.map(&:railtie_name).include? "spree_recently_viewed" %>
+  <div id="recent-products" class="list-box">
+    <%= render "shared/recently_viewed_products" %>
+  </div>
+<% end %>

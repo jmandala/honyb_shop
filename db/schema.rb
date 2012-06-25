@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120612220111) do
+ActiveRecord::Schema.define(:version => 20120625152716) do
 
   create_table "activators", :force => true do |t|
     t.string   "description"
@@ -64,6 +64,21 @@ ActiveRecord::Schema.define(:version => 20120612220111) do
   end
 
   add_index "adjustments", ["order_id"], :name => "index_adjustments_on_order_id"
+
+  create_table "affiliates", :force => true do |t|
+    t.string   "affiliate_key",     :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "logo_file_name"
+    t.string   "logo_content_type"
+    t.integer  "logo_file_size"
+    t.datetime "logo_updated_at"
+    t.string   "name"
+    t.text     "why_buy_text"
+    t.text     "css"
+  end
+
+  add_index "affiliates", ["affiliate_key"], :name => "honyb_id", :unique => true
 
   create_table "asn_files", :force => true do |t|
     t.string   "record_code",               :limit => 2
@@ -514,6 +529,7 @@ ActiveRecord::Schema.define(:version => 20120612220111) do
     t.integer  "dc_code_id"
     t.string   "split_shipment_type"
     t.integer  "parent_id"
+    t.integer  "affiliate_id"
   end
 
   add_index "orders", ["number"], :name => "index_orders_on_number"
@@ -1086,6 +1102,7 @@ ActiveRecord::Schema.define(:version => 20120612220111) do
     t.string   "unlock_token"
     t.datetime "locked_at"
     t.datetime "remember_created_at"
+    t.integer  "affiliate_id"
   end
 
   add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"

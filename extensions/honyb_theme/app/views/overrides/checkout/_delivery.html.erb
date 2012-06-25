@@ -1,0 +1,29 @@
+<h2><%= t :choose_your_shipping_speed %></h2>
+<p><%= t :shipping_times %></p>
+<ul class="fields">
+
+  <div id="methods">
+    <div class="field radios">
+      <% @order.rate_hash.each do |shipping_method| %>
+        <div class="field-pair">
+          <%= radio_button(:order, :shipping_method_id, shipping_method[:id]) %>
+
+          <label for="order_shipping_method_id_<%= shipping_method[:id]%>">
+            <strong><%= shipping_method[:name] %></strong>: <%= number_to_currency shipping_method[:cost] %><br />
+            [TODO: Duration field here]
+          </label>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <% if Spree::Config[:shipping_instructions] && @order.rate_hash.present? %>
+    <p id="minstrs" data-hook>
+      <%= form.label :special_instructions, t("shipping_instructions") %><br/>
+      <%= form.text_area :special_instructions, :cols => 40, :rows => 7 %>
+    </p>
+  <% end %>
+</ul>
+
+<div class="actions">
+  <button type="submit" class="checkout forward">Continue &raquo;</button>
+</div>
