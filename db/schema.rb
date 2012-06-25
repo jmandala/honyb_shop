@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120624191314) do
+ActiveRecord::Schema.define(:version => 20120625152716) do
 
   create_table "activators", :force => true do |t|
     t.string   "description"
@@ -73,6 +73,9 @@ ActiveRecord::Schema.define(:version => 20120624191314) do
     t.string   "logo_content_type"
     t.integer  "logo_file_size"
     t.datetime "logo_updated_at"
+    t.string   "name"
+    t.text     "why_buy_text"
+    t.text     "css"
   end
 
   add_index "affiliates", ["affiliate_key"], :name => "honyb_id", :unique => true

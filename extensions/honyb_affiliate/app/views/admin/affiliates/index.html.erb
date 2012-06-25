@@ -12,7 +12,7 @@
 <table class="index" id="listing_affiliates" data-hook>
   <thead>
     <tr data-hook="admin_affiliates_index_headers">
-      <th><%=  t('affiliate.logo') %></th>
+      <th><%=  t('affiliate.name') %></th>
       <th><%= sort_link @search,:affiliate_key, t(:affiliate), {}, {:title => 'affiliates_email_title'} %></th>
       <th data-hook="admin_affiliates_index_header_actions"></th>
     </tr>
@@ -21,6 +21,7 @@
     <% @affiliates.each do |affiliate|%>
       <tr id="<%= dom_id affiliate %>" data-hook="admin_affiliates_index_rows">
         <td>      
+          <%= affiliate.name %><br/>
           <%= image_tag affiliate.logo.url %>
         </td>
         <td width="350px" class='affiliate_key'><%=link_to affiliate.affiliate_key, object_url(affiliate) %></td>

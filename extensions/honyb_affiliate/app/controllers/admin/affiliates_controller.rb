@@ -7,7 +7,6 @@ class Admin::AffiliatesController < Admin::ResourceController
     end
   end
   
-  
   protected
 
   def collection

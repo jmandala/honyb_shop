@@ -20,8 +20,12 @@ class Affiliate < ActiveRecord::Base
   has_many :users
   has_many :orders
   
-  has_attached_file :logo
+  has_attached_file :logo, :url => "/spree/honyb/affiliates/:attachment/:id/:style_:filename",
+      :styles => { :embed => 'x16'},
+      :default_style => :embed
   
+  validates :name, :presence => true
+  validates_attachment_content_type :logo, :content_type => %w(image/png image/jpg image/gif)
   
   def self.current
     Thread.current[:affiliate]

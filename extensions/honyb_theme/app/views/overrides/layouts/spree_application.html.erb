@@ -3,15 +3,19 @@
 <div id="everything">
 
   <% if embed? %>
+    <%- show_why_buy = Affiliate.current && !Affiliate.current.why_buy_text.blank? %>
+
     <header>
 
       <div id="logo">
-        <%= image_tag("boston-review/boston-review-logo.gif", :width => "81", :height => "16", :alt => "logo") %>
+        <%= image_tag Affiliate.current.logo.url, :height => '16', :alt => 'logo' %>
       </div>
 
-      <div id="why-buy">
-        <%= t :why_buy_from_us %>
-      </div>
+      <%- if show_why_buy %>
+        <div id="why-buy">
+          <%= t :why_buy_from_us %>
+        </div>
+      <%- end %>
 
       <nav>
         <div id="shopping-nav">
@@ -27,17 +31,19 @@
 
     <div id="top-buffer"></div>
 
-    <div id="why-buy-details">
+    <% if show_why_buy %>
+      <div id="why-buy-details">
 
-      <div id="why-buy-message">
-        <%= t(:why_buy_message).html_safe %>
+        <div id="why-buy-message">
+          <%= Affiliate.current.why_buy_text.html_safe %>
+        </div>
+
+        <div id="why-buy-hide">
+          <div class="hide"><%= t :hide_this %></div>
+        </div>
+
       </div>
-
-      <div id="why-buy-hide">
-        <div class="hide"><%= t :hide_this %></div>
-      </div>
-
-    </div>
+    <%- end %>
 
     <% if  content_for?(:banner) %>
       <div id="banner" role="banner">

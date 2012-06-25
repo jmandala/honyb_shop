@@ -1,10 +1,22 @@
 <h1><%= t(:affiliate_key) %></h1>
 
 <table>
+  <tr data-hook="affiliate_name">
+    <th><%= t('affiliate.name') %></th>
+    <td>
+      <%= @affiliate.name %>
+    </td>
+  </tr>
   <tr data-hook="affiliate_logo">
     <th><%= t('affiliate.logo') %></th>
     <td>
       <%= image_tag @affiliate.logo.url %>
+    </td>
+  </tr>
+  <tr data-hook="affiliate_css">
+    <th><%= t('affiliate.css') %></th>
+    <td>
+      <%= @affiliate.css %>
     </td>
   </tr>
 </table>

@@ -67,4 +67,14 @@ describe Affiliate do
     end
   end
 
+  describe '#logo' do
+    
+    it "should have the correct logo URL" do
+      affiliate = Factory.create(:affiliate)
+      affiliate.logo = Rails.root + 'spec/fixtures/images/boston-review-logo.gif'
+      puts affiliate.to_yaml
+      affiliate.logo.url.should == '/honyb/affiliates/logos/1/original_bostonreview.gif'
+    end
+  end
+  
 end

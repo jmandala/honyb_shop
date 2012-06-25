@@ -2,12 +2,20 @@
 
 <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 
-<% if embed? %>
-  <!--IF EMBED-->
+<%- if embed? %>
+  <!-- BEGIN EMBED -->
   <script type="text/javascript">
     window.onload = function () {
       parent.socket.postMessage($('#everything').height() + 20);
       parent.socket.postMessage('loaded');
     };
   </script>
-<% end %>
+
+  <%- if Affiliate.current && !Affiliate.current.css.blank? %>
+    <style type="text/css">
+      <%= Affiliate.current.css %>
+    </style>
+  <%- end %>
+  <!-- END EMBED -->
+<%- end %>
+
