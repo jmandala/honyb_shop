@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120616084147) do
+ActiveRecord::Schema.define(:version => 20120624191314) do
 
   create_table "activators", :force => true do |t|
     t.string   "description"
@@ -66,9 +66,13 @@ ActiveRecord::Schema.define(:version => 20120616084147) do
   add_index "adjustments", ["order_id"], :name => "index_adjustments_on_order_id"
 
   create_table "affiliates", :force => true do |t|
-    t.string   "affiliate_key", :null => false
+    t.string   "affiliate_key",     :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "logo_file_name"
+    t.string   "logo_content_type"
+    t.integer  "logo_file_size"
+    t.datetime "logo_updated_at"
   end
 
   add_index "affiliates", ["affiliate_key"], :name => "honyb_id", :unique => true

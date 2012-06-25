@@ -4,7 +4,7 @@
 en: 
   new_affiliate: "New Affiliate"
   affiliate: 
-    logo: "Affiliate logo."
+    logo: "Affiliate Logo"
     not_found: "Affiliate could not be found."
     key:
       not_blank: "Affiliate Key must not be blank."
