@@ -2,7 +2,6 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.1.4'
 
-
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -24,7 +23,7 @@ end
 
 # Dev/Test gems
 group :test, :development do
-  gem 'sqlite3'  
+  gem 'sqlite3'
   gem 'launchy'
   gem 'spork', '~> 0.9.0.rc'
   gem 'capybara'
