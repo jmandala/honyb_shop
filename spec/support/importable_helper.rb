@@ -2,7 +2,6 @@ require_relative '../spec_helper'
 
 shared_examples "an importable file" do |klass, record_length, ext|
 
-
   before :all do
     @import_class = klass
     @record_length = record_length

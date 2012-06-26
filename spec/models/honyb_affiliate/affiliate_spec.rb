@@ -1,8 +1,11 @@
 require "spec_helper"
 
 describe Affiliate do
+  
   let(:affiliate_key) { 'affiliate-id' }
 
+  before { Affiliate.current = nil }
+  
   it "#current should return nil by default" do
     Affiliate.current.should == nil
   end
@@ -35,11 +38,12 @@ describe Affiliate do
   context "when params are valid" do
     before do
       @user = Factory(:user)
-      @affiliate = Affiliate.create(:affiliate_key => affiliate_key, :users => [@user])
+      @affiliate = Factory.create(:affiliate)
+      @affiliate.users = [@user]
     end
 
     it "#init should set the correct affiliate" do
-      Affiliate.init(affiliate_key)
+      Affiliate.init(@affiliate.affiliate_key)
       Affiliate.current.should == @affiliate
       Affiliate.has_current?.should == true
     end
@@ -64,16 +68,6 @@ describe Affiliate do
         @affiliate.orders.should == [@order]
       end
 
-    end
-  end
-
-  describe '#logo' do
-    
-    it "should have the correct logo URL" do
-      affiliate = Factory.create(:affiliate)
-      affiliate.logo = Rails.root + 'spec/fixtures/images/boston-review-logo.gif'
-      puts affiliate.to_yaml
-      affiliate.logo.url.should == '/honyb/affiliates/logos/1/original_bostonreview.gif'
     end
   end
   

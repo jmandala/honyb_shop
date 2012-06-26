@@ -81,6 +81,6 @@ module HonybShop
 # Change the path that assets are served from
 # config.assets.prefix = "/assets"
 
-    config.active_record.observers = :affiliate_assignment_observer    
+    config.active_record.observers = :order_observer, :affiliate_assignment_observer    
   end
 end

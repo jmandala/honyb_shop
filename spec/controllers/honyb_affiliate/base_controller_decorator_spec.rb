@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe HomeController, :type => :controller do
+describe HomeController do
   let(:affiliate_key) { 'the-affiliate-id' }
 
   before do
@@ -39,20 +39,20 @@ describe HomeController, :type => :controller do
   
   context "valid affiliate_key" do
     before do
-      @affiliate = Affiliate.create(:affiliate_key => affiliate_key)
+      @affiliate = Factory(:affiliate)
     end
     
     it "should get the affiliate with the param data" do
-      get :index, :affiliate_key => affiliate_key
+      get :index, :affiliate_key => @affiliate.affiliate_key
       Affiliate.current.should == @affiliate
-      request.session[:affiliate_key].should == affiliate_key
+      request.session[:affiliate_key].should == @affiliate.affiliate_key
     end
     
     it "should get the affiliate with the session data" do
-      request.session[:affiliate_key] = affiliate_key
+      request.session[:affiliate_key] = @affiliate.affiliate_key
       get :index
       Affiliate.current.should == @affiliate
-      request.session[:affiliate_key].should == affiliate_key
+      request.session[:affiliate_key].should == @affiliate.affiliate_key
     end
   end
 end

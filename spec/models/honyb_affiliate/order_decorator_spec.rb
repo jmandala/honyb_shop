@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Order do
   it "has an affiliate" do
-    affiliate = Affiliate.create(:affiliate_key => String.random(6))
+    affiliate = Factory.create(:affiliate)
     order = Factory.create(:order)
     order.affiliate = affiliate
     order.save!

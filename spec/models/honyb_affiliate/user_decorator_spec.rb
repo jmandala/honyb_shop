@@ -4,7 +4,8 @@ describe User do
 
   before do
     @user = Factory(:user)
-    @affiliate = Affiliate.create(:affiliate_key => String.random(10), :users => [@user])
+    @affiliate = Factory(:affiliate)
+    @affiliate.users = [@user]
   end
 
   it "has an affiliate" do
