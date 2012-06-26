@@ -64,7 +64,6 @@ after "deploy:restart", "delayed_job:restart"
 
 desc 'install the necessary prerequisites'
 task :bundle_install, :roles => :app do
-  run "cd #{release_path} && rvm gem install sqlite3 -- --with-sqlite3-dir=/opt/local/sqlite-3.7.0.9"
   run "cd #{release_path} && bundle install --without development test"
 end
 
