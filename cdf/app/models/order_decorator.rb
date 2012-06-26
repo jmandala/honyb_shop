@@ -94,6 +94,7 @@ Order.class_eval do
 
   def self.needs_po
     where("orders.completed_at IS NOT NULL").
+        where("orders.state = 'complete'").
         where("orders.po_file_id IS NULL").
         where("orders.shipment_state = 'ready'").
         order('orders.completed_at asc')

@@ -7,7 +7,7 @@ describe 'order_decorator' do
   it "should say hello" do
     order.hello.should == 'hello'
   end
-  
+
   context "with regard to constants" do
     it "should have an ORDER_NAME" do
       Order::ORDER_NAME.should == 'Order Name'
@@ -72,7 +72,7 @@ describe 'order_decorator' do
     it "should have cdf_invoice_headers" do
       order.cdf_invoice_headers.should == []
     end
-    
+
     it "should have comments" do
       order.comments.should == []
     end
@@ -110,7 +110,7 @@ describe 'order_decorator' do
       order.test?.should == true
       order.live?.should == false
     end
-    
+
     it "should create a test order" do
       test_order = Order.create_test_order
       test_order.live?.should == false
@@ -137,7 +137,16 @@ describe 'order_decorator' do
       order.has_po?.should == false
     end
   end
-  
+
+
+  context "#needs_po" do
+    it "returns false by default" do
+      order = Factory.create(:order)
+      order.needs_po?.should == false
+    end
+    
+  end
+
   context "when working with order_name" do
     it "should set an order_name" do
       order.order_name.should == ''
@@ -145,8 +154,7 @@ describe 'order_decorator' do
       order.order_name.should == 'test order'
     end
   end
-  
-  
+
 
 end
 
