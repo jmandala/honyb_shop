@@ -10,7 +10,9 @@
   <tr data-hook="affiliate_logo">
     <th><%= t('affiliate.logo') %></th>
     <td>
-      <%= image_tag @affiliate.logo.url %>
+      <%- if @affiliate.logo? %>
+        <%= image_tag @affiliate.logo.url %>
+      <%- end %>
     </td>
   </tr>
   <tr data-hook="affiliate_css">

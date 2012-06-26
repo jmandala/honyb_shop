@@ -25,6 +25,8 @@ class Affiliate < ActiveRecord::Base
       :default_style => :embed
   
   validates :name, :presence => true
+  validates_uniqueness_of :affiliate_key
+  validates_uniqueness_of :name
   validates_attachment_content_type :logo, :content_type => %w(image/png image/jpg image/gif)
   
   def self.current
