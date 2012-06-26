@@ -86,6 +86,7 @@ namespace :assets do
   task :symlink, :roles => :app do
 
     symlink_to_shared '/public/spree/products', '/uploaded-files/spree/products'
+    symlink_to_shared '/public/spree/honyb', '/uploaded-files/spree/honyb'
     symlink_to_shared '/cdf/data_lib'
     symlink_to_shared '/cdf/config/config.yml'
   end
