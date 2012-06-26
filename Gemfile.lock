@@ -293,11 +293,12 @@ GEM
       mailfactory (>= 1.2.3)
       rubyzip (>= 0.9.1)
       ruport (>= 1.6.0)
-    sass (3.1.15)
-    sass-rails (3.1.6)
+    sass (3.1.19)
+    sass-rails (3.1.4)
       actionpack (~> 3.1.0)
       railties (~> 3.1.0)
-      sass (>= 3.1.10)
+      sass (>= 3.1.4)
+      sprockets (~> 2.0.0)
       tilt (~> 1.3.2)
     selenium-webdriver (2.20.0)
       childprocess (>= 0.2.5)
@@ -404,7 +405,7 @@ DEPENDENCIES
   rspec-rails (~> 2.0)
   ruport
   ruport-util
-  sass-rails (~> 3.1.4)
+  sass-rails (= 3.1.4)
   spork (~> 0.9.0.rc)
   spree (= 0.70.5)
   spree_comments!
