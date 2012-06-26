@@ -145,6 +145,25 @@ describe 'order_decorator' do
       order.needs_po?.should == false
     end
     
+    it "needs a po when there is none" do
+      order = Cdf::OrderBuilder.completed_test_order
+      order.po_file.should_not == nil
+      order.needs_po?.should == false
+      order.po_file = nil
+      order.save
+      order.needs_po?.should == true
+      Order.needs_po.should == [order]
+    end
+    
+    it "doesn't need a po_file when it is canceled'" do
+      order = Cdf::OrderBuilder.completed_test_order
+      order.po_file = nil
+      order.state = 'canceled'
+      order.save
+      order.needs_po?.should == false
+      Order.needs_po.should == []      
+    end
+    
   end
 
   context "when working with order_name" do
