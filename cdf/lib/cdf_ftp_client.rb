@@ -34,9 +34,9 @@ class CdfFtpClient
 
   def initialize(opts={})
     @keep_alive = opts[:keep_alive]
-    @server = Cdf::Config[:cdf_ftp_server]
-    @user = Cdf::Config[:cdf_ftp_user]
-    @password = Cdf::Config[:cdf_ftp_password]
+    @server = opts[:server]
+    @user = opts[:user]
+    @password = opts[:password]
     
     # unset the password unless in production
     #@password = BAD_PASSWORD unless Rails.env.production?
@@ -87,7 +87,7 @@ class CdfFtpClient
   def files_from_dir_list(list, regexp)
     files = []
     list.each do |file|
-      file_name = name_from_path(file)
+      file_name = CdfFtpClient.name_from_path(file)
       files << file_name if !regexp || regexp && file =~ /#{regexp}$/
     end
     files
@@ -99,7 +99,7 @@ class CdfFtpClient
     connect do |ftp|
       ftp.chdir dir if dir
       ftp.list.each do |file|
-        file_name = name_from_path(file)
+        file_name = CdfFtpClient.name_from_path(file)
         files << file if !regexp || regexp && file_name =~ /#{regexp}$/
       end
     end
@@ -141,7 +141,7 @@ class CdfFtpClient
     downloaded = []
 
     dir(remote_path, mask).each do |path|
-      file_name = name_from_path(path)
+      file_name = CdfFtpClient.name_from_path(path)
       @ftp.get File.join(remote_path, file_name), File.join(local_dir, file_name)
       downloaded << file_name
     end
@@ -149,8 +149,12 @@ class CdfFtpClient
     downloaded
   end
 
-  def name_from_path(file)
+  def self.name_from_path(file)
     file.split[file.split.length-1]
+  end
+
+  def self.size_from_path(file)
+    file.split[4]
   end
 
   def open?

@@ -23,6 +23,9 @@ class CdfInvoiceFile < ActiveRecord::Base
 
   define_ext 'BIN'
   define_length 80
+  support_versioning true
+  define_ftp_dirs ['test', 'outgoing']
+  define_ftp_server_connection Cdf::Config[:cdf_ftp_server], Cdf::Config[:cdf_ftp_user], Cdf::Config[:cdf_ftp_password], true
 
   import_format do |d|
     d.template :cdf_invoice_defaults do |t|

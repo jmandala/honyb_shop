@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120612220111) do
+ActiveRecord::Schema.define(:version => 20120626202912) do
 
   create_table "activators", :force => true do |t|
     t.string   "description"
@@ -414,6 +414,18 @@ ActiveRecord::Schema.define(:version => 20120612220111) do
     t.boolean  "test_mode",   :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "ingram_stock_files", :force => true do |t|
+    t.string   "record_code",   :limit => 2
+    t.integer  "parent_id"
+    t.string   "file_name"
+    t.datetime "imported_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "downloaded_at"
+    t.integer  "file_size"
+    t.date     "file_date"
   end
 
   create_table "inventory_units", :force => true do |t|

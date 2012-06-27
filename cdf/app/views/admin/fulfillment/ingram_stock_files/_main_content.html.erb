@@ -1,0 +1,53 @@
+<div>
+  <table class="index">
+    <thead>
+    <tr>
+      <th> <%= t(:file_name) %> </th>
+      <th> <%= t(:date) %> </th>
+      <th> <%= t(:downloaded_at) %> </th>
+      <th> <%= t(:imported_at) %> </th>
+      <th> <%= t(:file_size) %> </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% for import_file in @collection do %>
+        <tr>
+          <td>
+            <% if import_file.downloaded_at %>
+                <%= link_to import_file.file_name, send("admin_fulfillment_#{type}_file_path".to_sym, import_file) %>
+            <% else %>
+                <%= import_file.file_name %>
+            <% end %>
+          </td>
+
+          <td>
+            <%= import_file.file_date %>
+          </td>
+
+          <td>
+            <% if import_file.downloaded_at %>
+                <%= time_ago_in_words import_file.downloaded_at %> <%= t :ago %>
+            <% else %>
+                <%= link_to_with_icon 'add', t(:download_now), send("download_admin_fulfillment_ingram_stock_file_path".to_sym, import_file), :method => :post %>
+            <% end %>
+          </td>
+          <td>
+            <% if import_file.imported_at %>
+                <%= time_ago_in_words import_file.imported_at %> <%= t :ago %>
+            <% else %>
+                <%= link_to_with_icon 'add', t(:import_now), send("import_admin_fulfillment_ingram_stock_file_path".to_sym, import_file), :method => :post %>
+            <% end %>
+          </td>
+          <td>
+            <%= (import_file.file_size.to_f / 1024).round(4) %> Kb
+          </td>
+        </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+  <% if @collection.size == 0 %>
+    <%= t :no_files %>
+  <% end %>
+</div>

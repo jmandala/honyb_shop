@@ -55,11 +55,21 @@ namespace :deploy do
 end
 
 after 'deploy:update_code', :bundle_install
+after 'deploy:update_code', "deploy:migrate"
+after 'deploy:restart', :run_post_commands
+after "deploy:stop",    "delayed_job:stop"
+after "deploy:start",   "delayed_job:start"
+after "deploy:restart", "delayed_job:restart"
 
 desc 'install the necessary prerequisites'
 task :bundle_install, :roles => :app do
   run "cd #{release_path} && rvm gem install sqlite3 -- --with-sqlite3-dir=/opt/local/sqlite-3.7.0.9"
   run "cd #{release_path} && bundle install --without development test"
+end
+
+desc 'post install and restart commands'
+task :run_post_commands, :roles => :app do
+  run "cd #{release_path} && whenever --update-crontab honyb_shop"
 end
 
 desc "tail production log files"

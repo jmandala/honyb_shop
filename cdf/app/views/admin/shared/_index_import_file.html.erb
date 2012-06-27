@@ -14,29 +14,7 @@
 
 <h1><%= t "#{type}_files" %></h1>
 
-<div>
-  <table class="index">
-    <thead>
-    <tr>
-      <th> <%= sort_link @search, :file_name, t(:file_name) %> </th>
-      <th> <%= t('imported_at') %> </th>
-      <th> <%= sort_link @search, :created_at, t(:created_at) %> </th>
-    </tr>
-    </thead>
-
-    <tbody>
-    <% for import_file in @collection do %>
-      <%= render 'admin/shared/import_file', :import_file => import_file, :type => type %>
-    <% end %>
-    </tbody>
-  </table>
-
-  <% if @collection.size == 0 %>
-    <%= t :no_files %>
-  <% end %>
-
-  <%= paginate(@collection, :previous_label => "&#171; #{t(:previous)}", :next_label => "#{t(:next)} &#187;") %>
-</div>
+<%= render "admin/fulfillment/#{type}_files/main_content", :type => type %>
 
 <% content_for :sidebar do %>
   <div class="box">
