@@ -21,10 +21,10 @@ describe AffiliateAssignmentObserver do
   
   context "when there is already an affiliate assigned" do
     it "should not assign the current affiliate" do
-      affiliate = Factory.create(:affiliate, :affiliate_key => String.random(10))
+      affiliate = Factory.create(:affiliate)
       order = Order.new
       order.affiliate = affiliate
-      Affiliate.current = Factory.create(:affiliate, :affiliate_key => String.random(10))      
+      Affiliate.current = Factory.create(:affiliate)      
       order.save!
       order = Order.find(order.id)            
       order.affiliate.should == affiliate
