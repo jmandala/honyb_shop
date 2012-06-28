@@ -19,8 +19,8 @@ every 4.hours do
   runner "Downloader.download_and_import_stock_delta_files"
 end
 
-# need to add specific time and date for this
-every 1.weeks do
+# setting the full file download for 3AM every Sunday, but which time zone will this use? Local time zone of the server (US - Eastern) or GMT? Or something else entirely?
+every :sunday, :at => '3am' do
   runner "Downloader.download_and_import_inventory_file"
 end
 
