@@ -24,7 +24,7 @@ describe PoFile do
     order = create_order
     Order.count.should == 1
 
-    order.refresh
+    order.reload
 
     order.payment.state.should == "completed"
     order.needs_po?.should == false

@@ -34,9 +34,9 @@ class CdfFtpClient
 
   def initialize(opts={})
     @keep_alive = opts[:keep_alive]
-    @server = opts[:server]
-    @user = opts[:user]
-    @password = opts[:password]
+    @server = opts[:server].nil? ? Cdf::Config[:cdf_ftp_server] : opts[:server]
+    @user = opts[:user].nil? ? Cdf::Config[:cdf_ftp_user] : opts[:user]
+    @password = opts[:password].nil? ? Cdf::Config[:cdf_ftp_password] : opts[:password]
     
     # unset the password unless in production
     #@password = BAD_PASSWORD unless Rails.env.production?

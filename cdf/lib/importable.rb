@@ -99,7 +99,7 @@ module Importable
       client = CdfFtpClient.new({:keep_alive => true, :server => ftp_server, :user => ftp_user_name, :password => ftp_password })
       files = []
       ftp_dirs.each do |dir|
-        remote_dir = "~/#{dir}"
+        remote_dir = "#{dir}"
         files += client.dir(remote_dir, ".*#{@ext}")
       end
       client.close
@@ -127,11 +127,11 @@ module Importable
     end
 
     def outgoing_dir
-      '~/outgoing'
+      'outgoing'
     end
 
     def test_dir
-      '~/test'
+      'test'
     end
 
     # Downloads all remote files in the 'outgoing' directory
