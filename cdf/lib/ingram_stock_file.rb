@@ -134,7 +134,7 @@ class IngramStockFile < ActiveRecord::Base
   def self.download_all_new_delta_files
     last_delta_file = IngramStockFile.all(:limit => 1, :order => "file_date DESC")
     last_delta_file_name = last_delta_file.blank? ? nil : last_delta_file[0].file_name
-    last_delta_file_name = last_delta_file_name[0, last_delta_file_name.length - 4]
+    last_delta_file_name = last_delta_file_name[0, last_delta_file_name.length - 4] unless last_delta_file_name.nil?
 
     downloadable = IngramStockFile.remote_files
     downloadable.each do |file|
