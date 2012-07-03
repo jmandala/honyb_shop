@@ -1,10 +1,12 @@
+require 'zip/zip'
+
 class IngramStockFile < ActiveRecord::Base
   include Importable
 
   has_many :versions, :class_name => 'IngramStockFile', :foreign_key => 'parent_id', :autosave => true
   belongs_to :parent, :class_name => 'IngramStockFile'
 
-  define_ext 'dat'
+  define_ext 'zip'
   define_length 300
   support_versioning false
   define_ftp_dirs ['Inventory']
@@ -103,10 +105,18 @@ class IngramStockFile < ActiveRecord::Base
 
     begin
       products = []
-      p = parsed
-      p[:body].each do |product_data|
-        product = create_product product_data
-        products << product
+      prefix = self.generate_part_file_prefix
+      Dir.foreach(CdfConfig::current_data_lib_in) do |part_file|
+        if part_file.starts_with? prefix
+          temp_file = IngramStockFile.new(:file_name => part_file, :created_at => Time.now)     # we've split up the large Ingram inventory file into more manageable parts, now import each one
+          p = temp_file.parsed
+          p[:body].each do |product_data|
+            product = create_product product_data
+            products << product
+          end
+
+          File.delete File.join(CdfConfig::current_data_lib_in, part_file)      # delete the temporary part file
+        end
       end
 
       # mark this Inventory file as imported
@@ -121,10 +131,27 @@ class IngramStockFile < ActiveRecord::Base
     end
   end
 
+  def self.download_all_new_delta_files
+    last_delta_file = IngramStockFile.all(:limit => 1, :order => "file_date DESC")
+    last_delta_file_name = last_delta_file.blank? ? nil : last_delta_file[0].file_name
+    last_delta_file_name = last_delta_file_name[0, last_delta_file_name.length - 4]
+
+    downloadable = IngramStockFile.remote_files
+    downloadable.each do |file|
+      file_name = CdfFtpClient.name_from_path(file)
+      file_info = IngramStockFile.file_name_useful_to_honyb file_name
+      if (file_info[:useful_file] && !file_info[:full_file] && file_name[0, file_name.length - (@ext.length+1)] > last_delta_file_name)    # download only the files we care about, and ones that are newer than the latest one we've already got
+        download_file = IngramStockFile.download_file nil, file_name
+        yield download_file
+      end
+    end
+
+  end
+
   def find_file_date!
     return self.file_date unless self.file_date.nil?
 
-    /stockv2delta(?<file_date>\d{6})[a-f]@ingram.dat/ =~ self.file_name
+    /stockv2delta(?<file_date>\d{6})[a-f]@ingram.\w{3}/ =~ self.file_name
     parsed_date = nil
     parsed_date = Date.strptime(file_date, "%y%m%d") unless file_date.nil?
 
@@ -135,9 +162,30 @@ class IngramStockFile < ActiveRecord::Base
   end
 
   def get_delta_letter
-    /stockv2delta\d{6}(?<file_letter>[a-f])@ingram.dat/ =~ self.file_name
+    /stockv2delta\d{6}(?<file_letter>[a-f])@ingram.\w{3}/ =~ self.file_name
 
     file_letter
+  end
+
+  def delta_date
+    self.file_date.nil? ? "Full File" : self.file_date
+  end
+
+  def generate_part_file_prefix
+    "delta#{self.find_file_date!}#{self.get_delta_letter}_parts_"
+  end
+
+  # we are looking for stockv2@ingram.zip (full inventory file) or a stockv2deltaXXXXXX[a-f]@ingram.zip (daily delta file)
+  def self.file_name_useful_to_honyb file_name
+    file_date = nil
+    full_file = (file_name  == "stockv2@ingram.zip")
+    if full_file
+      useful_file = true
+    else
+      useful_file = !(/stockv2delta(?<file_date>\d{6})[a-f]@ingram.zip/ =~ file_name).nil?
+    end
+
+    return { :useful_file => (full_file || useful_file), :full_file => full_file, :file_date => file_date }
   end
 
 end

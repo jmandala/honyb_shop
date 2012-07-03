@@ -57,6 +57,7 @@ gem 'rack-jsonp-middleware'
 gem 'delayed_job_active_record'
 gem 'daemons'
 gem 'whenever', :require => false
+gem 'rubyzip', '>= 0.9.9'
 
 #gem 'ie_iframe_cookies'
 

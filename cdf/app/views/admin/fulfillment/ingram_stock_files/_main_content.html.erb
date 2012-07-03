@@ -3,7 +3,7 @@
     <thead>
     <tr>
       <th> <%= t(:file_name) %> </th>
-      <th> <%= t(:date) %> </th>
+      <th> <%= t(:delta_date) %> </th>
       <th> <%= t(:downloaded_at) %> </th>
       <th> <%= t(:imported_at) %> </th>
       <th> <%= t(:file_size) %> </th>
@@ -22,7 +22,7 @@
           </td>
 
           <td>
-            <%= import_file.file_date %>
+            <%= import_file.delta_date %>
           </td>
 
           <td>

@@ -27,13 +27,15 @@
       <%= render file_details, :import_file => import_file %>
     </div>
   <% end %>
-  
-  <div id='#parsed' class='data_group'>
-    <h2><%= t :parsed %></h2>
-    <div class='collapseable'>    
-      <pre><%= import_file.parsed.to_yaml %></pre>
-    </div>
-  </div>
+
+  <% unless @hide_parsed %>
+      <div id='#parsed' class='data_group'>
+        <h2><%= t :parsed %></h2>
+        <div class='collapseable'>
+          <pre><%= import_file.parsed.to_yaml %></pre>
+        </div>
+      </div>
+  <% end %>
 
   <div id='contents' class='data_group'>    
     <h2><%= t :contents %></h2> 

@@ -2,10 +2,10 @@ require 'spec_helper'
 require 'ruby-debug'
 
 describe IngramStockFile do
-  it_should_behave_like "an importable file", IngramStockFile, 300, 'dat' do
+  it_should_behave_like "an importable file", IngramStockFile, 300, 'zip' do
 
-    let(:outgoing_file) { 'dly_stkv2delta20120504.dat' }
-    let(:incoming_file) { 'dly_stkv2delta20120504_out.dat' }
+    let(:outgoing_file) { 'dly_stkv2delta20120504.zip' }
+    let(:incoming_file) { 'dly_stkv2delta20120504_out.zip' }
 
     let(:create_order_1) { %q[Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R543255800')]}
     let(:create_order_2) { %q[Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R554266337')]}

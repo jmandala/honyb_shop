@@ -1,6 +1,6 @@
 <%= render 'admin/shared/fulfillment_sub_menu' %>
 
-<% if @downloadable.size > 0 %>
+<% if !@hide_download_all_button && @downloadable.size > 0 %>
   <div class="admin_buttons">
     <%= form_tag(send("admin_fulfillment_#{type}_files_path")) do |f| %>
       <div class="download">

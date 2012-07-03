@@ -12,31 +12,8 @@ class Downloader
   end
 
   def self.download_and_import_stock_delta_files
-    local_files = IngramStockFile.all(:limit => 6, :order => "file_date DESC")
-    first_date = nil
-    delta_letter = 'a'
-    unless local_files.nil?
-      first_date = local_files[0].file_date unless local_files.empty?
-      local_files.each do |local_file|
-        if first_date == local_file.file_date
-          /stockv2delta\d{6}(?<file_letter>[a-f])@ingram.dat/ =~ local_file.file_name
-          if compare_letters(file_letter, delta_letter)
-            delta_letter = file_letter
-          end
-        else
-          break
-        end
-      end
-    end
-
-    new_files = IngramStockFile.download
-    unless new_files.nil?
-      new_files.each do |file|
-        file_date = file.find_file_date!
-        if !file_date.nil? && (first_date.nil? || file_date >= first_date) && compare_letters(file.get_delta_letter, delta_letter)
-          file.import
-        end
-      end
+    IngramStockFile.download_all_new_delta_files do |downloaded_file|
+      downloaded_file.import unless downloaded_file.nil?
     end
   end
 

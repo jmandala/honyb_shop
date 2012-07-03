@@ -1,0 +1,2 @@
+<h2><%= t(:product_type) %></h2>
+<%= f.select :ingram_product_type, options_for_select(@types_array, @product.ingram_product_type), {:include_blank => true} %>

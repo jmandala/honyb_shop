@@ -55,7 +55,7 @@ en:
   no_files: "No Files"
   poa_type: "POA Type"
   file_name: "File Name"
-  file_size: "File Size"
+  file_size: "File Size (zip file)"
   status: "Status"
   freight_charge: "Freight"
   amount: "Amount"
@@ -65,7 +65,7 @@ en:
   ship_date: "Ship Date"
   item_count: "Item Count"
   shipping_and_handling: "S & H"
-  date: "Date"
+  delta_date: "Delta Date"
   imported_at: "Imported At"
   created_at: "Created At"
   parsed: "Parsed"
@@ -124,3 +124,7 @@ en:
   qualifies_for_free_shipping: Qualifies for <strong>FREE</strong> shipping!
   isbn13: ISBN13
   logged_in_succesfully: "Logged in successfully."
+  book: "Book"
+  hardcover: "Hard Cover"
+  digital: "Digital Media"
+  product_type: "Product Type"

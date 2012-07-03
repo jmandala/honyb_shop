@@ -134,6 +134,10 @@ module Importable
       'test'
     end
 
+    def zip_file?
+      @ext == 'zip'
+    end
+
     # Downloads all remote files in the 'outgoing' directory
     # matching the file_mask
     #
@@ -168,9 +172,38 @@ module Importable
       remote_listing = client.dir ftp_dirs.first, ".*#{@ext}"
       import_file = self.new_or_archived(file_name)
 
+      if zip_file?
+        file_name = file_name.partition(".")[0] + ".#{@ext}"
+      end
       local_path = create_path file_name
       client.get file_name, local_path
-      write_data_with_delimiters local_path
+
+      if zip_file?
+        Zip::ZipFile.open(local_path) { |zip_file|
+          f_path=File.join(CdfConfig::current_data_lib_in, zip_file.first.name)
+          if File.exists? f_path
+            File.delete f_path
+          end
+          zip_file.extract(zip_file.first, f_path)          # extract from the zip file
+
+          # split up the extracted files into more manageable parts
+          prefix = import_file.generate_part_file_prefix
+          Dir.foreach(CdfConfig::current_data_lib_in) do |part_file|
+            File.delete File.join(CdfConfig::current_data_lib_in, part_file) if part_file.starts_with? prefix    # delete any old parts of this file, if any are present
+          end
+          system("cd #{File.dirname(f_path)} && split -a 4 #{f_path} #{prefix}")    # split up the new file into portions
+          Dir.foreach(CdfConfig::current_data_lib_in) do |part_file|
+            if part_file.starts_with? prefix
+              write_data_with_delimiters File.join(CdfConfig::current_data_lib_in, part_file)
+            end
+          end
+
+          import_file.file_name = "#{zip_file.first.name}"
+          import_file.save
+        }
+      else
+        write_data_with_delimiters local_path
+      end
 
       import_file
     end

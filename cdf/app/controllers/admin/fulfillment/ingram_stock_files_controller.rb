@@ -1,24 +1,31 @@
 class Admin::Fulfillment::IngramStockFilesController < Admin::Fulfillment::ImportController
+  before_filter :hide_parsed, :only => [:show]
 
   def index
     params[:search] ||= {}
     @search = model_class.metasearch(params[:search], :distinct => true)
 
     @downloadable = model_class.remote_files
+    @hide_download_all_button = true
 
     @collection = []
     @downloadable.each do |file|
       file_name = CdfFtpClient.name_from_path(file)
-      import_file = model_class.find_by_file_name(file_name)
+      file_info = IngramStockFile.file_name_useful_to_honyb file_name
+      if file_info[:useful_file]
+        file_name = file_name.partition(".")[0] + ".dat"
+        import_file = model_class.find_by_file_name(file_name)
+        if import_file.nil?
+          parsed_date = nil
+          parsed_date = Date.strptime(file_info[:file_date], "%y%m%d") unless file_info[:full_file]
+          import_file = model_class.create(:file_name => file_name, :file_size => CdfFtpClient.size_from_path(file), :file_date => parsed_date)
+        else
+          import_file.file_size = CdfFtpClient.size_from_path(file)     # update the file size if it had changed since the last time we've seen this file
+          import_file.save
+        end
 
-      if !import_file
-        /stockv2delta(?<file_date>\d{6})[a-f]@ingram.dat/ =~ file_name
-        parsed_date = nil
-        parsed_date = Date.strptime(file_date, "%y%m%d") unless file_date.nil?
-        import_file = model_class.create(:file_name => file_name, :file_size => CdfFtpClient.size_from_path(file), :file_date => parsed_date)
+        @collection << import_file
       end
-
-      @collection << import_file
     end
 
     respond_with @collection
@@ -78,6 +85,10 @@ class Admin::Fulfillment::IngramStockFilesController < Admin::Fulfillment::Impor
       flash[:error] = "Failed to download #{@object.file_name}. #{e.message}"
       logger.error e.backtrace
       raise e
+  end
+
+  def hide_parsed
+    @hide_parsed = true
   end
 
 end
