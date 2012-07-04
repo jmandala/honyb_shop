@@ -63,8 +63,13 @@ class ImportFileHelper
       client.should_receive(:get).with("#{file_names[dir.to_sym]}", PoaFile.create_path(file_names[dir.to_sym])).any_number_of_times.and_return do
         file = File.new(PoaFile.create_path(file_names[dir.to_sym]), 'w')
         content = sample_files[dir.to_sym]
-        file.write content
-        file.close
+#        if content == "testingram.zip"
+#          file.close
+#          PoaFile.copy_file PoaFile.create_path(content), PoaFile.create_path(file_names[dir.to_sym])
+#        else
+          file.write content
+          file.close
+#        end
         nil
       end
     end

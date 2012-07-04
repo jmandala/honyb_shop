@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120703005606) do
+ActiveRecord::Schema.define(:version => 20120704002117) do
 
   create_table "activators", :force => true do |t|
     t.string   "description"
@@ -861,6 +861,9 @@ ActiveRecord::Schema.define(:version => 20120703005606) do
     t.string   "meta_keywords"
     t.integer  "count_on_hand",        :default => 0,  :null => false
     t.string   "ingram_product_type"
+    t.string   "availability_status"
+    t.string   "publisher_status"
+    t.datetime "ingram_updated_at"
   end
 
   add_index "products", ["available_on"], :name => "index_products_on_available_on"

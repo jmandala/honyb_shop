@@ -125,7 +125,7 @@ shared_examples "an importable file" do |klass, record_length, ext|
             downloaded = @import_class.download
             new_import_file = @import_class.find_by_file_name @file_names.first
             new_import_file.versions.count == 1
-            new_import_file.versions.first.file_name.should == @file_names[@import_class.ftp_dirs.first.to_sym] + ".1"
+            new_import_file.versions.first.file_name.should == @sample_file[@import_class.ftp_dirs.first.to_sym] + ".1"
           end
         end
 

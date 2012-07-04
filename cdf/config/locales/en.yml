@@ -128,3 +128,6 @@ en:
   hardcover: "Hard Cover"
   digital: "Digital Media"
   product_type: "Product Type"
+  availability_status: "Availability Status"
+  publisher_status: "Publisher Status"
+  last_updated: "Last Inventory Update"

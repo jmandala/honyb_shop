@@ -94,6 +94,16 @@ class IngramStockFile < ActiveRecord::Base
                             product_info[:chambersburg_on_hand].to_i
     product.available_on = (product_info[:on_sale_date] == "00010101") ? Date.today.to_datetime : product_info[:on_sale_date].to_datetime
 
+    type = Product::PRODUCT_TYPES[product_info[:product_type]]
+    product.ingram_product_type = type[:id] unless type.nil?
+
+    availability = Product::AVAILABILITY_STATUS[product_info[:product_availability_code]]
+    product.availability_status = availability[:id] unless availability.nil?
+
+    status = Product::PUBLISHER_STATUS[product_info[:publisher_status_code]]
+    product.publisher_status = status[:id] unless status.nil?
+
+    product.ingram_updated_at = Time.now
     product.save!
     product
   end
