@@ -22,9 +22,9 @@ set :user,                  'honyb'
 set :group,                 "honyb"
 set :use_sudo, false
 
-role :web,                  "216.237.100.194"
-role :app,                  "216.237.100.194"
-role :db,                   "216.237.100.194", :primary => true # This is where Rails migrations will run
+role :web,                  "www2.honyb.com"
+role :app,                  "www2.honyb.com"
+role :db,                   "www2.honyb.com", :primary => true # This is where Rails migrations will run
 #role :db,  "your slave db-server here"
 
 set(:latest_release)  { fetch(:current_path) }
@@ -38,15 +38,15 @@ set(:previous_revision) { capture("cd #{current_path}; git rev-parse --short HEA
 default_environment["RAILS_ENV"] = 'production'
 
 # Use our ruby-1.9.2-p290@my_site gemset
-#default_environment["PATH"]         = "--"
-#default_environment["GEM_HOME"]     = "--"
-#default_environment["GEM_PATH"]     = "--"
-#default_environment["RUBY_VERSION"] = "ruby-1.9.2-p290"
+default_environment["PATH"]         =  "/usr/local/rvm/gems/ruby-1.9.2-p290/bin:/usr/local/rvm/gems/ruby-1.9.2-p290@global/bin:/usr/local/rvm/rubies/ruby-1.9.2-p290/bin:/usr/local/rvm/bin:/home/honyb/bin:/usr/kerberos/bin:/usr/local/bin:/bin:/usr/bin"
+default_environment["GEM_HOME"]     =  "/usr/local/rvm/gems/ruby-1.9.2-p290"
+default_environment["GEM_PATH"]     = "/usr/local/rvm/gems/ruby-1.9.2-p290:/usr/local/rvm/gems/ruby-1.9.2-p290@global"
+default_environment["RUBY_VERSION"] = "ruby-1.9.2-p290"
 
 # adjust if you are using RVM, remove if you are not
-$:.unshift(File.expand_path('./lib', ENV['rvm_path']))
-require 'rvm/capistrano'
-set :rvm_ruby_string, 'ruby-1.9.2-p290@rails-3.1.1'
+#$:.unshift(File.expand_path('./lib', ENV['rvm_path']))
+#require 'rvm/capistrano'
+#set :rvm_ruby_string, 'ruby-1.9.2-p290@rails-3.1.1'
 
 default_run_options[:shell] = 'bash'
 
@@ -90,7 +90,7 @@ namespace :deploy do
 
   desc "Update the deployed code."
   task :update_code, :except => { :no_release => true } do
-    run "cd #{current_path}; git fetch origin; git reset --hard #{branch}"
+    run "mkdir -p #{current_path} && cd #{current_path} && git fetch origin; git reset --hard #{branch}"
     finalize_update
   end
 
@@ -176,18 +176,12 @@ def run_rake(cmd)
   run "cd #{current_path}; #{rake} #{cmd}"
 end
 
-#after 'deploy:update_code', :bundle_install
 #after 'deploy:update_code', "deploy:migrate"
-after 'deploy:start', :run_post_commands
+#after 'deploy:start', :run_post_commands
 
-after "deploy:stop",    "delayed_job:stop"
-after "deploy:start",   "delayed_job:start"
-after "deploy:restart", "delayed_job:restart"
-
-desc 'install the necessary prerequisites'
-task :bundle_install, :roles => :app do
-  run "cd #{release_path} && bundle install --without development test"
-end
+#after "deploy:stop",    "delayed_job:stop"
+#after "deploy:start",   "delayed_job:start"
+#after "deploy:restart", "delayed_job:restart"
 
 desc 'post install and restart commands'
 task :run_post_commands, :roles => :app do

@@ -25,7 +25,7 @@ if env == "production"
   working_directory "/usr/local/mandala-sites/honyb/www.honyb.com/current"
 
   # feel free to point this anywhere accessible on the filesystem
-  user 'deployer', 'staff'
+  user 'honyb', 'staff'
   shared_path = "/usr/local/mandala-sites/honyb/www.honyb.com/shared"
 
   stderr_path "#{shared_path}/log/unicorn.stderr.log"
