@@ -8,39 +8,39 @@ require "delayed/recipes"
 #set :asset_env, '--trace'
 
 
-set :scm,                   :git
-set :git_server,            'code.mandaladesigns.com'
-set :repository,            "#{git_server}:/repos/honyb/honyb_shop.git"
-set :branch,                'origin/master'
-set :migrate_target,        :current
-set :ssh_options,           { :forward_agent => true }
-set :deploy_to,             "/usr/local/mandala-sites/honyb/www.honyb.com"
-set :rails_env,             :production
-set :normalize_timestamps,  false
+set :scm, :git
+set :git_server, 'code.mandaladesigns.com'
+set :repository, "#{git_server}:/repos/honyb/honyb_shop.git"
+set :branch, 'origin/master'
+set :migrate_target, :current
+set :ssh_options, {:forward_agent => true}
+set :deploy_to, "/usr/local/mandala-sites/honyb/www.honyb.com"
+set :rails_env, :production
+set :normalize_timestamps, false
 
-set :user,                  'honyb'
-set :group,                 "honyb"
+set :user, 'honyb'
+set :group, "honyb"
 set :use_sudo, false
 
-role :web,                  "www2.honyb.com"
-role :app,                  "www2.honyb.com"
-role :db,                   "www2.honyb.com", :primary => true # This is where Rails migrations will run
+role :web, "www2.honyb.com"
+role :app, "www2.honyb.com"
+role :db, "www2.honyb.com", :primary => true # This is where Rails migrations will run
 #role :db,  "your slave db-server here"
 
-set(:latest_release)  { fetch(:current_path) }
-set(:release_path)    { fetch(:current_path) }
+set(:latest_release) { fetch(:current_path) }
+set(:release_path) { fetch(:current_path) }
 set(:current_release) { fetch(:current_path) }
 
-set(:current_revision)  { capture("cd #{current_path}; git rev-parse --short HEAD").strip }
-set(:latest_revision)   { capture("cd #{current_path}; git rev-parse --short HEAD").strip }
+set(:current_revision) { capture("cd #{current_path}; git rev-parse --short HEAD").strip }
+set(:latest_revision) { capture("cd #{current_path}; git rev-parse --short HEAD").strip }
 set(:previous_revision) { capture("cd #{current_path}; git rev-parse --short HEAD@{1}").strip }
 
 default_environment["RAILS_ENV"] = 'production'
 
 # Use our ruby-1.9.2-p290@my_site gemset
-default_environment["PATH"]         =  "/usr/local/rvm/gems/ruby-1.9.2-p290/bin:/usr/local/rvm/gems/ruby-1.9.2-p290@global/bin:/usr/local/rvm/rubies/ruby-1.9.2-p290/bin:/usr/local/rvm/bin:/home/honyb/bin:/usr/kerberos/bin:/usr/local/bin:/bin:/usr/bin"
-default_environment["GEM_HOME"]     =  "/usr/local/rvm/gems/ruby-1.9.2-p290"
-default_environment["GEM_PATH"]     = "/usr/local/rvm/gems/ruby-1.9.2-p290:/usr/local/rvm/gems/ruby-1.9.2-p290@global"
+default_environment["PATH"] = "/usr/local/rvm/gems/ruby-1.9.2-p290/bin:/usr/local/rvm/gems/ruby-1.9.2-p290@global/bin:/usr/local/rvm/rubies/ruby-1.9.2-p290/bin:/usr/local/rvm/bin:/home/honyb/bin:/usr/kerberos/bin:/usr/local/bin:/bin:/usr/bin"
+default_environment["GEM_HOME"] = "/usr/local/rvm/gems/ruby-1.9.2-p290"
+default_environment["GEM_PATH"] = "/usr/local/rvm/gems/ruby-1.9.2-p290:/usr/local/rvm/gems/ruby-1.9.2-p290@global"
 default_environment["RUBY_VERSION"] = "ruby-1.9.2-p290"
 
 # adjust if you are using RVM, remove if you are not
@@ -70,7 +70,7 @@ namespace :deploy do
   end
 
   desc "Setup your git-based deployment app"
-  task :setup, :except => { :no_release => true } do
+  task :setup, :except => {:no_release => true} do
     dirs = [deploy_to, shared_path]
     dirs += shared_children.map { |d| File.join(shared_path, d) }
     run "#{try_sudo} mkdir -p #{dirs.join(' ')} && #{try_sudo} chmod g+w #{dirs.join(' ')}"
@@ -89,7 +89,7 @@ namespace :deploy do
   end
 
   desc "Update the deployed code."
-  task :update_code, :except => { :no_release => true } do
+  task :update_code, :except => {:no_release => true} do
     run "mkdir -p #{current_path} && cd #{current_path} && git fetch origin; git reset --hard #{branch}"
     finalize_update
   end
@@ -103,7 +103,18 @@ namespace :deploy do
     restart
   end
 
-  task :finalize_update, :except => { :no_release => true } do
+  namespace :assets do
+    task :precompile, :roles => :web, :except => {:no_release => true} do
+      from = source.next_revision(current_revision)
+      if capture("cd #{latest_release} && #{source.local.log(from)} vendor/assets/ app/assets/ | wc -l").to_i > 0
+        run %Q{cd #{latest_release} && #{rake} RAILS_ENV=#{rails_env} #{asset_env} assets:precompile}
+      else
+        logger.info "Skipping asset pre-compilation because there were no asset changes"
+      end
+    end
+  end
+
+  task :finalize_update, :except => {:no_release => true} do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
 
     # mkdir -p is making sure that the directories are there for some SCM's that don't
@@ -121,34 +132,34 @@ namespace :deploy do
     if fetch(:normalize_asset_timestamps, true)
       stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")
       asset_paths = fetch(:public_children, %w(images stylesheets javascripts)).map { |p| "#{latest_release}/public/#{p}" }.join(" ")
-      run "find #{asset_paths} -exec touch -t #{stamp} {} ';'; true", :env => { "TZ" => "UTC" }
+      run "find #{asset_paths} -exec touch -t #{stamp} {} ';'; true", :env => {"TZ" => "UTC"}
     end
   end
 
   desc "Zero-downtime restart of Unicorn"
-  task :restart, :except => { :no_release => true } do
-    run "kill -s USR2 `cat /tmp/unicorn.my_site.pid`"
+  task :restart, :except => {:no_release => true} do
+    run "kill -s USR2 `cat /tmp/unicorn.honyb.pid`"
   end
 
   desc "Start unicorn"
-  task :start, :except => { :no_release => true } do
+  task :start, :except => {:no_release => true} do
     run "cd #{current_path} ; bundle exec unicorn_rails -c config/unicorn.rb -D"
   end
 
   desc "Stop unicorn"
-  task :stop, :except => { :no_release => true } do
-    run "kill -s QUIT `cat /tmp/unicorn.my_site.pid`"
-  end  
+  task :stop, :except => {:no_release => true} do
+    run "kill -s QUIT `cat /tmp/unicorn.honyb.pid`"
+  end
 
   namespace :rollback do
     desc "Moves the repo back to the previous version of HEAD"
-    task :repo, :except => { :no_release => true } do
+    task :repo, :except => {:no_release => true} do
       set :branch, "HEAD@{1}"
       deploy.default
     end
 
     desc "Rewrite reflog so HEAD@{1} will continue to point to at the next previous release."
-    task :cleanup, :except => { :no_release => true } do
+    task :cleanup, :except => {:no_release => true} do
       run "cd #{current_path}; git reflog delete --rewrite HEAD@{1}; git reflog delete --rewrite HEAD@{1}"
     end
 
@@ -158,8 +169,8 @@ namespace :deploy do
       rollback.cleanup
     end
   end
-  
-  
+
+
   desc 'reload database with seed data'
   task :seed do
     run "cd #{current_path}; rake db:seed RAILS_ENV=#{rails_env}"
@@ -169,7 +180,7 @@ namespace :deploy do
   task :cdf_seed do
     run "cd #{current_path}; rake cdf:db:seed RAILS_ENV=#{rails_env}"
   end
-  
+
 end
 
 def run_rake(cmd)
@@ -227,19 +238,19 @@ def symlink_to_shared(from, to = nil)
 
   if to
     dest_path = shared_path + to
-  else 
-    dest_path = shared_path + from    
+  else
+    dest_path = shared_path + from
   end
 
   run "mkdir -p #{orig_path}" if path_is_dir orig_path
-  run "mkdir -p #{dest_path}" if path_is_dir dest_path  
+  run "mkdir -p #{dest_path}" if path_is_dir dest_path
 
   # if the original path exists, 
   # and the path is a directory
   # rsync all the existing files to the destination first
   # then delete it
   run "if [ -d '#{orig_path}' ]; then rsync -avz #{orig_path}/ #{dest_path}; fi" if path_is_dir orig_path
-  
+
   run "rm -rf #{orig_path} && ln -s #{dest_path} #{orig_path}"
-  
+
 end
