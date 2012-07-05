@@ -12,13 +12,18 @@ group :assets do
 end
 
 gem 'jquery-rails'
-gem 'capistrano'
 gem 'haml'
 gem 'faker'
 gem "factory_girl_rails"
 
 group :production do
   gem 'mysql2'
+end
+
+gem "unicorn"
+
+group :development do
+  gem "capistrano"
 end
 
 # Dev/Test gems
