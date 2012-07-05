@@ -10,6 +10,7 @@ describe CdfInvoiceFile do
     let(:outgoing_file) { '05536017.BIN' }
     let(:incoming_file) { 'T5536017.BIN' }
 
+    let(:binary_file_name) { nil }
 
     let(:outgoing_contents) do
       %q[%Q[0100001169797800000INGRAM BK CO 110822INVOICE COMMUNICATIONS                    

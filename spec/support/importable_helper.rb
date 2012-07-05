@@ -21,6 +21,8 @@ shared_examples "an importable file" do |klass, record_length, ext|
     if @import_class.ftp_dirs.count > 1
       @sample_file[@import_class.ftp_dirs.last.to_sym] = eval(test_contents)
     end
+
+    @binary_file = binary_file_name
   end
   
 
@@ -87,7 +89,7 @@ shared_examples "an importable file" do |klass, record_length, ext|
 
     context "and there is 1 import files on the server" do
       before :each do
-        ImportFileHelper.init_client(@client, @ext, @file_names, @remote_dir, @sample_file, @import_class.ftp_dirs)
+        ImportFileHelper.init_client(@client, @ext, @file_names, @remote_dir, @sample_file, @import_class.ftp_dirs, @binary_file)
       end
 
       it "should count only the files ending with the correct extension" do
@@ -97,7 +99,7 @@ shared_examples "an importable file" do |klass, record_length, ext|
       context "and the import file is downloaded" do
         before :each do
           @downloaded = @import_class.download
-          @import_file = @import_class.find_by_file_name @file_names.first
+          @import_file = (@ext == 'zip') ? @import_class.first : (@import_class.find_by_file_name @file_names.first)
         end
 
         after :each do
@@ -110,7 +112,7 @@ shared_examples "an importable file" do |klass, record_length, ext|
         end
 
         it "should have 0 versions" do
-          @import_file.versions.count.should == 0
+          !@import_class.supports_versioning? || @import_file.versions.count.should == 0
         end
 
         it "should create a new version when downloading a second time" do
@@ -125,7 +127,7 @@ shared_examples "an importable file" do |klass, record_length, ext|
             downloaded = @import_class.download
             new_import_file = @import_class.find_by_file_name @file_names.first
             new_import_file.versions.count == 1
-            new_import_file.versions.first.file_name.should == @sample_file[@import_class.ftp_dirs.first.to_sym] + ".1"
+            new_import_file.versions.first.file_name.should == @file_names[@import_class.ftp_dirs.first.to_sym] + ".1"
           end
         end
 
@@ -211,7 +213,9 @@ shared_examples "an importable file" do |klass, record_length, ext|
             end
 
             it "should import the correct file name" do
-              @first_import_file.file_name.should == @file_names[@import_class.ftp_dirs.first.to_sym]
+              expected_file_name = @file_names[@import_class.ftp_dirs.first.to_sym]
+              expected_file_name = expected_file_name.partition(".")[0] + ".dat" if (@ext == 'zip')
+              @first_import_file.file_name.should == expected_file_name
             end
 
             it "should validate import results" do

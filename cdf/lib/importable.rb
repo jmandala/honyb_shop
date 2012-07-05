@@ -175,6 +175,7 @@ module Importable
 
       if zip_file?
         data_file_name = file_name
+        data_file_name = data_file_name.partition(".")[0] + ".dat"   # ensure that the data file we're looking for is one with a .dat extension
         file_name = file_name.partition(".")[0] + ".#{@ext}"
       end
 
@@ -266,9 +267,9 @@ module Importable
       File.join CdfConfig::current_data_lib_in, file_name
     end
 
-#    def copy_file src, dest
-#      system("cp #{src} #{dest}")
-#    end
+    def copy_file src, dest
+      system("cp #{src} #{dest}")
+    end
 
     def needs_import
       where("#{self.table_name}.imported_at IS NULL")
