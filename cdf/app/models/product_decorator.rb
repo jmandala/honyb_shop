@@ -76,6 +76,37 @@ Product.class_eval do
     return { :types => types_array, :available => available_array, :status => status_array }
   end
 
+  def get_biblio_data!
+    book_info = GoogleBook.new self.sku
+
+    self.name = book_info.title
+    self.subtitle = book_info.subtitle
+    self.description = book_info.description
+    self.publisher = book_info.publisher
+    self.published_date = Date.parse book_info.published_date
+    self.page_count = book_info.page_count
+    self.thumbnail_google_url = book_info.thumbnail_url
+
+    authors = ""
+    book_info.authors.each do |author|
+      authors = authors + (authors.empty? ? "" : ", ") + author
+    end
+    self.book_authors = authors
+
+    self.google_books_update = Time.now
+    self.save
+  end
+
+  def product_type
+    return :book.to_s if self.ingram_product_type.nil?
+    PRODUCT_TYPES.each do |type|
+      if type[1][:id] == self.ingram_product_type
+        return type[1][:text]
+      end
+    end
+    self.ingram_product_type.to_s
+  end
+
   private
 
   def get_product_property(symbol)

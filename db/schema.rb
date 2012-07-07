@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120704002117) do
+ActiveRecord::Schema.define(:version => 20120706211403) do
 
   create_table "activators", :force => true do |t|
     t.string   "description"
@@ -864,6 +864,13 @@ ActiveRecord::Schema.define(:version => 20120704002117) do
     t.string   "availability_status"
     t.string   "publisher_status"
     t.datetime "ingram_updated_at"
+    t.datetime "google_books_update"
+    t.string   "subtitle"
+    t.string   "publisher"
+    t.datetime "published_date"
+    t.integer  "page_count"
+    t.string   "book_authors"
+    t.string   "thumbnail_google_url"
   end
 
   add_index "products", ["available_on"], :name => "index_products_on_available_on"
