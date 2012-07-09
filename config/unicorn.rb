@@ -19,14 +19,16 @@ timeout 30
 pid "/tmp/unicorn.honyb.pid"
 
 # Production specific settings
-if env == "production"
+if env == "production" || env == "staging"
   # Help ensure your application will always spawn in the symlinked
   # "current" directory that Capistrano sets up.
-  working_directory "/usr/local/mandala-sites/honyb/www.honyb.com/current"
+  urls = {'production' => 'www.honyb.com', 'staging' => 'stage.honyb.com'}
+  
+  working_directory "/usr/local/mandala-sites/honyb/#{urls[env]}/current"
 
   # feel free to point this anywhere accessible on the filesystem
   user 'honyb', 'honyb'
-  shared_path = "/usr/local/mandala-sites/honyb/www.honyb.com/shared"
+  shared_path = "/usr/local/mandala-sites/honyb/#{urls[env]}/shared"
 
   stderr_path "#{shared_path}/log/unicorn.stderr.log"
   stdout_path "#{shared_path}/log/unicorn.stdout.log"

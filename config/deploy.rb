@@ -55,6 +55,9 @@ namespace :deploy do
     dirs += shared_children.map { |d| File.join(shared_path, d) }
     run "#{try_sudo} mkdir -p #{dirs.join(' ')} && #{try_sudo} chmod g+w #{dirs.join(' ')}"
     run "git clone #{repository} #{current_path}"
+    update
+    migrate
+    seed
   end
 
   task :cold do
@@ -123,7 +126,7 @@ namespace :deploy do
 
   desc "Start unicorn"
   task :start, :except => {:no_release => true} do
-    run "cd #{current_path} ; bundle exec unicorn_rails -c config/unicorn.rb -D"
+    run "cd #{current_path} && bundle exec unicorn_rails -c config/unicorn.rb -D"
   end
 
   desc "Stop unicorn"
@@ -140,7 +143,7 @@ namespace :deploy do
 
     desc "Rewrite reflog so HEAD@{1} will continue to point to at the next previous release."
     task :cleanup, :except => {:no_release => true} do
-      run "cd #{current_path}; git reflog delete --rewrite HEAD@{1}; git reflog delete --rewrite HEAD@{1}"
+      run "cd #{current_path} && git reflog delete --rewrite HEAD@{1} && git reflog delete --rewrite HEAD@{1}"
     end
 
     desc "Rolls back to the previously deployed version."
@@ -153,12 +156,18 @@ namespace :deploy do
 
   desc 'reload database with seed data'
   task :seed do
-    run "cd #{current_path}; rake db:seed RAILS_ENV=#{rails_env}"
+    run <<-CMD
+      cd #{current_path} &&
+      bundle exec rake db:seed cdf:db:seed AUTO_ACCEPT=1 RAILS_ENV=#{rails_env}
+    CMD
   end
 
   desc 'load the cdf seeds'
   task :cdf_seed do
-    run "cd #{current_path}; rake cdf:db:seed RAILS_ENV=#{rails_env}"
+    run <<-CMD 
+      cd #{current_path} && 
+      bundle exec rake cdf:db:seed 
+    CMD
   end
 
 end
