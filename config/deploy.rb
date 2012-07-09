@@ -56,8 +56,6 @@ namespace :deploy do
     run "#{try_sudo} mkdir -p #{dirs.join(' ')} && #{try_sudo} chmod g+w #{dirs.join(' ')}"
     run "git clone #{repository} #{current_path}"
     update
-    migrate
-    seed
   end
 
   task :cold do
