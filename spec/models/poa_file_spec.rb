@@ -14,6 +14,8 @@ describe PoaFile do
     let(:create_order_1) { %q[Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R543255800')]}
     let(:create_order_2) { %q[Cdf::OrderBuilder.completed_test_order(:ean => %w(9780373200009 978037352805), :order_number => 'R554266337')]}
 
+    let(:binary_file_name) { nil }
+
     let(:outgoing_contents) do
       %q[%Q[02000011697978     INGRAM       110810RUYFU110809180859.FBO F030000000     1    
 1100002             #{@order_1.number.ljust_trim(22)}20N273016979780110810110810110810     

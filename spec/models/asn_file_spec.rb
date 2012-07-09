@@ -18,7 +18,9 @@ describe AsnFile do
     let(:qty_slashed) { 0.ljust_trim(5)}
     let(:tracking) { 'ZTESTTRACKCI017060000'.ljust_trim(25)}
     let(:status_code) { '00'.ljust_trim(2)}
-    
+
+    let(:binary_file_name) { nil }
+
     let(:outgoing_contents) do
       %q[%Q[CR20N2730   000000024.0                                                                                                                                                                                 
 OR#{@order_1.number.ljust_trim(22)}        00000039980000000000000000000000000000000000000000001000000000499800000200   000120110812                                                                               

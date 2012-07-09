@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120625152716) do
+ActiveRecord::Schema.define(:version => 20120706211403) do
 
   create_table "activators", :force => true do |t|
     t.string   "description"
@@ -64,21 +64,6 @@ ActiveRecord::Schema.define(:version => 20120625152716) do
   end
 
   add_index "adjustments", ["order_id"], :name => "index_adjustments_on_order_id"
-
-  create_table "affiliates", :force => true do |t|
-    t.string   "affiliate_key",     :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "logo_file_name"
-    t.string   "logo_content_type"
-    t.integer  "logo_file_size"
-    t.datetime "logo_updated_at"
-    t.string   "name"
-    t.text     "why_buy_text"
-    t.text     "css"
-  end
-
-  add_index "affiliates", ["affiliate_key"], :name => "honyb_id", :unique => true
 
   create_table "asn_files", :force => true do |t|
     t.string   "record_code",               :limit => 2
@@ -431,6 +416,18 @@ ActiveRecord::Schema.define(:version => 20120625152716) do
     t.datetime "updated_at"
   end
 
+  create_table "ingram_stock_files", :force => true do |t|
+    t.string   "record_code",   :limit => 2
+    t.integer  "parent_id"
+    t.string   "file_name"
+    t.datetime "imported_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "downloaded_at"
+    t.integer  "file_size"
+    t.date     "file_date"
+  end
+
   create_table "inventory_units", :force => true do |t|
     t.integer  "variant_id"
     t.integer  "order_id"
@@ -529,7 +526,6 @@ ActiveRecord::Schema.define(:version => 20120625152716) do
     t.integer  "dc_code_id"
     t.string   "split_shipment_type"
     t.integer  "parent_id"
-    t.integer  "affiliate_id"
   end
 
   add_index "orders", ["number"], :name => "index_orders_on_number"
@@ -864,6 +860,17 @@ ActiveRecord::Schema.define(:version => 20120625152716) do
     t.string   "meta_description"
     t.string   "meta_keywords"
     t.integer  "count_on_hand",        :default => 0,  :null => false
+    t.string   "ingram_product_type"
+    t.string   "availability_status"
+    t.string   "publisher_status"
+    t.datetime "ingram_updated_at"
+    t.datetime "google_books_update"
+    t.string   "subtitle"
+    t.string   "publisher"
+    t.datetime "published_date"
+    t.integer  "page_count"
+    t.string   "book_authors"
+    t.string   "thumbnail_google_url"
   end
 
   add_index "products", ["available_on"], :name => "index_products_on_available_on"
@@ -1102,7 +1109,6 @@ ActiveRecord::Schema.define(:version => 20120625152716) do
     t.string   "unlock_token"
     t.datetime "locked_at"
     t.datetime "remember_created_at"
-    t.integer  "affiliate_id"
   end
 
   add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"

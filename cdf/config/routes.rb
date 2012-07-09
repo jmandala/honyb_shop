@@ -57,6 +57,19 @@ Rails.application.routes.draw do
           post :import
         end
       end
+
+      resources :ingram_stock_files do
+        collection do
+          delete :purge
+          post :load_files
+
+        end
+
+        member do
+          post :import
+          post :download
+        end
+      end
     end
 
     resources :orders do

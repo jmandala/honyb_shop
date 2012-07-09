@@ -236,7 +236,7 @@ Order.class_eval do
   end
 
   def generate_and_submit_po_file
-    Delayed::Worker.logger.debug "generating a submitting a PO file"
+    Delayed::Worker.logger.debug "generating and submitting a PO file"
     self.update!        # update to make sure the shipping state is correct
     if !self.nil? && self.needs_po? && !self.payment.nil? && self.payment.state == "completed"
       po_file = PoFile.generate_from_order self     # generate the PO file from our order

@@ -53,18 +53,22 @@ class ImportFileHelper
     klass.remote_files.count.should == count
   end
 
-  def self.init_client(client, ext, file_names, remote_dir, sample_files)
+  def self.init_client(client, ext, file_names, remote_dir, sample_files, test_ftp_dirs, binary_file)
     client.should_receive(:close).any_number_of_times.and_return(nil)
 
-    %w(test outgoing).each do |dir|
-      client.stub!(:delete).with("~/#{dir}", "#{file_names[dir.to_sym]}").any_number_of_times.and_return(nil)
-      client.should_receive(:dir).with("~/#{dir}", ".*#{ext}").any_number_of_times.and_return(remote_dir[dir.to_sym])
+    test_ftp_dirs.each do |dir|
+      client.stub!(:delete).with("#{dir}", "#{file_names[dir.to_sym]}").any_number_of_times.and_return(nil)
+      client.should_receive(:dir).with("#{dir}", ".*#{ext}").any_number_of_times.and_return(remote_dir[dir.to_sym])
       client.should_receive(:name_from_path).with(remote_dir[dir.to_sym].first).any_number_of_times.and_return(file_names[dir.to_sym])
-      client.should_receive(:get).with("~/#{dir}/#{file_names[dir.to_sym]}", PoaFile.create_path(file_names[dir.to_sym])).any_number_of_times.and_return do
+      client.should_receive(:get).with("#{file_names[dir.to_sym]}", PoaFile.create_path(file_names[dir.to_sym])).any_number_of_times.and_return do
         file = File.new(PoaFile.create_path(file_names[dir.to_sym]), 'w')
-        content = sample_files[dir.to_sym]
-        file.write content
-        file.close
+        if binary_file.nil?
+          file.write sample_files[dir.to_sym]
+          file.close
+        else
+          file.close
+          PoaFile.copy_file PoaFile.create_path(binary_file), PoaFile.create_path(file_names[dir.to_sym])
+        end
         nil
       end
     end

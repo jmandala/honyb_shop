@@ -109,5 +109,11 @@ Spork.each_run do
   Dir[Rails.root.join("extensions/**/app/**/*_decorator.rb")].each { |f| require f }
   Dir[Rails.root.join("extensions/**/lib/**/*_decorator.rb")].each { |f| require f }
 
+  test_dir = "cdf/data_lib/in/#{Time.now.strftime "%Y"}"
+  unless Dir.exists? test_dir
+    Dir.new test_dir
+  end
+  system("cp test/testingram.zip #{test_dir}")
+
   require 'spree_core/testing_support/factories'
 end

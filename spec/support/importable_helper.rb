@@ -13,11 +13,15 @@ shared_examples "an importable file" do |klass, record_length, ext|
     @order_2 = eval create_order_2
 
     @order_1.line_items.each { |li| LineItem.find_by_id(li.id).should == li}
-    
+
     @sample_file = {
-        :outgoing => eval(outgoing_contents),
-        :test => eval(test_contents)
+        @import_class.ftp_dirs.first.to_sym => eval(outgoing_contents)
     }
+    if @import_class.ftp_dirs.count > 1
+      @sample_file[@import_class.ftp_dirs.last.to_sym] = eval(test_contents)
+    end
+
+    @binary_file = binary_file_name
   end
   
 
@@ -39,14 +43,16 @@ shared_examples "an importable file" do |klass, record_length, ext|
     before :all do
 
       @file_names = {
-          :outgoing => outgoing_file,
-          :test => incoming_file
+          @import_class.ftp_dirs.first.to_sym => outgoing_file
       }
+      if @import_class.ftp_dirs.count > 1
+        @file_names[@import_class.ftp_dirs.last.to_sym] = incoming_file
+      end
 
-      @remote_dir = {
-          :outgoing => ["-rw-rw-rw-   1 user     group         128 Aug  3 13:30 #{@file_names[:outgoing]}"],
-          :test => ["-rw-rw-rw-   1 user     group         128 Aug  3 13:30 #{@file_names[:test]}"]
-      }
+      @remote_dir = {}
+      @import_class.ftp_dirs.each do |dir|
+        @remote_dir[dir.to_sym] = ["-rw-rw-rw-   1 user     group         128 Aug  3 13:30 #{@file_names[dir.to_sym]}"]
+      end
     end
 
     before :each do
@@ -55,7 +61,7 @@ shared_examples "an importable file" do |klass, record_length, ext|
 
       @po_files = {}
 
-      %w(test outgoing).each do |dir|
+      @import_class.ftp_dirs.each do |dir|
         file_name = @file_names[dir.to_sym].gsub(/fbc$/, 'fbo')
         po_file = PoFile.create(:file_name => file_name)
         @po_files[dir.to_sym] = {
@@ -71,8 +77,8 @@ shared_examples "an importable file" do |klass, record_length, ext|
     context "and there are no files on the server" do
       it "should count 0 files" do
         ImportFileHelper.should_have_remote_file_count(@client, @import_class, 0) do |client|
-          %w(test outgoing).each do |dir|
-            remote_dir = "~/#{dir}"
+          @import_class.ftp_dirs.each do |dir|
+            remote_dir = "#{dir}"
             client.should_receive(:dir).with(remote_dir, ".*#{@ext}").once.and_return([])
           end
           client.should_receive(:close).once.and_return(nil)
@@ -82,17 +88,17 @@ shared_examples "an importable file" do |klass, record_length, ext|
 
     context "and there is 1 import files on the server" do
       before :each do
-        ImportFileHelper.init_client(@client, @ext, @file_names, @remote_dir, @sample_file)
+        ImportFileHelper.init_client(@client, @ext, @file_names, @remote_dir, @sample_file, @import_class.ftp_dirs, @binary_file)
       end
 
       it "should count only the files ending with the correct extension" do
-        ImportFileHelper.should_have_remote_file_count(@client, @import_class, 2)
+        ImportFileHelper.should_have_remote_file_count(@client, @import_class, @import_class.ftp_dirs.count)
       end
 
       context "and the import file is downloaded" do
         before :each do
           @downloaded = @import_class.download
-          @import_file = @import_class.find_by_file_name @file_names[:outgoing]
+          @import_file = (@ext == 'zip') ? @import_class.first : (@import_class.find_by_file_name @file_names.first)
         end
 
         after :each do
@@ -101,25 +107,27 @@ shared_examples "an importable file" do |klass, record_length, ext|
 
 
         it "should have the right data" do
-          @import_file.data.should == @import_class.add_delimiters(@sample_file[:outgoing])
+          @import_file.data.should == @import_class.add_delimiters(@sample_file[@import_class.ftp_dirs.first.to_sym])
         end
 
         it "should have 0 versions" do
-          @import_file.versions.count.should == 0
+          !@import_class.supports_versioning? || @import_file.versions.count.should == 0
         end
 
         it "should create a new version when downloading a second time" do
-          remote_file_count = @file_names.size
-          @import_class.needs_import.count.should == remote_file_count
-          @downloaded.size.should == remote_file_count
-          @downloaded.first.versions.size.should == 0
+          if @import_class.supports_versioning?
+            remote_file_count = @file_names.size
+            @import_class.needs_import.count.should == remote_file_count
+            @downloaded.size.should == remote_file_count
+            @downloaded.first.versions.size.should == 0
 
-          @import_class.needs_import.count.should == remote_file_count
-          @import_class.needs_import.first.should == @downloaded.first
-          downloaded = @import_class.download
-          new_import_file = @import_class.find_by_file_name @file_names[:outgoing]
-          new_import_file.versions.count == 1
-          new_import_file.versions.first.file_name.should == @file_names[:outgoing] + ".1"
+            @import_class.needs_import.count.should == remote_file_count
+            @import_class.needs_import.first.should == @downloaded.first
+            downloaded = @import_class.download
+            new_import_file = @import_class.find_by_file_name @file_names.first
+            new_import_file.versions.count == 1
+            new_import_file.versions.first.file_name.should == @file_names[@import_class.ftp_dirs.first.to_sym] + ".1"
+          end
         end
 
         it "should have correct record length chars in each line" do
@@ -133,24 +141,26 @@ shared_examples "an importable file" do |klass, record_length, ext|
       context "and a file with the same name has already been downloaded" do
         before :each do
           @import_class.download
-          @orig_import_file = @import_class.find_by_file_name @file_names[:outgoing]
+          @orig_import_file = @import_class.find_by_file_name @file_names.first
         end
 
         it "should make the existing @import_class old version the new file" do
-          @orig_import_file.versions.should == []
-          @orig_import_file.parent.should == nil
+          if @import_class.supports_versioning?
+            @orig_import_file.versions.should == []
+            @orig_import_file.parent.should == nil
 
-          @import_class.download
+            @import_class.download
 
-          @orig_import_file.reload
-          @orig_import_file.parent.should_not == nil
-          @orig_import_file.versions.should == []
+            @orig_import_file.reload
+            @orig_import_file.parent.should_not == nil
+            @orig_import_file.versions.should == []
 
-          @import_class.count.should == (@file_names.size * 2)
+            @import_class.count.should == (@file_names.size * 2)
 
-          @import_class.where(:file_name => @file_names[:outgoing]).count.should == 1
-          import_file = @import_class.find_by_file_name @file_names[:outgoing]
-          import_file.versions.count.should == 1
+            @import_class.where(:file_name => @file_names.first).count.should == 1
+            import_file = @import_class.find_by_file_name @file_names.first
+            import_file.versions.count.should == 1
+          end
         end
       end
 
@@ -182,7 +192,7 @@ shared_examples "an importable file" do |klass, record_length, ext|
           it "should import files one by one" do
             @first_import_file.import.should_not == nil
             @first_import_file.imported_at.should_not == nil
-            @import_class.needs_import.count.should == 1
+            @import_class.needs_import.count.should == @file_names.count-1
           end
 
           it "should import all files" do
@@ -198,11 +208,13 @@ shared_examples "an importable file" do |klass, record_length, ext|
             end
 
             it "should return the correct data" do
-              @first_import_file.data.should == @import_class.add_delimiters(@sample_file[:outgoing])
+              @first_import_file.data.should == @import_class.add_delimiters(@sample_file[@import_class.ftp_dirs.first.to_sym])
             end
 
             it "should import the correct file name" do
-              @first_import_file.file_name.should == @file_names[:outgoing]
+              expected_file_name = @file_names[@import_class.ftp_dirs.first.to_sym]
+              expected_file_name = expected_file_name.partition(".")[0] + ".dat" if (@ext == 'zip')
+              @first_import_file.file_name.should == expected_file_name
             end
 
             it "should validate import results" do

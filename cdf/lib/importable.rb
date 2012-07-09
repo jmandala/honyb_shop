@@ -35,12 +35,51 @@ module Importable
       @ext
     end
 
+    def define_ftp_dirs(dirs)
+      @dirs = dirs
+    end
+
+    def ftp_dirs
+      @dirs
+    end
+
+    def define_ftp_server_connection(server, user, password, delete_remote_files)
+      @server = server
+      @user = user
+      @password = password
+      @delete_remote_files = delete_remote_files
+    end
+
+    def ftp_server
+      @server
+    end
+
+    def ftp_user_name
+      @user
+    end
+
+    def ftp_password
+      @password
+    end
+
+    def delete_remote_files?
+      @delete_remote_files
+    end
+
     def define_length(length)
       @record_length = length
     end
 
     def record_length
       @record_length
+    end
+
+    def support_versioning(support)
+      @supports_versioning = support
+    end
+
+    def supports_versioning?
+      @supports_versioning
     end
 
     def import_format
@@ -55,16 +94,12 @@ module Importable
       Dir.glob(CdfConfig::current_data_lib_in + "/**/" + file_mask)
     end
 
-    def name_from_path(file)
-      file.split[file.split.length-1]
-    end
-
     # Returns an array of remote file names including only files with an extension of @@ext
     def remote_files
-      client = CdfFtpClient.new({:keep_alive => true})
+      client = CdfFtpClient.new({:keep_alive => true, :server => ftp_server, :user => ftp_user_name, :password => ftp_password })
       files = []
-      ['test', 'outgoing'].each do |dir|
-        remote_dir = "~/#{dir}"
+      ftp_dirs.each do |dir|
+        remote_dir = "#{dir}"
         files += client.dir(remote_dir, ".*#{@ext}")
       end
       client.close
@@ -92,11 +127,15 @@ module Importable
     end
 
     def outgoing_dir
-      '~/outgoing'
+      'outgoing'
     end
 
     def test_dir
-      '~/test'
+      'test'
+    end
+
+    def zip_file?
+      @ext == 'zip'
     end
 
     # Downloads all remote files in the 'outgoing' directory
@@ -106,10 +145,10 @@ module Importable
     def download
       CdfConfig::ensure_path CdfConfig::current_data_lib_in
 
-      client = CdfFtpClient.new({:keep_alive => true})
+      client = CdfFtpClient.new({:keep_alive => true, :server => ftp_server, :user => ftp_user_name, :password => ftp_password })
 
       files = []
-      [outgoing_dir, test_dir].each do |remote_dir|
+      ftp_dirs.each do |remote_dir|
         download_from_dir(client, remote_dir).each { |file| files << file }
       end
       files
@@ -119,27 +158,70 @@ module Importable
       remote_listing = client.dir remote_dir, ".*#{@ext}"
       files = []
       remote_listing.each do |listing|
-        file = client.name_from_path listing
+        file = CdfFtpClient.name_from_path listing
 
-        import_file = self.new_or_archived(file)
+        files << self.download_file(client, file)
 
-        local_path = create_path file
-        remote_path = File.join(remote_dir, file)
-        client.get remote_path, local_path
-        write_data_with_delimiters local_path
-
-        files << import_file
-
-        client.delete remote_dir, file
+        client.delete remote_dir, file if delete_remote_files?
       end
       files
+    end
+
+    def download_file(client, file_name)
+      # client = client || default_client
+      client = CdfFtpClient.new({:keep_alive => true, :server => ftp_server, :user => ftp_user_name, :password => ftp_password }) if client.nil?
+      remote_listing = client.dir ftp_dirs.first, ".*#{@ext}"
+      import_file = self.new_or_archived(file_name)
+
+      if zip_file?
+        data_file_name = file_name
+        data_file_name = data_file_name.partition(".")[0] + ".dat"   # ensure that the data file we're looking for is one with a .dat extension
+        file_name = file_name.partition(".")[0] + ".#{@ext}"
+      end
+
+      local_path = create_path file_name
+      client.get file_name, local_path
+
+      if zip_file?
+        f_path=File.join(CdfConfig::current_data_lib_in, data_file_name)
+        if File.exists? f_path
+          File.delete f_path
+        end
+
+        system("cd #{File.dirname(f_path)} && unzip #{file_name} | xargs chmod 666")
+        if !File.exists? f_path
+          raise "Unexpected result after unzipping the downloaded file!"
+        end
+
+        # split up the extracted files into more manageable parts
+        prefix = import_file.generate_part_file_prefix
+        Dir.foreach(CdfConfig::current_data_lib_in) do |part_file|
+          File.delete File.join(CdfConfig::current_data_lib_in, part_file) if part_file.starts_with? prefix    # delete any old parts of this file, if any are present
+        end
+
+        system("cd #{File.dirname(f_path)} && split -l 1000 -a 4 #{f_path} #{prefix}")    # split up the new file into portions
+        Dir.foreach(CdfConfig::current_data_lib_in) do |part_file|
+          if part_file.starts_with? prefix
+            write_data_with_delimiters File.join(CdfConfig::current_data_lib_in, part_file)
+          end
+        end
+
+        import_file.file_name = data_file_name
+        import_file.save
+      else
+        write_data_with_delimiters local_path
+      end
+
+      import_file
     end
 
     def new_or_archived(file)
       import_file = self.find_by_file_name(file)
 
       if import_file
-        import_file = import_file.archive_with_new_file file
+        if supports_versioning?
+          import_file = import_file.archive_with_new_file file
+        end
       else
         import_file = self.create(:file_name => file)
       end
@@ -172,7 +254,7 @@ module Importable
     def files_from_dir_list(list)
       files = []
       list.each do |file|
-        file_name = self.name_from_path(file)
+        file_name = CdfFtpClient.name_from_path(file)
         if file_name =~ /#{@ext}$/
           files << file_name
         end
@@ -185,10 +267,13 @@ module Importable
       File.join CdfConfig::current_data_lib_in, file_name
     end
 
+    def copy_file src, dest
+      system("cp #{src} #{dest}")
+    end
+
     def needs_import
       where("#{self.table_name}.imported_at IS NULL")
     end
-
 
     def read_contents(path)
       File.read path
@@ -216,7 +301,7 @@ module Importable
   end
 
   def populate_file_header(p)
-    update_from_hash p[:header].first
+    update_from_hash p[:header].first unless p[:header].nil?
   end
 
   # Read the file data and build the record
@@ -303,42 +388,6 @@ module Importable
 
   def write_data(data)
     self.class.write_data path, data
-  end
-
-  class Downloader
-    def self.download_poa_files
-      self.download_files PoaFile
-    end
-
-    def self.download_asn_files
-      self.download_files AsnFile
-    end
-
-    def self.download_cdf_invoice_files
-      self.download_files CdfInvoiceFile
-    end
-
-    private
-
-    def self.download_files(class_instance)
-      puts "downloading files"
-
-      files = []
-
-      begin
-        class_instance.download
-	files = class_instance.import_all
-      rescue => e
-        message = "Error downloading. #{e.message}. #{e.backtrace.slice(0, 15)}"
-        Rails.logger.error message
-        Rails.logger.error e.backtrace.slice(0, 15)
-        CdfImportExceptionLog.create(:event => message, :file_name => self.file_name)
-      end
-
-      puts "Downloaded and stored #{files.count} #{class_instance.to_s} Files"
-
-      return files.count
-    end
   end
 
 end

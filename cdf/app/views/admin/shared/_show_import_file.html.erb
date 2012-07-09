@@ -27,13 +27,15 @@
       <%= render file_details, :import_file => import_file %>
     </div>
   <% end %>
-  
-  <div id='#parsed' class='data_group'>
-    <h2><%= t :parsed %></h2>
-    <div class='collapseable'>    
-      <pre><%= import_file.parsed.to_yaml %></pre>
-    </div>
-  </div>
+
+  <% unless @hide_parsed %>
+      <div id='#parsed' class='data_group'>
+        <h2><%= t :parsed %></h2>
+        <div class='collapseable'>
+          <pre><%= import_file.parsed.to_yaml %></pre>
+        </div>
+      </div>
+  <% end %>
 
   <div id='contents' class='data_group'>    
     <h2><%= t :contents %></h2> 
@@ -50,23 +52,25 @@
 </div>
 
 <% content_for :sidebar do %>
-  <div class='box'>
-   <h3><%= import_file.orders.count %><%= t :orders %></h3>
-    <table>
-      <thead>
-        <tr>
-          <th><%= t :id %></th> 
-          <th><%= t :completed_date %></th>
-      </tr>
-        </thead>
-      <tbody>
-        <% for order in import_file.orders do %>
-        <tr>
-          <td> <%= link_to order.number, admin_order_path(order) %> </td>
-          <td> <%= order.completed_at.strftime("%m-%d-%y") if order.completed_at %> </td>
-        </tr>
-        <% end %>
-      </tbody>
-      </table>
-  </div>
+  <% if import_file.respond_to? :orders %>
+      <div class='box'>
+       <h3><%= import_file.orders.count %><%= t :orders %></h3>
+        <table>
+          <thead>
+            <tr>
+              <th><%= t :id %></th>
+              <th><%= t :completed_date %></th>
+          </tr>
+            </thead>
+          <tbody>
+            <% for order in import_file.orders do %>
+            <tr>
+              <td> <%= link_to order.number, admin_order_path(order) %> </td>
+              <td> <%= order.completed_at.strftime("%m-%d-%y") if order.completed_at %> </td>
+            </tr>
+            <% end %>
+          </tbody>
+          </table>
+      </div>
+  <% end %>
 <% end %>
