@@ -3,7 +3,7 @@ set :rails_env, 'staging'
 
 server 'stage.honyb.com', :app, :web, :primary => true
 
-set :branch, 'origin/wip/capistrano-enhancement'
+set :branch, 'origin/master'
 
 set :application, 'stage.honyb.com'
 role :db, "stage.honyb.com", :primary => true
