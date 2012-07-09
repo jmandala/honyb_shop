@@ -26,9 +26,14 @@ production:
   pool: 5
   timeout: 5000
 
-cucumber:
-  <<: *test
-  
-#db: honyb_shop_dev
-#user: devbee
-#passwd: 8dErfns354lnna
+staging:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: honyb_shop_stage
+  username: stage_bee
+  password: stage_bee_pass
+  host: 192.168.1.137
+  pool: 5
+  timeout: 5000
+

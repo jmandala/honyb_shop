@@ -2,30 +2,26 @@
 require 'bundler/capistrano'
 require "delayed/recipes"
 
-#set :stages, %w(stage production)
-set :application, "honyb_shop"
-#set :domain, 'www.honyb.com'
-#set :host, 'ruby.mandaladesigns.com'
-#set :asset_env, '--trace'
+
+# Multi-stage deploy's explained here: https://github.com/capistrano/capistrano/wiki/2.x-Multistage-Extension
+set :stages, %w(staging production)
+set :default_stage, 'staging'
+require 'capistrano/ext/multistage'
+
 
 set :scm, :git
 set :git_server, 'code.mandaladesigns.com'
 set :repository, "#{git_server}:/repos/honyb/honyb_shop.git"
-set :branch, 'origin/master'
 set :migrate_target, :current
 set :ssh_options, {:forward_agent => true}
-set :deploy_to, "/usr/local/mandala-sites/honyb/www.honyb.com"
-set :rails_env, :production
+
+
 set :normalize_timestamps, false
 
 set :user, 'honyb'
 set :group, "honyb"
 set :use_sudo, false
 
-role :web, "www1.honyb.com", "www2.honyb.com"
-role :app, "www1.honyb.com", "www2.honyb.com"
-role :db, "www1.honyb.com", :primary => true # This is where Rails migrations will run
-#role :db,  "your slave db-server here"
 
 set(:latest_release) { fetch(:current_path) }
 set(:release_path) { fetch(:current_path) }
@@ -35,7 +31,6 @@ set(:current_revision) { capture("cd #{current_path}; git rev-parse --short HEAD
 set(:latest_revision) { capture("cd #{current_path}; git rev-parse --short HEAD").strip }
 set(:previous_revision) { capture("cd #{current_path}; git rev-parse --short HEAD@{1}").strip }
 
-default_environment["RAILS_ENV"] = 'production'
 
 # Use our ruby-1.9.2-p290@my_site gemset
 default_environment["PATH"] = "/usr/local/rvm/gems/ruby-1.9.2-p290/bin:/usr/local/rvm/gems/ruby-1.9.2-p290@global/bin:/usr/local/rvm/rubies/ruby-1.9.2-p290/bin:/usr/local/rvm/bin:/home/honyb/bin:/usr/kerberos/bin:/usr/local/bin:/bin:/usr/bin"
@@ -208,6 +203,12 @@ after "deploy:update_code", "assets:symlink"
 after "deploy", "deploy:cleanup"
 
 load 'deploy/assets'
+
+task :uname do
+  run "uname -a"
+end
+
+
 
 # @returns true if path is a directory -- has not file extension
 def path_is_dir(path)
