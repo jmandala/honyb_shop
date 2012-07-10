@@ -18,7 +18,21 @@
       - if @valid_credentials
         %span.valid [VALID]
       - else
-        %span.invalid [INVALID]      
+        %span.invalid [INVALID]
+    %li
+      inventory ftp server: #{Cdf::Config[:cdf_ftp_inventory_server]}
+      - if @valid_inventory_server
+        %span.valid [VALID]
+      - else
+        %span.invalid [INVALID]
+    %li inventory ftp user: #{Cdf::Config[:cdf_ftp_inventory_user]}
+    %li inventory ftp pwd: #{Cdf::Config[:cdf_ftp_inventory_password]}
+    %li
+      ftp credentials:
+      - if @valid_inventory_credentials
+        %span.valid [VALID]
+      - else
+        %span.invalid [INVALID]
     %li ship to account: #{Cdf::Config[:cdf_ship_to_account]}
     %li ship to pwd: #{Cdf::Config[:cdf_ship_to_password]}
     %li bill to account: #{Cdf::Config[:cdf_bill_to_account]}

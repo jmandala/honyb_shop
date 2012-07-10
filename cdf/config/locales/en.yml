@@ -50,6 +50,7 @@ en:
   import_file: "Import"
   import_now: "Import Now"
   imported_at: "Imported At"
+  import_queued_at: "Import Queued At"
   downloaded_at: "Downloaded At"
   download_now: "Download Now"
   no_files: "No Files"

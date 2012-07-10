@@ -43,11 +43,12 @@ module Importable
       @dirs
     end
 
-    def define_ftp_server_connection(server, user, password, delete_remote_files)
+    def define_ftp_server_connection(server, user, password, delete_remote_files, run_mode=nil)
       @server = server
       @user = user
       @password = password
       @delete_remote_files = delete_remote_files
+      @run_mode = run_mode
     end
 
     def ftp_server
@@ -60,6 +61,10 @@ module Importable
 
     def ftp_password
       @password
+    end
+
+    def run_mode
+      @run_mode
     end
 
     def delete_remote_files?
@@ -94,9 +99,13 @@ module Importable
       Dir.glob(CdfConfig::current_data_lib_in + "/**/" + file_mask)
     end
 
+    def default_ftp_client
+      CdfFtpClient.new({:keep_alive => true, :server => ftp_server, :user => ftp_user_name, :password => ftp_password, :run_mode => @run_mode })
+    end
+
     # Returns an array of remote file names including only files with an extension of @@ext
     def remote_files
-      client = CdfFtpClient.new({:keep_alive => true, :server => ftp_server, :user => ftp_user_name, :password => ftp_password })
+      client = default_ftp_client
       files = []
       ftp_dirs.each do |dir|
         remote_dir = "#{dir}"
@@ -145,7 +154,7 @@ module Importable
     def download
       CdfConfig::ensure_path CdfConfig::current_data_lib_in
 
-      client = CdfFtpClient.new({:keep_alive => true, :server => ftp_server, :user => ftp_user_name, :password => ftp_password })
+      client = default_ftp_client
 
       files = []
       ftp_dirs.each do |remote_dir|
@@ -168,9 +177,8 @@ module Importable
     end
 
     def download_file(client, file_name)
-      # client = client || default_client
-      client = CdfFtpClient.new({:keep_alive => true, :server => ftp_server, :user => ftp_user_name, :password => ftp_password }) if client.nil?
-      remote_listing = client.dir ftp_dirs.first, ".*#{@ext}"
+      client = client || default_ftp_client
+      remote_listing = client.dir ftp_dirs.first, ".*#{@ext}"   # yup, this call is useless... but the client.get fails if we don't do a client.dir first(!)
       import_file = self.new_or_archived(file_name)
 
       if zip_file?

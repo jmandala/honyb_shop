@@ -79,17 +79,30 @@ Product.class_eval do
   def get_biblio_data!
     book_info = GoogleBook.new self.sku
 
+    return if (book_info.nil? || book_info.matching_count == 0)
+
     self.name = book_info.title
     self.subtitle = book_info.subtitle
     self.description = book_info.description
     self.publisher = book_info.publisher
-    self.published_date = Date.parse book_info.published_date
+    self.published_date = book_info.published_date
     self.page_count = book_info.page_count
-    self.thumbnail_google_url = book_info.thumbnail_url
+    begin
+      thumbnail = book_info.thumbnail_url
+      unless thumbnail.nil?
+        img = Image.new
+        img.attachment = open(URI.parse(thumbnail))
+        self.images << img
+      end
+    rescue => e
+      logger.error "An Error has occurred while downloading an image: #{e.message}. Image URL: #{thumbnail}"
+    end
 
     authors = ""
-    book_info.authors.each do |author|
-      authors = authors + (authors.empty? ? "" : ", ") + author
+    unless book_info.authors.nil?
+      book_info.authors.each do |author|
+        authors = authors + (authors.empty? ? "" : ", ") + author
+      end
     end
     self.book_authors = authors
 

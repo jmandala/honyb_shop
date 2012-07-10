@@ -33,7 +33,16 @@ class Admin::Fulfillment::SystemCheckController < Admin::BaseController
       @incoming_files = client.archive_files
     end
     client.close
-    
+
+    # check the inventory server - always going against the live server
+    client_inventory = CdfFtpClient.new({:keep_alive => true,
+                                         :server => Cdf::Config[:cdf_ftp_inventory_server],
+                                         :user => Cdf::Config[:cdf_ftp_inventory_user],
+                                         :password => Cdf::Config[:cdf_ftp_inventory_password],
+                                         :run_mode => :live })
+    @valid_inventory_server = client_inventory.valid_server?
+    @valid_inventory_credentials = client_inventory.valid_credentials?
+    client_inventory.close
 
   end
 

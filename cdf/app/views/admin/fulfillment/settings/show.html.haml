@@ -63,6 +63,26 @@
 
   %tr
     %th{:scope => 'row'}
+      = t "cdf_ftp_inventory_server"
+    %td
+      =  Cdf::Config[:cdf_ftp_inventory_server]
+
+
+  %tr
+    %th{:scope => 'row'}
+      = t "cdf_ftp_inventory_user"
+    %td
+      = Cdf::Config[:cdf_ftp_inventory_user]
+
+
+  %tr
+    %th{:scope => 'row'}
+      = t "cdf_ftp_inventory_password"
+    %td
+      = Cdf::Config[:cdf_ftp_inventory_password].empty? ? "[undefined]" : "******"
+
+  %tr
+    %th{:scope => 'row'}
       = t "cdf_po_file_generate_delay" + " (production only)"
     %td
       = Cdf::Config[:cdf_po_file_generate_delay]

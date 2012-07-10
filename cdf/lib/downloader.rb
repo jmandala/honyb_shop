@@ -13,13 +13,13 @@ class Downloader
 
   def self.download_and_import_stock_delta_files
     IngramStockFile.download_all_new_delta_files do |downloaded_file|
-      downloaded_file.import unless downloaded_file.nil?
+      downloaded_file.import_core unless downloaded_file.nil?         # call import_core so as not to use the background delayed_job
     end
   end
 
   def download_and_import_inventory_file
     inventory_file = IngramStockFile.download_file nil, "stockv2@ingram.dat"
-    inventory_file.import unless inventory_file.nil?
+    inventory_file.import_core unless inventory_file.nil?           # call import_core so as not to use the background delayed_job
   end
 
   private

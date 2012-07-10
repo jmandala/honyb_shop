@@ -10,7 +10,7 @@ class IngramStockFile < ActiveRecord::Base
   define_length 300
   support_versioning false
   define_ftp_dirs ['Inventory']
-  define_ftp_server_connection "ftp2.ingrambook.com", "w20N2730", "mdl730", false
+  define_ftp_server_connection Cdf::Config[:cdf_ftp_inventory_server], Cdf::Config[:cdf_ftp_inventory_user], Cdf::Config[:cdf_ftp_inventory_password], false, :live
 
   @collaborators = []
 
@@ -109,6 +109,12 @@ class IngramStockFile < ActiveRecord::Base
   end
 
   def import
+    self.import_queued_at = Time.now
+    self.save
+    self.delay.import_core
+  end
+
+  def import_core
     if import_error?
       return CdfImportExceptionLog.create(:event => "Error importing file: #{import_error_message}", :file_name => self.file_name)
     end

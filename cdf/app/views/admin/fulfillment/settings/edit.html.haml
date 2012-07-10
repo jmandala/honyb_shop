@@ -65,6 +65,26 @@
 
     %tr
       %th{:scope => 'row'}
+        = label_tag 'preferences[cdf_ftp_inventory_server]', t("cdf_ftp_inventory_server")
+      %td
+        =  text_field_tag('preferences[cdf_ftp_inventory_server]', Cdf::Config[:cdf_ftp_inventory_server])
+
+
+    %tr
+      %th{:scope => 'row'}
+        = label_tag 'preferences[cdf_ftp_inventory_user]', t("cdf_ftp_inventory_user")
+      %td
+        = text_field_tag('preferences[cdf_ftp_inventory_user]',  Cdf::Config[:cdf_ftp_inventory_user])
+
+
+    %tr
+      %th{:scope => 'row'}
+        = label_tag 'preferences[cdf_ftp_inventory_password]', t("cdf_ftp_inventory_password")
+      %td
+        = password_field_tag('preferences[cdf_ftp_inventory_password]', Cdf::Config[:cdf_ftp_inventory_password])
+
+    %tr
+      %th{:scope => 'row'}
         = label_tag 'preferences[cdf_po_file_generate_delay]', t("cdf_po_file_generate_delay") + " (Production Only)"
       %td
         = text_field_tag('preferences[cdf_po_file_generate_delay]', Cdf::Config[:cdf_po_file_generate_delay])

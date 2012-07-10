@@ -25,7 +25,17 @@ class GoogleBook
   end
 
   def published_date
-    @book_info["items"].first["volumeInfo"]["publishedDate"]
+    begin
+      return Date.parse @book_info["items"].first["volumeInfo"]["publishedDate"]
+    rescue => e
+      if /\d{4}-\d{2}/ =~ @book_info["items"].first["volumeInfo"]["publishedDate"]        # we want to create a valid date, but Google sometimes just gives us year and month, no day.
+        begin
+          Date.parse "#{@book_info['items'].first['volumeInfo']['publishedDate']}-01"     # and if they didn't even give us that, give up on it altogether!
+        rescue
+          nil
+        end
+      end
+    end
   end
 
   def page_count
@@ -33,7 +43,13 @@ class GoogleBook
   end
 
   def thumbnail_url
-    @book_info["items"].first["volumeInfo"]["imageLinks"]["thumbnail"]
+    thumbnail = @book_info["items"].first["volumeInfo"]["imageLinks"]["thumbnail"] unless @book_info["items"].first["volumeInfo"]["imageLinks"].nil?
+    if thumbnail.nil?
+      thumbnail
+    else
+      thumbnail = thumbnail.gsub "&edge=curl", ""         # take out the edge=curl parameter from the middle of the string
+      thumbnail = thumbnail.gsub "?edge=curl&", "?"       # take it out if it's the first thing in the string too. This won't work if it's the first AND only parameter, but that should never occur
+    end
   end
 
   def matching_count
