@@ -1,7 +1,8 @@
 ProductsController.class_eval do
-  after_filter :update_results, :only => [:index]
+  def index
+    @searcher = Spree::Config.searcher_class.new(params)
+    @products = @searcher.retrieve_products
 
-  def update_results
     unless params[:keywords].nil? || @products.nil?
       @products.each do |book|
         if book.google_books_update.nil?
@@ -10,5 +11,7 @@ ProductsController.class_eval do
         end
       end
     end
+
+    respond_with(@products)
   end
 end

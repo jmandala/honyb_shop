@@ -2,33 +2,40 @@ class Admin::Fulfillment::IngramStockFilesController < Admin::Fulfillment::Impor
   before_filter :hide_parsed, :only => [:show]
 
   def index
-    params[:search] ||= {}
-    @search = model_class.metasearch(params[:search], :distinct => true)
+    begin
+      @downloadable = []
+      @collection = []
+      params[:search] ||= {}
+      @search = model_class.metasearch(params[:search], :distinct => true)
 
-    @downloadable = model_class.remote_files
-    @hide_download_all_button = true
+      @downloadable = model_class.remote_files
+      @hide_download_all_button = true
 
-    @collection = []
-    @downloadable.each do |file|
-      file_name = CdfFtpClient.name_from_path(file)
-      file_info = IngramStockFile.file_name_useful_to_honyb file_name
-      if file_info[:useful_file]
-        file_name = file_name.partition(".")[0] + ".dat"
-        import_file = model_class.find_by_file_name(file_name)
-        if import_file.nil?
-          parsed_date = nil
-          parsed_date = Date.strptime(file_info[:file_date], "%y%m%d") unless file_info[:full_file]
-          import_file = model_class.create(:file_name => file_name, :file_size => CdfFtpClient.size_from_path(file), :file_date => parsed_date)
-        else
-          import_file.file_size = CdfFtpClient.size_from_path(file)     # update the file size if it had changed since the last time we've seen this file
-          import_file.save
+      @downloadable.each do |file|
+        file_name = CdfFtpClient.name_from_path(file)
+        file_info = IngramStockFile.file_name_useful_to_honyb file_name
+        if file_info[:useful_file]
+          file_name = file_name.partition(".")[0] + ".dat"
+          import_file = model_class.find_by_file_name(file_name)
+          if import_file.nil?
+            parsed_date = nil
+            parsed_date = Date.strptime(file_info[:file_date], "%y%m%d") unless file_info[:full_file]
+            import_file = model_class.create(:file_name => file_name, :file_size => CdfFtpClient.size_from_path(file), :file_date => parsed_date)
+          else
+            import_file.file_size = CdfFtpClient.size_from_path(file)     # update the file size if it had changed since the last time we've seen this file
+            import_file.save
+          end
+
+          @collection << import_file
         end
-
-        @collection << import_file
       end
-    end
 
-    respond_with @collection
+      respond_with @collection
+    rescue => e
+      flash[:error] = "An error has occurred: #{e.message}"
+      logger.error e.message
+      logger.error e.backtrace
+    end
   end
 
   def import

@@ -17,7 +17,7 @@ class CdfFtpClient
   
   
   def run_mode
-    Cdf::Config[:cdf_run_mode].to_sym
+    @run_mode
   end
 
   def mock?
@@ -28,7 +28,7 @@ class CdfFtpClient
     run_mode == :live
   end
 
-  def test?
+  def   test?
     run_mode == :test
   end
 
@@ -37,6 +37,7 @@ class CdfFtpClient
     @server = opts[:server].nil? ? Cdf::Config[:cdf_ftp_server] : opts[:server]
     @user = opts[:user].nil? ? Cdf::Config[:cdf_ftp_user] : opts[:user]
     @password = opts[:password].nil? ? Cdf::Config[:cdf_ftp_password] : opts[:password]
+    @run_mode = opts[:run_mode].nil? ? Cdf::Config[:cdf_run_mode].to_sym : opts[:run_mode].to_sym
     
     # unset the password unless in production
     #@password = BAD_PASSWORD unless Rails.env.production?
