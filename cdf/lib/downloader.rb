@@ -21,6 +21,7 @@ class Downloader
     inventory_file = IngramStockFile.download_file nil, "stockv2@ingram.dat"
     unless inventory_file.nil?
       inventory_file.downloaded_at = Time.now
+      inventory_file.save
       inventory_file.import_core           # call import_core so as not to use the background delayed_job
     end
   end
