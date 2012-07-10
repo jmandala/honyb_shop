@@ -3,7 +3,7 @@ set :rails_env, 'staging'
 
 server 'stage.honyb.com', :app, :web, :primary => true
 
-set :branch, 'origin/master'
+set :branch, 'origin/wip/merge-automation-master'
 
 set :application, 'stage.honyb.com'
 role :db, "stage.honyb.com", :primary => true
