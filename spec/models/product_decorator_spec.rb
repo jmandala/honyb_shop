@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'ruby-debug'
 
 describe 'product' do
 
@@ -15,6 +14,7 @@ describe 'product' do
 
   it "should get correct bibliographical info from Google Books" do
     product.master = Variant.new(:sku => "9780689843587")
+    product.images.size.should == 0
     product.get_biblio_data!
 
     product.name.should == "The War Within"
@@ -23,7 +23,7 @@ describe 'product' do
     product.page_count.should == 151
     product.publisher.should == "Aladdin"
     product.published_date.strftime("%Y-%m-%d").to_s.should == Date.parse("2002-09-01").to_s
-    product.thumbnail_google_url.should == "http://bks7.books.google.com/books?id=nYRkhAEak-8C&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    product.images.size.should == 1
     product.book_authors.should == "Carol Matas"
     product.google_books_update.should_not == nil
   end

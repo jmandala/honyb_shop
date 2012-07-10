@@ -39,44 +39,25 @@ class Admin::Fulfillment::IngramStockFilesController < Admin::Fulfillment::Impor
   end
 
   def import
-    begin
-      if @object.downloaded_at.nil?
-        result = model_class.download_file nil, @object.file_name
+    model_class.delay.delayed_import @object
+    @object.download_queued_at = Time.now
+    @object.save!
 
-        if result
-          result.downloaded_at = Time.now
-          result.save!
-          @object = result
-        end
-      end
-      result = @object.import!
-      flash[:notice] = "Imported #{@object.file_name}."
-
-    rescue => e
-      flash[:error] = "#{e.message}"
-
-    end
     respond_with(@object) do |format|
       format.html { redirect_to polymorphic_url([:admin, :fulfillment, object_name]) }
       format.js { render :layout => false }
     end
-
-  rescue Exception => e
-    flash[:error] = "Failed to import #{@object.file_name}. #{e.message}"
-    logger.error e.backtrace
-    raise e
   end
-
 
   def download
     begin
-      result = model_class.download_file nil, @object.file_name
+      result = model_class.delay.download_file nil, @object.file_name
 
       if result
-        result.downloaded_at = Time.now
-        result.save!
+        @object.download_queued_at = Time.now
+        @object.save!
 
-        flash[:notice] = "Downloaded #{@object.file_name}."
+        flash[:notice] = "Download Queued for #{@object.file_name}."
       end
 
     rescue => e

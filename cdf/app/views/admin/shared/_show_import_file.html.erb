@@ -15,7 +15,9 @@
       <% if import_file.imported_at %>
         <%= raw(data_pair(:imported_at) { import_file.imported_at.strftime("%m-%d-%y %H:%M")}) %>
       <% else %>
-        <% if import_file.respond_to?(:import_queued_at) && import_file.import_queued_at %>
+        <% if import_file.respond_to?(:download_queued_at) && import_file.download_queued_at %>
+          <%= raw(data_pair(:download_queued_at) { import_file.download_queued_at.strftime("%m-%d-%y %H:%M")}) %>
+        <% elsif import_file.respond_to?(:import_queued_at) && import_file.import_queued_at %>
           <%= raw(data_pair(:import_queued_at) { import_file.import_queued_at.strftime("%m-%d-%y %H:%M")}) %>
         <% else %>
           <%= form_tag(send("import_admin_fulfillment_#{type}_file_path".to_sym, import_file)) do |f| %>

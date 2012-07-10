@@ -19,7 +19,10 @@ class Downloader
 
   def self.download_and_import_inventory_file
     inventory_file = IngramStockFile.download_file nil, "stockv2@ingram.dat"
-    inventory_file.import_core unless inventory_file.nil?           # call import_core so as not to use the background delayed_job
+    unless inventory_file.nil?
+      inventory_file.downloaded_at = Time.now
+      inventory_file.import_core           # call import_core so as not to use the background delayed_job
+    end
   end
 
   private

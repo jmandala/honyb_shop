@@ -191,6 +191,8 @@ module Importable
       client.get file_name, local_path
 
       if zip_file?
+        import_file.downloaded_at = Time.now if import_file.respond_to? :download_at
+
         f_path=File.join(CdfConfig::current_data_lib_in, data_file_name)
         if File.exists? f_path
           File.delete f_path
@@ -298,6 +300,7 @@ module Importable
   end
 
   def data
+    return nil if self.respond_to?(:download_queued_at) && !self.download_queued_at.nil?
     raise ArgumentError, "File not found: #{path}" unless File.exists?(path)
     return @data unless @data.nil? || @data.empty?
     @data = self.class.read_contents path

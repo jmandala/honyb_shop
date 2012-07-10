@@ -170,8 +170,8 @@ describe CdfFtpClient do
           end
 
           it "should know it's in mock mode" do
-            @client.run_mode.should == :mock
-            @client.mock?.should == true
+            @mock_client.run_mode.should == :mock
+            @mock_client.mock?.should == true
           end
 
           it "should connect just fine" do

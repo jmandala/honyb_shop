@@ -108,6 +108,27 @@ class IngramStockFile < ActiveRecord::Base
     product
   end
 
+  def self.delayed_import object
+    begin
+      if object.downloaded_at.nil?
+        result = IngramStockFile.download_file nil, object.file_name
+
+        if result
+          result.downloaded_at = Time.now
+          result.save!
+          object = result
+        end
+      end
+      result = object.import_core
+      flash[:notice] = "Imported #{object.file_name}."
+
+    rescue => e
+      flash[:error] = "Failed to import #{object.file_name}. #{e.message}"
+      logger.error e.backtrace
+      raise e
+    end
+  end
+
   def import
     self.import_queued_at = Time.now
     self.save
@@ -158,6 +179,7 @@ class IngramStockFile < ActiveRecord::Base
       file_info = IngramStockFile.file_name_useful_to_honyb file_name
       if (file_info[:useful_file] && !file_info[:full_file] && file_name[0, file_name.length - (@ext.length+1)] > last_delta_file_name)    # download only the files we care about, and ones that are newer than the latest one we've already got
         download_file = IngramStockFile.download_file nil, file_name
+        download_file.downloaded_at = Time.now unless download_file.nil?
         yield download_file
       end
     end
