@@ -3,16 +3,24 @@
 # It's helpful, but not entirely necessary to understand cron before proceeding.
 # http://en.wikipedia.org/wiki/Cron
 
-every 30.minutes do
-  runner "Downloader.download_poa_files"
+def production?
+  @environment == 'production'
 end
 
-every 4.hours do
-  runner "Downloader.download_asn_files"
-end
+job_type :runner, "cd :path && RAILS_ENV=:environment :bundler exec :task"
 
-every 4.hours do
-  runner "Downloader.download_cdf_invoice_files"
+if production?
+  every 30.minutes do
+    runner "Downloader.download_poa_files"
+  end
+
+  every 4.hours do
+    runner "Downloader.download_asn_files"
+  end
+
+  every 4.hours do
+    runner "Downloader.download_cdf_invoice_files"
+  end
 end
 
 every 4.hours do
