@@ -35,9 +35,9 @@ set(:previous_revision) { capture("cd #{current_path}; git rev-parse --short HEA
 
 
 # Use our ruby-1.9.2-p290@my_site gemset
-default_environment["PATH"] = "/usr/local/rvm/gems/ruby-1.9.2-p290/bin:/usr/local/rvm/gems/ruby-1.9.2-p290@global/bin:/usr/local/rvm/rubies/ruby-1.9.2-p290/bin:/usr/local/rvm/bin:/home/honyb/bin:/usr/kerberos/bin:/usr/local/bin:/bin:/usr/bin"
+default_environment["PATH"] = "/usr/local/rvm/gems/ruby-1.9.2-p290@rails-3.1.1/bin:/usr/local/rvm/gems/ruby-1.9.2-p290@global/bin:/usr/local/rvm/rubies/ruby-1.9.2-p290/bin:/usr/local/rvm/bin:/home/honyb/bin:/usr/kerberos/bin:/usr/local/bin:/bin:/usr/bin"
 default_environment["GEM_HOME"] = "/usr/local/rvm/gems/ruby-1.9.2-p290"
-default_environment["GEM_PATH"] = "/usr/local/rvm/gems/ruby-1.9.2-p290:/usr/local/rvm/gems/ruby-1.9.2-p290@global"
+default_environment["GEM_PATH"] = "/usr/local/rvm/gems/ruby-1.9.2-p290@rails-3.1.1:/usr/local/rvm/gems/ruby-1.9.2-p290@global"
 default_environment["RUBY_VERSION"] = "ruby-1.9.2-p290"
 
 default_run_options[:shell] = 'bash'

@@ -7,8 +7,6 @@ def production?
   @environment == 'production'
 end
 
-job_type :runner, "cd :path && RAILS_ENV=:environment :bundler exec :task"
-
 if production?
   every 30.minutes do
     runner "Downloader.download_poa_files"
