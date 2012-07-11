@@ -146,8 +146,10 @@ class IngramStockFile < ActiveRecord::Base
         if part_file.starts_with? prefix
           temp_file = IngramStockFile.new(:file_name => part_file, :created_at => Time.now)     # we've split up the large Ingram inventory file into more manageable parts, now import each one
           p = temp_file.parsed
-          p[:body].each do |product_data|
-            create_product product_data
+          IngramStockFile.transaction do
+            p[:body].each do |product_data|
+              create_product product_data
+            end
           end
           p = nil
           temp_file = nil
