@@ -191,7 +191,7 @@ module Importable
       client.get file_name, local_path
 
       if zip_file?
-        import_file.downloaded_at = Time.now if import_file.respond_to? :download_at
+        import_file.downloaded_at = Time.now if import_file.respond_to? :downloaded_at
 
         f_path=File.join(CdfConfig::current_data_lib_in, data_file_name)
         if File.exists? f_path
@@ -217,6 +217,7 @@ module Importable
         end
 
         import_file.file_name = data_file_name
+        import_file.download_queued_at = nil if import_file.respond_to? :download_queued_at
         import_file.save
       else
         write_data_with_delimiters local_path

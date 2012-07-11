@@ -94,18 +94,18 @@ class IngramStockFile < ActiveRecord::Base
                             product_info[:chambersburg_on_hand].to_i
     product.available_on = (product_info[:on_sale_date] == "00010101") ? Date.today.to_datetime : product_info[:on_sale_date].to_datetime
 
-    type = Product::PRODUCT_TYPES[product_info[:product_type]]
+    type = PRODUCT_TYPES[product_info[:product_type]]
     product.ingram_product_type = type[:id] unless type.nil?
 
-    availability = Product::AVAILABILITY_STATUS[product_info[:product_availability_code]]
+    availability = AVAILABILITY_STATUS[product_info[:product_availability_code]]
     product.availability_status = availability[:id] unless availability.nil?
 
-    status = Product::PUBLISHER_STATUS[product_info[:publisher_status_code]]
+    status = PUBLISHER_STATUS[product_info[:publisher_status_code]]
     product.publisher_status = status[:id] unless status.nil?
 
+    puts "Updated product with ISBN #{product_info[:ean]}"
     product.ingram_updated_at = Time.now
     product.save!
-    product
   end
 
   def self.delayed_import object
@@ -120,10 +120,10 @@ class IngramStockFile < ActiveRecord::Base
         end
       end
       result = object.import_core
-      flash[:notice] = "Imported #{object.file_name}."
+      logger.debug "Imported #{object.file_name}."
 
     rescue => e
-      flash[:error] = "Failed to import #{object.file_name}. #{e.message}"
+      logger.error "Failed to import #{object.file_name}. #{e.message}"
       logger.error e.backtrace
       raise e
     end
@@ -141,26 +141,25 @@ class IngramStockFile < ActiveRecord::Base
     end
 
     begin
-      products = []
       prefix = self.generate_part_file_prefix
       Dir.foreach(CdfConfig::current_data_lib_in) do |part_file|
         if part_file.starts_with? prefix
           temp_file = IngramStockFile.new(:file_name => part_file, :created_at => Time.now)     # we've split up the large Ingram inventory file into more manageable parts, now import each one
           p = temp_file.parsed
           p[:body].each do |product_data|
-            product = create_product product_data
-            products << product
+            create_product product_data
           end
+          p = nil
+          temp_file = nil
 
+          logger.debug "processed a file #{part_file}"
           File.delete File.join(CdfConfig::current_data_lib_in, part_file)      # delete the temporary part file
         end
       end
 
       # mark this Inventory file as imported
       self.imported_at = Time.now
-      save!
-
-      products
+      self.save!
 
     rescue => e
       CdfImportExceptionLog.create(:event => e.message, :file_name => self.file_name, :backtrace => e.backtrace)
