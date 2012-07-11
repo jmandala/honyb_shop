@@ -103,7 +103,6 @@ class IngramStockFile < ActiveRecord::Base
     status = PUBLISHER_STATUS[product_info[:publisher_status_code]]
     product.publisher_status = status[:id] unless status.nil?
 
-    puts "Updated product with ISBN #{product_info[:ean]}"
     product.ingram_updated_at = Time.now
     product.save!
   end
@@ -144,6 +143,7 @@ class IngramStockFile < ActiveRecord::Base
       prefix = self.generate_part_file_prefix
       Dir.foreach(CdfConfig::current_data_lib_in) do |part_file|
         if part_file.starts_with? prefix
+          puts "**** Importing Ingram stock records from #{part_file}"
           temp_file = IngramStockFile.new(:file_name => part_file, :created_at => Time.now)     # we've split up the large Ingram inventory file into more manageable parts, now import each one
           p = temp_file.parsed
           IngramStockFile.transaction do
@@ -154,7 +154,7 @@ class IngramStockFile < ActiveRecord::Base
           p = nil
           temp_file = nil
 
-          logger.debug "processed a file #{part_file}"
+          puts "**** Finished processing stock records file #{part_file}"
           File.delete File.join(CdfConfig::current_data_lib_in, part_file)      # delete the temporary part file
         end
       end
