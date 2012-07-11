@@ -18,6 +18,7 @@ class CdfConfiguration < Configuration
   preference :split_shipment_type, :string, :default => :release_when_full
 
   preference :cdf_po_file_generate_delay, :string, :default => 120
+  preference :enable_delay_job_in_development, :string, :default => false
   
   PER_PAGE = [25, 50, 75, 100, 150, 200]
 end

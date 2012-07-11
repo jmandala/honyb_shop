@@ -3,6 +3,9 @@
 cdf_ftp_user: FTP_USER_NAME
 cdf_ftp_password: FTP_PASSWORD
 cdf_ftp_server: ftp1.ingrambook.com
+cdf_ftp_inventory_user: w20N2730
+cdf_ftp_inventory_password: mdl730
+cdf_ftp_inventory_server: ftp2.ingrambook.com
 cdf_ship_to_password: SHIP_PAS # max ship_to_password length is 8 characters
 cdf_ship_to_account: SHIP_12    # max ship_to_account length is 7 characters
 cdf_bill_to_account: BILL_12    # max bill_to_account length is 7 characters

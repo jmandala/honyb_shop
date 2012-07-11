@@ -141,23 +141,37 @@ class IngramStockFile < ActiveRecord::Base
 
     begin
       prefix = self.generate_part_file_prefix
+      total_time = 0
+      count_products_total = 0
       Dir.foreach(CdfConfig::current_data_lib_in) do |part_file|
         if part_file.starts_with? prefix
-          puts "**** Importing Ingram stock records from #{part_file}"
+          start_time = Time.now
+          puts "**** Starting import of Ingram stock records from #{part_file} at #{start_time}"
           temp_file = IngramStockFile.new(:file_name => part_file, :created_at => Time.now)     # we've split up the large Ingram inventory file into more manageable parts, now import each one
           p = temp_file.parsed
+          count_products = 0
           IngramStockFile.transaction do
             p[:body].each do |product_data|
               create_product product_data
+              count_products += 1
             end
           end
           p = nil
           temp_file = nil
 
-          puts "**** Finished processing stock records file #{part_file}"
+          end_time = Time.now
+          total_time += (end_time - start_time)
+          count_products_total += count_products
+          avg_speed = (count_products > 0) ? (end_time - start_time)/count_products*1000 : "N/A"
+          puts "**** Finished processing #{count_products} stock records from file #{part_file} in #{(end_time - start_time).round} seconds. Average speed #{avg_speed} per 1000 records"
           File.delete File.join(CdfConfig::current_data_lib_in, part_file)      # delete the temporary part file
         end
       end
+
+      avg_time = count_products_total > 0 ? (total_time/count_products_total)*1000 : 0
+      puts "****** Successfully imported inventory from #{self.file_name}. Average import time: #{avg_time.round(2)} seconds per 1000 records"
+
+#      debugger    # comment me out (here to be able to check on the output of the line above in development)!!!
 
       # mark this Inventory file as imported
       self.imported_at = Time.now

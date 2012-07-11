@@ -39,9 +39,20 @@ class Admin::Fulfillment::IngramStockFilesController < Admin::Fulfillment::Impor
   end
 
   def import
+    if disable_delay_job?
+      Delayed::Worker.delay_jobs = false
+    end
+
     model_class.delay.delayed_import @object
-    @object.download_queued_at = Time.now
-    @object.save!
+
+    if disable_delay_job?
+      Delayed::Worker.delay_jobs = true
+    else
+      @object.download_queued_at = Time.now
+      @object.save!
+    end
+
+    flash[:notice] = "Successfully imported #{@object.file_name}"
 
     respond_with(@object) do |format|
       format.html { redirect_to polymorphic_url([:admin, :fulfillment, object_name]) }
@@ -51,11 +62,18 @@ class Admin::Fulfillment::IngramStockFilesController < Admin::Fulfillment::Impor
 
   def download
     begin
+      if disable_delay_job?
+        Delayed::Worker.delay_jobs = false
+      end
       result = model_class.delay.download_file nil, @object.file_name
 
       if result
-        @object.download_queued_at = Time.now
-        @object.save!
+        if disable_delay_job?
+          Delayed::Worker.delay_jobs = true
+        else
+          @object.download_queued_at = Time.now
+          @object.save!
+        end
 
         flash[:notice] = "Download Queued for #{@object.file_name}."
       end
@@ -77,6 +95,13 @@ class Admin::Fulfillment::IngramStockFilesController < Admin::Fulfillment::Impor
 
   def hide_parsed
     @hide_parsed = true
+  end
+
+  private
+
+  # disable delay job by default in development - set enable_delay_job_in_development in config.yml to override
+  def disable_delay_job?
+    Rails.env == "development" && !Cdf::Config[:enable_delay_job_in_development]
   end
 
 end
