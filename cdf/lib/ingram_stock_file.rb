@@ -77,34 +77,60 @@ class IngramStockFile < ActiveRecord::Base
     end
   end
 
+  AVAILABLE_IMMEDIATELY = "00010101"
+
   def create_product(product_info)
-    variant = Variant.find_by_sku(product_info[:ean])   # check if this is a new product, or an update to an existing one
+    # Product fields
+    available_on = (product_info[:on_sale_date] == AVAILABLE_IMMEDIATELY) ? Date.today.to_datetime : product_info[:on_sale_date].to_datetime
+    type = PRODUCT_TYPES[product_info[:product_type]]
+    ingram_product_type = type.nil? ? nil : type[:id]
+    availability = AVAILABILITY_STATUS[product_info[:product_availability_code]]
+    availability_status = availability.nil? ? nil : availability[:id]
+    status = PUBLISHER_STATUS[product_info[:publisher_status_code]]
+    publisher_status = status.nil? ? nil : status[:id]
+
+    # Master Variant fields
+    price = product_info[:list_price].to_d / 100
+    count_on_hand = product_info[:la_vergne_on_hand].to_i +
+                    product_info[:roseburg_on_hand].to_i +
+                    product_info[:ft_wayne_on_hand].to_i +
+                    product_info[:chambersburg_on_hand].to_i
+
+    variant = Variant.includes(:product).find_by_sku(product_info[:ean])   # check if this is a new product, or an update to an existing one
+    updated = false
     if variant.nil?
+      # New Product - perform a regular save, triggering all the validations and callbacks
       product = Product.new
       product.name = product_info[:ean]
       product.sku = product_info[:ean]
+      product.price = price
+      product.count_on_hand = count_on_hand
+      product.available_on = available_on
+      product.ingram_product_type = ingram_product_type
+      product.availability_status = availability_status
+      product.publisher_status = publisher_status
+      product.ingram_updated_at = Time.now
+      product.save
+      updated = true
     else
-      product = variant.product
+      # Update of an existing record - do a fast db update using update_all, without validations or callbacks (and cross your fingers...)
+      variant_hash = {}
+      variant_hash[:price] = price unless (price == variant.price)
+      variant_hash[:count_on_hand] = count_on_hand unless (count_on_hand == variant.count_on_hand)
+      Variant.update_all(variant_hash, :id => variant.id) unless variant_hash.empty?
+
+      product_hash = {}
+      product_hash[:available_on] = available_on unless ((available_on == variant.product.available_on) || ((product_info[:on_sale_date] == AVAILABLE_IMMEDIATELY) && (variant.product.available_on < Date.today)))
+      product_hash[:ingram_product_type] = ingram_product_type unless (ingram_product_type == variant.product.ingram_product_type)
+      product_hash[:availability_status] = availability_status unless (availability_status == variant.product.availability_status)
+      product_hash[:publisher_status] = publisher_status unless (publisher_status == variant.product.publisher_status)
+      product_hash[:ingram_updated_at] = Time.now unless product_hash.empty?
+      Product.update_all(product_hash, :id => variant.product_id) unless product_hash.empty?
+
+      updated = !(variant_hash.empty? && product_hash.empty?)
     end
 
-    product.price = product_info[:list_price].to_d / 100
-    product.count_on_hand = product_info[:la_vergne_on_hand].to_i +
-                            product_info[:roseburg_on_hand].to_i +
-                            product_info[:ft_wayne_on_hand].to_i +
-                            product_info[:chambersburg_on_hand].to_i
-    product.available_on = (product_info[:on_sale_date] == "00010101") ? Date.today.to_datetime : product_info[:on_sale_date].to_datetime
-
-    type = PRODUCT_TYPES[product_info[:product_type]]
-    product.ingram_product_type = type[:id] unless type.nil?
-
-    availability = AVAILABILITY_STATUS[product_info[:product_availability_code]]
-    product.availability_status = availability[:id] unless availability.nil?
-
-    status = PUBLISHER_STATUS[product_info[:publisher_status_code]]
-    product.publisher_status = status[:id] unless status.nil?
-
-    product.ingram_updated_at = Time.now
-    product.save!
+    return updated
   end
 
   def self.delayed_import object
@@ -150,9 +176,12 @@ class IngramStockFile < ActiveRecord::Base
           temp_file = IngramStockFile.new(:file_name => part_file, :created_at => Time.now)     # we've split up the large Ingram inventory file into more manageable parts, now import each one
           p = temp_file.parsed
           count_products = 0
+          count_updated_products = 0
           IngramStockFile.transaction do
             p[:body].each do |product_data|
-              create_product product_data
+              if create_product product_data
+                count_updated_products += 1
+              end
               count_products += 1
             end
           end
@@ -163,7 +192,7 @@ class IngramStockFile < ActiveRecord::Base
           total_time += (end_time - start_time)
           count_products_total += count_products
           avg_speed = (count_products > 0) ? (end_time - start_time)/count_products*1000 : "N/A"
-          puts "**** Finished processing #{count_products} stock records from file #{part_file} in #{(end_time - start_time).round} seconds. Average speed #{avg_speed} per 1000 records"
+          puts "**** Processed #{count_products} stock records, updating #{count_updated_products} from file #{part_file} in #{(end_time - start_time).round} seconds. Average speed #{avg_speed} per 1000 records"
           File.delete File.join(CdfConfig::current_data_lib_in, part_file)      # delete the temporary part file
         end
       end
