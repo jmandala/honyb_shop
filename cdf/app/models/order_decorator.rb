@@ -245,7 +245,7 @@ Order.class_eval do
       Delayed::Worker.logger.error "ERROR: Attempting to generate and submit a PO file, but the Order #{self.nil? ? '[nil]' : self.id} is in an invalid state"
     end
   end
-  handle_asynchronously :generate_and_submit_po_file, :run_at => Proc.new { when_to_run_po_file }
+  handle_asynchronously :generate_and_submit_po_file, :run_at => Proc.new { when_to_run_po_file }, :queue => 'fulfillment'
 
   private
   # Sets the order type if not already set 

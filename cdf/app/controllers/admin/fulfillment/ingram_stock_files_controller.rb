@@ -43,7 +43,7 @@ class Admin::Fulfillment::IngramStockFilesController < Admin::Fulfillment::Impor
       Delayed::Worker.delay_jobs = false
     end
 
-    model_class.delay.delayed_import @object
+    model_class.delay(:queue => 'download').delayed_import @object
 
     if disable_delay_job?
       Delayed::Worker.delay_jobs = true
@@ -65,7 +65,7 @@ class Admin::Fulfillment::IngramStockFilesController < Admin::Fulfillment::Impor
       if disable_delay_job?
         Delayed::Worker.delay_jobs = false
       end
-      result = model_class.delay.download_file nil, @object.file_name
+      result = model_class.delay(:queue => 'download').download_file nil, @object.file_name
 
       if result
         if disable_delay_job?

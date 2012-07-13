@@ -166,7 +166,7 @@ class IngramStockFile < ActiveRecord::Base
     prefix = self.generate_part_file_prefix
     part_files = Dir["#{CdfConfig::current_data_lib_in}/#{prefix}*"]
     part_files.each do |part_file|
-      self.delay.import_part_file part_file, (part_file == part_files.last)          # let delayed_job process each of the parts file in the background
+      self.delay(:queue => 'import').import_part_file part_file, (part_file == part_files.last)          # let delayed_job process each of the parts file in the background
     end
   end
 
