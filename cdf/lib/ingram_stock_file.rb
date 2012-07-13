@@ -97,7 +97,7 @@ class IngramStockFile < ActiveRecord::Base
                     product_info[:chambersburg_on_hand].to_i
 
     variant = Variant.includes(:product).find_by_sku(product_info[:ean])   # check if this is a new product, or an update to an existing one
-    updated = false
+    action = :none
     if variant.nil?
       # New Product - perform a regular save, triggering all the validations and callbacks
       product = Product.new
@@ -111,7 +111,7 @@ class IngramStockFile < ActiveRecord::Base
       product.publisher_status = publisher_status
       product.ingram_updated_at = Time.now
       product.save
-      updated = true
+      action = :create
     else
       # Update of an existing record - do a fast db update using update_all, without validations or callbacks (and cross your fingers...)
       variant_hash = {}
@@ -127,10 +127,10 @@ class IngramStockFile < ActiveRecord::Base
       product_hash[:ingram_updated_at] = Time.now unless product_hash.empty?
       Product.update_all(product_hash, :id => variant.product_id) unless product_hash.empty?
 
-      updated = !(variant_hash.empty? && product_hash.empty?)
+      action = :update unless (variant_hash.empty? && product_hash.empty?)
     end
 
-    return updated
+    return action
   end
 
   def self.delayed_import object
@@ -142,10 +142,11 @@ class IngramStockFile < ActiveRecord::Base
           result.downloaded_at = Time.now
           result.save!
           object = result
+          puts "Completed downloading #{object.file_name} at #{result.downloaded_at}"
         end
       end
-      result = object.import_core
-      logger.debug "Imported #{object.file_name}."
+      result = object.import
+      puts "Queued import of #{object.file_name} at #{Time.now}."
 
     rescue => e
       logger.error "Failed to import #{object.file_name}. #{e.message}"
@@ -155,61 +156,72 @@ class IngramStockFile < ActiveRecord::Base
   end
 
   def import
-    self.import_queued_at = Time.now
-    self.save
-    self.delay.import_core
-  end
-
-  def import_core
     if import_error?
       return CdfImportExceptionLog.create(:event => "Error importing file: #{import_error_message}", :file_name => self.file_name)
     end
 
-    begin
-      prefix = self.generate_part_file_prefix
-      total_time = 0
-      count_products_total = 0
-      Dir.foreach(CdfConfig::current_data_lib_in) do |part_file|
-        if part_file.starts_with? prefix
-          start_time = Time.now
-          puts "**** Starting import of Ingram stock records from #{part_file} at #{start_time}"
-          temp_file = IngramStockFile.new(:file_name => part_file, :created_at => Time.now)     # we've split up the large Ingram inventory file into more manageable parts, now import each one
-          p = temp_file.parsed
-          count_products = 0
-          count_updated_products = 0
-          IngramStockFile.transaction do
-            p[:body].each do |product_data|
-              if create_product product_data
-                count_updated_products += 1
-              end
-              count_products += 1
-            end
-          end
-          p = nil
-          temp_file = nil
+    self.import_queued_at = Time.now
+    self.save
 
-          end_time = Time.now
-          total_time += (end_time - start_time)
-          count_products_total += count_products
-          avg_speed = (count_products > 0) ? (end_time - start_time)/count_products*1000 : "N/A"
-          puts "**** Processed #{count_products} stock records, updating #{count_updated_products} from file #{part_file} in #{(end_time - start_time).round} seconds. Average speed #{avg_speed} per 1000 records"
-          File.delete File.join(CdfConfig::current_data_lib_in, part_file)      # delete the temporary part file
+    prefix = self.generate_part_file_prefix
+    part_files = Dir["#{CdfConfig::current_data_lib_in}/#{prefix}*"]
+    part_files.each do |part_file|
+      self.delay.import_part_file part_file, (part_file == part_files.last)          # let delayed_job process each of the parts file in the background
+    end
+  end
+
+  # we've split up the large Ingram inventory file into more manageable parts, now import each one
+  def import_part_file part_file_name, last_part_file
+    begin
+      start_time = Time.now
+      puts "**** Starting import of Ingram stock records from #{part_file_name} at #{start_time}"
+      temp_file = IngramStockFile.new(:file_name => File.basename(part_file_name), :created_at => Time.now)
+      p = temp_file.parsed
+      count_products = 0
+      count_updated_products = 0
+      count_created_products = 0
+      IngramStockFile.transaction do
+        p[:body].each do |product_data|
+          case create_product product_data
+            when :update
+              count_updated_products += 1
+            when :create
+              count_created_products += 1
+          end
+          count_products += 1
         end
       end
+      p = nil
+      temp_file = nil
 
-      avg_time = count_products_total > 0 ? (total_time/count_products_total)*1000 : 0
-      puts "****** Successfully imported inventory from #{self.file_name}. Average import time: #{avg_time.round(2)} seconds per 1000 records"
+      end_time = Time.now
+      avg_speed = (count_products > 0) ? ((end_time - start_time)/count_products*1000).round(3) : "N/A"
+      puts "**** Processed #{count_products} stock records, (#{count_updated_products} updates and #{count_created_products} creates) from file #{part_file_name} in #{(end_time - start_time).round} seconds. Average speed #{avg_speed} per 1000 records"
 
-#      debugger    # comment me out (here to be able to check on the output of the line above in development)!!!
+      File.delete part_file_name      # delete the temporary part file
 
-      # mark this Inventory file as imported
-      self.imported_at = Time.now
-      self.save!
+      if last_part_file
+        self.import_queued_at = nil
+        self.imported_at = Time.now
+        # need a self.save here, but the import_stats code below needs a save also - make sure to put a save here, if that code is ever removed!
+      end
+
+      stats = self.import_stats
+      unless stats.nil?
+        if (/(?<records_count>^\d+) Records; Average Time per 1000: (?<avg_record_time>\d{2}\.\d{3})/ =~ stats)
+          count_products += records_count.to_i
+          avg_speed = (((avg_record_time.to_f * records_count.to_f / 1000) + (end_time - start_time))/count_products * 1000).round(3)
+        end
+      end
+      # there could, potentially be a concurrency problem here, but this is informational only, so it's ok if we lose an update
+      self.import_stats = "#{count_products} Records; Average Time per 1000: #{avg_speed}"
+      self.save
 
     rescue => e
-      CdfImportExceptionLog.create(:event => e.message, :file_name => self.file_name, :backtrace => e.backtrace)
-      raise e
+     CdfImportExceptionLog.create(:event => e.message, :file_name => part_file_name, :backtrace => e.backtrace)
+     raise e
     end
+
   end
 
   def self.download_all_new_delta_files

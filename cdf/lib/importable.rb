@@ -210,11 +210,12 @@ module Importable
         end
 
         system("cd #{File.dirname(f_path)} && split -l 1000 -a 4 #{f_path} #{prefix}")    # split up the new file into portions
-        Dir.foreach(CdfConfig::current_data_lib_in) do |part_file|
-          if part_file.starts_with? prefix
-            write_data_with_delimiters File.join(CdfConfig::current_data_lib_in, part_file)
-          end
-        end
+        # I don't think we need to do write_data_with_delimeters call for the Ingram files - they already use /r/n for a line break. Should we check?
+#        Dir.foreach(CdfConfig::current_data_lib_in) do |part_file|
+#          if part_file.starts_with? prefix
+#            write_data_with_delimiters File.join(CdfConfig::current_data_lib_in, part_file)
+#          end
+#        end
 
         import_file.file_name = data_file_name
         import_file.download_queued_at = nil if import_file.respond_to? :download_queued_at

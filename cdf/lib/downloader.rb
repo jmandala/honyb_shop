@@ -13,7 +13,7 @@ class Downloader
 
   def self.download_and_import_stock_delta_files
     IngramStockFile.download_all_new_delta_files do |downloaded_file|
-      downloaded_file.import_core unless downloaded_file.nil?         # call import_core so as not to use the background delayed_job
+      downloaded_file.import unless downloaded_file.nil?
     end
   end
 
@@ -22,7 +22,7 @@ class Downloader
     unless inventory_file.nil?
       inventory_file.downloaded_at = Time.now
       inventory_file.save
-      inventory_file.import_core           # call import_core so as not to use the background delayed_job
+      inventory_file.import
     end
   end
 
