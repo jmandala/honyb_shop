@@ -1,9 +1,9 @@
 <%
    # Define product properties
    if @product_properties
-     subtitle = @product_properties.includes(:property).where('properties.name = "Subtitle"').first
-     author = @product_properties.includes(:property).where('properties.name = "Author Statement"').first
-     product_details = @product_properties.includes(:property).where('properties.name = "Product Details"').first
+     subtitle = @product.subtitle #@product_properties.includes(:property).where('properties.name = "Subtitle"').first
+     author = @product.book_authors #@product_properties.includes(:property).where('properties.name = "Author Statement"').first
+     #product_details = @product_properties.includes(:property).where('properties.name = "Product Details"').first
    end
 %>
 
@@ -17,20 +17,17 @@
 
   <div class="details">
     <div id="product-images" data-hook>
-      <div id="main-image">
-        <%= render 'image' %>
-      </div>
-      <div id="thumbnails" data-hook>
-        <%= render 'thumbnails', :product => @product %>
-      </div>
+		<%= updated_product_image(@product) %>
     </div>
 
     <div class="properties">
       <div class="product-details">
-        <% if product_details && product_details.value %>
-          <p> <%= product_details.value.html_safe %> </p>
-        <% end %>
-        <p><%= t :isbn13 %>: <%= @product.sku %></p>
+          <p style="font-weight: bold">Product Details</p>
+        <%# if product_details && product_details.value %>
+          <p> <b><%= t @product.product_type %>:</b> <%= @product.page_count %> pages</p>
+          <p> <b>Publisher:</b> <%= @product.publisher %> (<%= @product.published_date.strftime("%B %Y") unless @product.published_date.nil? %>)</p>
+        <%# end %>
+        <p><b><%= t :isbn13 %>:</b> <%= @product.sku %></p>
       </div>
     </div>
   </div>
@@ -39,14 +36,14 @@
     <div class="title-and-author">
       <div class="title">
         <h2><%= accurate_title %></h2>
-        <% if subtitle && subtitle.value && !subtitle.value.empty? %>
-          <h3><%= subtitle.value %></h3>
+        <% if subtitle %>
+          <h3><%= subtitle %></h3>
         <% end %>
       </div>
 
-      <% if author && author.value %>
+      <% if author %>
         <div class="author">
-          <%= author.value.html_safe %>
+          <%= author %> (Author)
         </div>
       <% end %>
     </div>

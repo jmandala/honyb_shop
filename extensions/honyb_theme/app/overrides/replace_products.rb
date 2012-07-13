@@ -13,10 +13,16 @@ Deface::Override.new(:virtual_path => %q{shared/_products},
   <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
     <div class="product">
       <div class="image">
-        <%= link_to product_image(product), product, :title => product.name %>
+        <%= link_to updated_product_image(product), product, :title => product.name %>
       </div>
 
       <div class="details">
+        <div class="title">
+          <%= link_to product.name, product, :title => product.name %>
+        </div>
+        <div class="author">
+          <%= book_authors_display product %>
+        </div>
         <div class="prices">
           <span class="price discounted"><%= number_to_currency(product.price * 1.2) %></span>&nbsp;
           <span class="price selling"><%= product_price(product) %></span></div>
