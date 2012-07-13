@@ -39,6 +39,8 @@ group :test, :development do
   gem 'minitest-reporters', '>= 0.5.0'
   gem 'guard-spork'
   gem 'turn', :require => false
+#  gem 'ruby-debug19'
+  gem 'newrelic_rpm'
 end
 
 gem 'spree', '0.70.5'
