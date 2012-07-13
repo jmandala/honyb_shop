@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120710184308) do
+ActiveRecord::Schema.define(:version => 20120713002943) do
 
   create_table "activators", :force => true do |t|
     t.string   "description"
@@ -443,6 +443,7 @@ ActiveRecord::Schema.define(:version => 20120710184308) do
     t.date     "file_date"
     t.datetime "import_queued_at"
     t.datetime "download_queued_at"
+    t.string   "import_stats"
   end
 
   create_table "inventory_units", :force => true do |t|
@@ -1148,6 +1149,7 @@ ActiveRecord::Schema.define(:version => 20120710184308) do
   end
 
   add_index "variants", ["product_id"], :name => "index_variants_on_product_id"
+  add_index "variants", ["sku"], :name => "index_variants_on_sku"
 
   create_table "zone_members", :force => true do |t|
     t.integer  "zone_id"
