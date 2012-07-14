@@ -1,0 +1,25 @@
+<%= render :partial => 'admin/shared/product_sub_menu' %>
+
+<%= render :partial => 'admin/shared/product_tabs', :locals => {:current => 'Biblio Info'} %>
+<%= render 'shared/error_messages', :target => @product %>
+
+<%= form_for @product, :url => get_biblio_info_admin_product_path, :html => { :method => :post } do |f| %>
+    <div style="float:left;margin-left: 10px; margin-right: 50px">
+        <%= updated_product_image(@product) %>
+    </div>
+    <ul>
+      <li><b>Book Title:</b> <%= @product.name %></li>
+      <li><b>Subtitle:</b> <%= @product.subtitle %></li>
+      <li><b>ISBN13:</b> <%= @product.sku %></li>
+      <li><b>Author(s):</b> <%= @product.book_authors %></li>
+      <li><b>Publisher:</b> <%= @product.publisher %></li>
+      <li><b>Publish Date:</b> <%= @product.published_date %></li>
+      <li><b>Page Count:</b> <%= @product.page_count %></li>
+      <li><b>Description:</b> <%= @product.description %></li>
+    </ul><br />
+    <b>Last Update:</b> <%= @product.google_books_update %>
+    <div style="clear:both" />
+    <div style="float:left">
+        <%= render :partial => 'admin/shared/edit_resource_links' %>
+    </div>
+<% end %>
