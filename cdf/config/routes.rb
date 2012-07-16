@@ -2,6 +2,13 @@ Rails.application.routes.draw do
 
   namespace :admin do
 
+    resources :products do
+      member do
+        get :biblio_info
+        post :get_biblio_info
+      end
+    end
+
     namespace :fulfillment do
       match 'dashboard' => 'dashboard#index'
       

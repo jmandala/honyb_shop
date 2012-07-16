@@ -79,7 +79,7 @@ Product.class_eval do
   def get_biblio_data!
     book_info = GoogleBook.new self.sku
 
-    return if (book_info.nil? || book_info.matching_count == 0)
+    return false if (book_info.nil? || book_info.matching_count == 0)
 
     self.name = book_info.title
     self.subtitle = book_info.subtitle
@@ -108,6 +108,7 @@ Product.class_eval do
 
     self.google_books_update = Time.now
     self.save
+    return true
   end
 
   def product_type

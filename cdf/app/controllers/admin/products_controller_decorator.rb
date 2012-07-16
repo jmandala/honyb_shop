@@ -36,4 +36,13 @@ Admin::ProductsController.class_eval do
     end
 
   end
+
+  def get_biblio_info
+    if @product.get_biblio_data!
+      flash[:notice] = "Successfully retrieved Bibliographical Info for this item"
+    else
+      flash[:error] = "Unable to retrieve Bibliographical Info for this item"
+    end
+    redirect_to biblio_info_admin_product_url(@product)
+  end
 end
