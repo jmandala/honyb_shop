@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120713002943) do
+ActiveRecord::Schema.define(:version => 20120716172854) do
 
   create_table "activators", :force => true do |t|
     t.string   "description"
@@ -1148,6 +1148,8 @@ ActiveRecord::Schema.define(:version => 20120713002943) do
     t.integer  "position"
   end
 
+  add_index "variants", ["deleted_at"], :name => "index_variants_on_deleted_at"
+  add_index "variants", ["is_master"], :name => "index_variants_on_is_master"
   add_index "variants", ["product_id"], :name => "index_variants_on_product_id"
   add_index "variants", ["sku"], :name => "index_variants_on_sku"
 
