@@ -14,7 +14,7 @@ listen "/tmp/honyb.socket", :backlog => 64
 preload_app true
 
 # nuke workers after 30 seconds instead of 60 seconds (the default)
-timeout 30
+timeout 360
 
 pid "/tmp/unicorn.honyb.pid"
 
