@@ -25,6 +25,8 @@ describe 'product' do
     product.published_date.strftime("%Y-%m-%d").to_s.should == Date.parse("2002-09-01").to_s
     product.images.size.should == 1
     product.book_authors.should == "Carol Matas"
+    product.raw_biblio_info.should_not == nil
+    product.raw_biblio_info["volumeInfo"]["title"].should == product.name
     product.google_books_update.should_not == nil
   end
   
