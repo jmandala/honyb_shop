@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120716172854) do
+ActiveRecord::Schema.define(:version => 20120717061227) do
 
   create_table "activators", :force => true do |t|
     t.string   "description"
@@ -890,9 +890,11 @@ ActiveRecord::Schema.define(:version => 20120716172854) do
     t.integer  "page_count"
     t.string   "book_authors"
     t.string   "thumbnail_google_url"
+    t.text     "raw_biblio_info"
   end
 
   add_index "products", ["available_on"], :name => "index_products_on_available_on"
+  add_index "products", ["deleted_at", "name"], :name => "deleted_at_and_name"
   add_index "products", ["deleted_at"], :name => "index_products_on_deleted_at"
   add_index "products", ["name"], :name => "index_products_on_name"
   add_index "products", ["permalink"], :name => "index_products_on_permalink"

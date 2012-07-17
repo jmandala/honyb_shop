@@ -1,5 +1,7 @@
 Product.class_eval do
 
+  serialize :raw_biblio_info, Hash
+
   PRODUCT_TYPES =  {'R' => { :id => :hardcover, :text => "Hardcover" },
                     'Q' => { :id => :quality, :text => "Quality Paper" },
                     'P' => { :id => :paperback, :text => "Mass Market Paperbacks" },
@@ -87,6 +89,7 @@ Product.class_eval do
     self.publisher = book_info.publisher
     self.published_date = book_info.published_date
     self.page_count = book_info.page_count
+    self.raw_biblio_info = book_info.raw
     begin
       thumbnail = book_info.thumbnail_url
       unless thumbnail.nil?

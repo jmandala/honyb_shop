@@ -52,6 +52,10 @@ class GoogleBook
     end
   end
 
+  def raw
+    @book_info["items"].first
+  end
+
   def matching_count
     @book_info["totalItems"] || 0
   end
