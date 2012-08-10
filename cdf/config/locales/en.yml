@@ -133,3 +133,5 @@ en:
   publisher_status: "Publisher Status"
   last_updated: "Last Inventory Update"
   biblio_info: "Bibliographical Info"
+  logged_in_succesfully: "Logged in successfully."
+  advanced_flexible_rate: "Advanced Flexi-rate Calculator"

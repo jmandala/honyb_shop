@@ -81,6 +81,7 @@ invalid_asn = AsnShippingMethodCode.find_or_create_by_big_bisac_code_sent_in('##
                                                                :notes => 'INVALID -- ONLY USE FOR TESTING')
 
 methods = [
+    {:name => 'Free Shipping (Economy Mail)', :first_item => 0, :additional_item => 0, :asn_shipping_method_code => economy_mail},
     {:name => 'Economy Mail', :first_item => 3.99, :additional_item => 0.99, :asn_shipping_method_code => economy_mail},
     {:name => 'Expedited Mail', :first_item => 4.98, :additional_item => 1.99, :asn_shipping_method_code => expedited_mail},
     {:name => '2nd Day Air', :first_item => 19.98, :additional_item => 5.99, :asn_shipping_method_code => two_day_air},
