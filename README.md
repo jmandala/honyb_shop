@@ -1,4 +1,4 @@
-== Welcome to HonyB
+## Welcome to HonyB
 
 HonyB is a back-end for affiliate bookstores.
 
@@ -6,7 +6,7 @@ It provides tools for seamless embedding within partner websites, and a fluid
 checkout that keeps customers on the partner's website.
 
 
-== Features
+## Features
 
 1. Order fulfillment with Ingram's CDF-lite program
 
@@ -18,7 +18,7 @@ checkout that keeps customers on the partner's website.
     * see order history
     * download customer information
 
-== Testing Setup
+## Testing Setup
 
 Before running tests, be sure to setup the test DB and the test config.yml.
 
@@ -29,7 +29,12 @@ Now you are ready to run tests:
 
   $> rspec spec
 
-== Status
+## Development Setup
+
+1. bundle exec rake cdf:db:seed
+2. bundle exec rails server
+
+## Status
 
 [6/25/2012]
   * Fullfilment integration is functional
