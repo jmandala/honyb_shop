@@ -10,3 +10,4 @@ doc
 .yardoc
 public/spree
 cdf/config/config.yml
+cdf/config/config.test.yml
