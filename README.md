@@ -22,17 +22,21 @@ checkout that keeps customers on the partner's website.
 
 Before running tests, be sure to setup the test DB and the test config.yml.
 
+```
   $> bundle exec rake db:migrate db:test:prepare
   $> cp cdf/config/config.yml.sample cdf/config/config.yml
+```
 
 Now you are ready to run tests:
 
+```
   $> rspec spec
+```
 
 ## Development Setup
 
-1. bundle exec rake cdf:db:seed
-2. bundle exec rails server
+1. `bundle exec rake cdf:db:seed`
+2. `bundle exec rails server`
 
 ## Status
 
